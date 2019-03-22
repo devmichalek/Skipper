@@ -30,7 +30,13 @@
     <ClCompile Include="parser.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
-    <ClCompile Include="global.cpp">
+    <ClCompile Include="interpreter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cmd_list.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cmd.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -46,7 +52,13 @@
     <ClInclude Include="parser.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
-    <ClInclude Include="global.h">
+    <ClInclude Include="interpreter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cmd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cmd_list.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
