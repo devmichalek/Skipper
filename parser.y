@@ -5,8 +5,6 @@
 	#pragma warning (disable: 4005)
 	#include <iostream>
 	#include <string>
-	#include <cstdio>
-	#include <cmath>
 	#include "interpreter.h"
 	extern Interpreter interpreter;
 
@@ -17,6 +15,7 @@
 	//extern void yyerror(const char*);
 	void yyerror(const char* msg)
 	{
+		interpreter.bError = true;
 		printf("Error: %s\n", msg);
 	}
 %}
