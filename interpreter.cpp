@@ -1,6 +1,7 @@
 #include "interpreter.h"
 #include "cmd.h"
 #include "cmd_list.h"
+#include "cmd_regex.h"
 
 Interpreter::Interpreter()
 {
@@ -23,10 +24,10 @@ void Interpreter::help()
 	printf("\nExamples:\n");
 	printf("  list --recursive --directory \"a\\b\\c\" [a-z].txt\n");
 	printf("  list -r *.php\n");
-	printf("  list -rd \"foo\" [abc+].js\n");
+	printf("  list -rd \"foo\" [abc+]\\.js\n");
 	printf("\nCommands:\n");
 	printf("  list\n\t[-h --help]\n\t[-d --directory <directory name>]\n\t[-r --recursive]\n\t[<regular expression>]\n");
-	printf("  regex\n\t[-h --help]\n\t[-m --mode]\n\t[-s --set <new mode>]\n\t[-l --list]\n");
+	printf("  regex\n\t[-h --help]\n\t[-m --mode]\n\t[-l --list]\n\t[-s --set <new mode>]\n");
 	printf("  remove\n\t[-h --help]\n\t[-d --directory <directory name>]\n\t[-r --recursive]\n\t[-f --force]\n\t<regular expression>\n");
 	printf("\n");
 }
@@ -62,7 +63,7 @@ void Interpreter::parse(std::string* msg)
 			{
 				if (ref.substr(3, 3) == "gex")
 				{	// regex
-
+					command = new Command_Regex(extract(ref, 7));
 				}
 				else if (ref.substr(3, 4) == "move")
 				{	// remove
