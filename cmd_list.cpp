@@ -1,6 +1,5 @@
 #include "cmd_list.h"
 #include <regex>
-#include <vector>
 
 Command_List::Command_List(std::vector<std::string> options) : Command(options)
 {
@@ -127,7 +126,7 @@ int Command_List::run()
 				for (auto &i : cells)
 				{
 					std::string &it = result[i];
-					count = std::count_if(it.begin(), it.end(), [](char &i) { return i == '\\'; });
+					count = (int)std::count_if(it.begin(), it.end(), [](char &i) { return i == '\\'; });
 					std::string buffer(count, ' ');
 					printf("%s%s\n", buffer.c_str(), it.c_str());
 				}

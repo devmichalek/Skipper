@@ -14,7 +14,7 @@ class Command_List final : public Command
 
 public:
 	explicit Command_List(std::vector<std::string> options);
-	~Command_List() {}
+	~Command_List() {} // not needed
 	bool parse();
 	int run();
 };
