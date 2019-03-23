@@ -140,6 +140,7 @@
   <ItemGroup>
     <ClCompile Include="cmd.cpp" />
     <ClCompile Include="cmd_list.cpp" />
+    <ClCompile Include="cmd_regex.cpp" />
     <ClCompile Include="interpreter.cpp" />
     <ClCompile Include="lexer.cpp" />
     <ClCompile Include="main.cpp" />
@@ -176,6 +177,7 @@
   <ItemGroup>
     <ClInclude Include="cmd.h" />
     <ClInclude Include="cmd_list.h" />
+    <ClInclude Include="cmd_regex.h" />
     <ClInclude Include="interpreter.h" />
     <ClInclude Include="parser.h" />
   </ItemGroup>
