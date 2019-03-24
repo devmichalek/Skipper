@@ -1,5 +1,5 @@
 #include "cmd_remove.h"
-#include <regex>
+#include "cmd_regex.h"
 #include <filesystem>
 
 Command_Remove::Command_Remove(std::vector<std::string> options) : Command(options)
@@ -105,7 +105,7 @@ int Command_Remove::run()
 			std::regex regex;
 			try
 			{
-				regex.assign(m_sRegex);
+				regex.assign(m_sRegex, Command_Regex::m_iMode);
 			}
 			catch (const std::regex_error &e)
 			{
@@ -120,7 +120,7 @@ int Command_Remove::run()
 				ibuffer = result[i].rfind('\\');
 				if (ibuffer != std::string::npos)
 				{
-					if (std::regex_match(result[i].substr(ibuffer), regex))
+					if (std::regex_match(result[i].substr(++ibuffer), regex))
 						cells.push_back(i);
 				}
 				else if (std::regex_match(result[i], regex))
