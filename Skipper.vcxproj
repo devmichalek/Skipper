@@ -141,6 +141,7 @@
     <ClCompile Include="cmd.cpp" />
     <ClCompile Include="cmd_list.cpp" />
     <ClCompile Include="cmd_regex.cpp" />
+    <ClCompile Include="cmd_remove.cpp" />
     <ClCompile Include="interpreter.cpp" />
     <ClCompile Include="lexer.cpp" />
     <ClCompile Include="main.cpp" />
@@ -178,6 +179,7 @@
     <ClInclude Include="cmd.h" />
     <ClInclude Include="cmd_list.h" />
     <ClInclude Include="cmd_regex.h" />
+    <ClInclude Include="cmd_remove.h" />
     <ClInclude Include="interpreter.h" />
     <ClInclude Include="parser.h" />
   </ItemGroup>
