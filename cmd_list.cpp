@@ -130,7 +130,16 @@ int Command_List::run()
 					std::string buffer(count, ' ');
 					printf("%s%s\n", buffer.c_str(), it.c_str());
 				}
-					
+			}
+		}
+		else
+		{
+			int count = 0;
+			for (auto &it : result)
+			{
+				count = (int)std::count_if(it.begin(), it.end(), [](char &i) { return i == '\\'; });
+				std::string buffer(count, ' ');
+				printf("%s%s\n", buffer.c_str(), it.c_str());
 			}
 		}
 	}
