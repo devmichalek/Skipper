@@ -84,7 +84,7 @@ int Command_Regex::run()
 		else if (m_bList)
 		{
 			std::string str;
-			printf("Available modes are:\n");
+			printf("\nAvailable modes are:\n");
 			for (int i = 1; i <= std::regex::flag_type::egrep; i *= 2)
 			{
 				str = getModeString(i);
