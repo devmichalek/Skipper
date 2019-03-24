@@ -30,10 +30,15 @@ bool Command_Regex::parse()
 			}
 			else
 			{
-				if (it == "-h")			{ m_bHelp = true; break; }
-				else if (it == "-m")	{ m_bMode = true; }
-				else if (it == "-l")	{ m_bList = true; }
-				else if (it == "-s")	{ m_bSetMode = true; }
+				if (it == "-h")						{ m_bHelp = true; break; }
+				else if (it == "-m" && !m_bMode)	{ m_bMode = true; }
+				else if (it == "-l" && !m_bList)	{ m_bList = true; }
+				else if (it == "-s" && !m_bSetMode)	{ m_bSetMode = true; }
+				else
+				{
+					printf("Error: switch %s is already specified\n", it.c_str());
+					return false;
+				}
 			}
 		}
 		else
