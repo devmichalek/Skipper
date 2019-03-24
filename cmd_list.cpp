@@ -1,5 +1,6 @@
 #include "cmd_list.h"
 #include <regex>
+#include <filesystem>
 
 Command_List::Command_List(std::vector<std::string> options) : Command(options)
 {
