@@ -1,6 +1,6 @@
 #include "cmd_regex.h"
 
-std::regex::flag_type Command_Regex::m_iMode = std::regex::flag_type::grep;
+std::regex::flag_type Command_Regex::m_iMode = std::regex::flag_type::ECMAScript;
 
 Command_Regex::Command_Regex(std::vector<std::string> options) : Command(options)
 {
@@ -84,7 +84,7 @@ int Command_Regex::run()
 		else if (m_bList)
 		{
 			std::string str;
-			printf("\nAvailable modes are:\n");
+			printf("Available modes are:\n");
 			for (int i = 1; i <= std::regex::flag_type::egrep; i *= 2)
 			{
 				str = getModeString(i);

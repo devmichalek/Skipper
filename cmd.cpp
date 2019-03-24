@@ -41,8 +41,7 @@ std::vector<std::string> extract(const std::string &str, int &&i)
 	{
 		if (i >= str.size())
 		{
-			if (!buffer.empty())
-				vec.push_back(buffer);
+			vec.push_back(buffer);
 			buffer = "";
 			break;
 		}
@@ -51,8 +50,7 @@ std::vector<std::string> extract(const std::string &str, int &&i)
 		{
 			if (quotes)
 			{
-				if (!buffer.empty())
-					vec.push_back(buffer);
+				vec.push_back(buffer);
 				buffer = "";
 				++i;
 			}
@@ -60,8 +58,7 @@ std::vector<std::string> extract(const std::string &str, int &&i)
 		}
 		else if (str[i] == ' ' && !quotes)
 		{
-			if (!buffer.empty())
-				vec.push_back(buffer);
+			vec.push_back(buffer);
 			buffer = "";
 		}
 		else

@@ -2,7 +2,6 @@
 #include "cmd.h"
 #include "cmd_list.h"
 #include "cmd_regex.h"
-#include "cmd_remove.h"
 
 Interpreter::Interpreter()
 {
@@ -29,7 +28,7 @@ void Interpreter::help()
 	printf("\nCommands:\n");
 	printf("  list\n\t[-h --help]\n\t[-d --directory <directory name>]\n\t[-r --recursive]\n\t[<regular expression>]\n");
 	printf("  regex\n\t[-h --help]\n\t[-m --mode]\n\t[-l --list]\n\t[-s --set <new mode>]\n");
-	printf("  remove\n\t[-h --help]\n\t[-d --directory <directory name>]\n\t[-v --verbose]\n\t[-r --recursive]\n\t<regular expression>\n");
+	printf("  remove\n\t[-h --help]\n\t[-d --directory <directory name>]\n\t[-r --recursive]\n\t[-f --force]\n\t<regular expression>\n");
 	printf("\n");
 }
 
@@ -68,7 +67,7 @@ void Interpreter::parse(std::string* msg)
 				}
 				else if (ref.substr(3, 4) == "move")
 				{	// remove
-					command = new Command_Remove(extract(ref, 8));
+
 				}
 			}
 		}
