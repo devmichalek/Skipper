@@ -45,14 +45,9 @@
     <ClCompile Include="cmd_remove.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="lexer.l">
-      <Filter>Bison Flex Files</Filter>
-    </None>
-    <None Include="parser.y">
-      <Filter>Bison Flex Files</Filter>
-    </None>
+    <ClCompile Include="collector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="parser.h">
@@ -73,5 +68,16 @@
     <ClInclude Include="cmd_remove.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="collector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="lexer.l">
+      <Filter>Bison Flex Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="parser.y">
+      <Filter>Bison Flex Files</Filter>
+    </CustomBuild>
   </ItemGroup>
 </Project>
