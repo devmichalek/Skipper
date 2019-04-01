@@ -2,7 +2,20 @@
 
 Command::Command(const std::vector<std::string> &options)
 {
+	m_flush = nullptr;
+	m_index = -1;
 	m_options = options;
+}
+
+void Command::force(void* fun)
+{
+	this->m_flush = fun;
+}
+
+void Command::output(std::string &&msg)
+{
+	void (*flush)(std::string &&, int &&) = (void(*) (std::string &&, int &&))m_flush;
+	flush(std::move(msg), std::move(m_index));
 }
 
 bool validate(const std::string &base, std::string search)

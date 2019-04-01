@@ -1,9 +1,12 @@
 #pragma once
+#include "collector.h"
 #include <string>
 #include <vector>
 
 class Command
 {
+	void* m_flush;
+	int m_index;
 protected:
 	std::vector<std::string> m_options;
 public:
@@ -13,6 +16,8 @@ public:
 	virtual ~Command() = default;
 	virtual bool parse() = 0;
 	virtual int run(void) = 0;
+	void force(void*);
+	void output(std::string &&msg);
 };
 
 bool validate(const std::string &base, std::string search);
