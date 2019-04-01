@@ -14,6 +14,7 @@ OPTION (\"[a-zA-Z ]+\")|([a-zA-Z]+)|(\-[a-zA-Z]+)|(\-\-[a-zA-Z]+)
 REGEX [a-zA-Z0-9\!\@\#\$\%\^\&\*\.\,\(\)\<\>\?\/\\\;\:\'\"\{\}\[\]\+\=\~\-\_]+
 WHITESPACE [\n\r \t]
 COMMENT \#.*
+REDIRECTION [\>]|[\>\>]
 
 %%	/*----- Definition section -----*/
 {INTEGERS}	{yylval.ival = atoi(yytext);	return INT;}
@@ -27,7 +28,7 @@ COMMENT \#.*
 
 {OPTION}	{yylval.csval = _strdup(yytext); return OPTSTR;}
 \![a-zA-Z]+	{yylval.csval = _strdup(yytext); return CMDSTR;}
-{REGEX}		{yylval.csval = _strdup(yytext); return REGSTR;}
+{REGEX}|({REGEX}{REDIRECTION}{REGEX})	{yylval.csval = _strdup(yytext); return REGSTR;}
 "!exit"{WHITESPACE}	{interpreter.exit(); yyterminate();}
 "!help"{WHITESPACE}	{interpreter.help();}
 
