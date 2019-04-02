@@ -142,11 +142,13 @@
     <ClCompile Include="cmd_list.cpp" />
     <ClCompile Include="cmd_regex.cpp" />
     <ClCompile Include="cmd_remove.cpp" />
-    <ClCompile Include="collector.cpp" />
+    <ClCompile Include="CommonScope.cpp" />
+    <ClCompile Include="ConcurrentScope.cpp" />
     <ClCompile Include="interpreter.cpp" />
     <ClCompile Include="lexer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="parser.cpp" />
+    <ClCompile Include="RegularScope.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="lexer.l">
@@ -181,9 +183,11 @@
     <ClInclude Include="cmd_list.h" />
     <ClInclude Include="cmd_regex.h" />
     <ClInclude Include="cmd_remove.h" />
-    <ClInclude Include="collector.h" />
+    <ClInclude Include="CommonScope.h" />
+    <ClInclude Include="ConcurrentScope.h" />
     <ClInclude Include="interpreter.h" />
     <ClInclude Include="parser.h" />
+    <ClInclude Include="RegularScope.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

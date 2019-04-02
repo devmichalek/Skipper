@@ -45,7 +45,13 @@
     <ClCompile Include="cmd_remove.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="collector.cpp">
+    <ClCompile Include="RegularScope.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ConcurrentScope.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CommonScope.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -68,7 +74,13 @@
     <ClInclude Include="cmd_remove.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="collector.h">
+    <ClInclude Include="RegularScope.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ConcurrentScope.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CommonScope.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
