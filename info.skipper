@@ -1,0 +1,74 @@
+# {} - regular scope
+# () - concurrent scope (unique thread)
+# It is forbidden to use nested concurrent scope inside raw concurrent scope (()).
+# Although nested regular scopes {{}} are allowed.
+
+# Global Scope
+
+{
+	# Scope 0
+
+	(
+		# Concurrent Scope 0.0
+	)
+
+	(
+		# Concurrent Scope 0.1
+	)
+}
+
+{
+	# Scope 1
+
+	(
+		# Concurrent Scope 1.0
+	)
+
+	(
+		# Concurrent Scope 1.1
+
+		{
+			# Scope 1.1.0
+
+			(
+				# Concurrent Scope 1.1.0.0
+			)
+
+			(
+				# Concurrent Scope 1.1.0.1
+			)
+		}
+
+		{
+			# Scope 1.1.1
+		}
+
+		{
+			# Scope 1.1.2
+
+			(
+				# Concurrent Scope 1.1.2.0
+			)
+
+			(
+				# Concurrent Scope 1.1.2.1
+			)
+		}
+	)
+}
+
+# Order of Scopes Evalution:
+# Global
+	# 0
+		# 0.0 <=> 0.1 (concurrently)
+	# 1
+		# 1.0 <=> 1.1 (concurrently)
+			# 1.1.0
+				# 1.1.0.0 <=> 1.1.0.1 <=> 1.0 (concurrently)
+			# 1.1.1
+			# 1.1.2
+				# 1.1.2.0 <=> 1.1.2.1 <=> 1.0 (concurrently)
+
+# Notice that concurrent scope (1.0) may (and probably will) work simultaneously with concurrent scopes 1.1.0.0 and 1.1.0.1.
+# Also concurrent scope (1.0) may work with concurrent scopes 1.1.2.0 and 1.1.2.1 at the same time.
+# Conclusion: If parent scope is concurrent its children concurrent scopes are concurrent to parent's parallel scopes.
