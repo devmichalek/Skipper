@@ -30,9 +30,6 @@
     <ClCompile Include="parser.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
-    <ClCompile Include="interpreter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="cmd_list.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -54,13 +51,13 @@
     <ClCompile Include="CommonScope.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ConsoleInterpreter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="parser.h">
       <Filter>Generated Files</Filter>
-    </ClInclude>
-    <ClInclude Include="interpreter.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="cmd.h">
       <Filter>Header Files</Filter>
@@ -81,6 +78,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CommonScope.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ConsoleInterpreter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

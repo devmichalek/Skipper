@@ -144,7 +144,7 @@
     <ClCompile Include="cmd_remove.cpp" />
     <ClCompile Include="CommonScope.cpp" />
     <ClCompile Include="ConcurrentScope.cpp" />
-    <ClCompile Include="interpreter.cpp" />
+    <ClCompile Include="ConsoleInterpreter.cpp" />
     <ClCompile Include="lexer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="parser.cpp" />
@@ -185,7 +185,7 @@
     <ClInclude Include="cmd_remove.h" />
     <ClInclude Include="CommonScope.h" />
     <ClInclude Include="ConcurrentScope.h" />
-    <ClInclude Include="interpreter.h" />
+    <ClInclude Include="ConsoleInterpreter.h" />
     <ClInclude Include="parser.h" />
     <ClInclude Include="RegularScope.h" />
   </ItemGroup>
