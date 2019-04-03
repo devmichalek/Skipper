@@ -139,12 +139,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="cmd.cpp" />
+    <ClCompile Include="cmd_help.cpp" />
+    <ClCompile Include="cmd_include.cpp" />
     <ClCompile Include="cmd_list.cpp" />
     <ClCompile Include="cmd_regex.cpp" />
     <ClCompile Include="cmd_remove.cpp" />
     <ClCompile Include="CommonScope.cpp" />
     <ClCompile Include="ConcurrentScope.cpp" />
-    <ClCompile Include="ConsoleInterpreter.cpp" />
+    <ClCompile Include="Interpreter.cpp" />
     <ClCompile Include="lexer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="parser.cpp" />
@@ -180,12 +182,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cmd.h" />
+    <ClInclude Include="cmd_help.h" />
+    <ClInclude Include="cmd_include.h" />
     <ClInclude Include="cmd_list.h" />
     <ClInclude Include="cmd_regex.h" />
     <ClInclude Include="cmd_remove.h" />
     <ClInclude Include="CommonScope.h" />
     <ClInclude Include="ConcurrentScope.h" />
-    <ClInclude Include="ConsoleInterpreter.h" />
+    <ClInclude Include="Interpreter.h" />
     <ClInclude Include="parser.h" />
     <ClInclude Include="RegularScope.h" />
   </ItemGroup>

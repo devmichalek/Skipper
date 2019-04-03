@@ -9,15 +9,14 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
     <Filter Include="Generated Files">
       <UniqueIdentifier>{f36843d2-f61b-4190-b265-aa2b156359c1}</UniqueIdentifier>
     </Filter>
     <Filter Include="Bison Flex Files">
       <UniqueIdentifier>{32e7eaf2-7110-4013-bc0d-90889efcea8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Commands">
+      <UniqueIdentifier>{454bf0bb-e94f-483e-a01e-140d7642bb14}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -30,18 +29,6 @@
     <ClCompile Include="parser.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
-    <ClCompile Include="cmd_list.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="cmd.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="cmd_regex.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="cmd_remove.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="RegularScope.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -51,25 +38,31 @@
     <ClCompile Include="CommonScope.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ConsoleInterpreter.cpp">
+    <ClCompile Include="Interpreter.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cmd_remove.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="cmd_regex.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="cmd_list.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="cmd_include.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="cmd.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="cmd_help.cpp">
+      <Filter>Commands</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="parser.h">
       <Filter>Generated Files</Filter>
-    </ClInclude>
-    <ClInclude Include="cmd.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="cmd_list.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="cmd_regex.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="cmd_remove.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RegularScope.h">
       <Filter>Header Files</Filter>
@@ -80,8 +73,26 @@
     <ClInclude Include="CommonScope.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ConsoleInterpreter.h">
+    <ClInclude Include="Interpreter.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cmd.h">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="cmd_include.h">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="cmd_list.h">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="cmd_regex.h">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="cmd_remove.h">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="cmd_help.h">
+      <Filter>Commands</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
