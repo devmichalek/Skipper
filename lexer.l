@@ -4,8 +4,8 @@
 	#pragma warning (disable: 4005)
 	#include <iostream>
 	#include "parser.h"
-	#include "ConsoleInterpreter.h"
-	ConsoleInterpreter consoleInterpreter;
+	#include "Interpreter.h"
+	Interpreter interpreter;
 %}
 
 INTEGERS [0-9]+
@@ -29,7 +29,6 @@ REDIRECTION [\>]|[\>\>]
 {OPTION}	{yylval.csval = _strdup(yytext); return OPTSTR;}
 \![a-zA-Z]+	{yylval.csval = _strdup(yytext); return CMDSTR;}
 {REGEX}|({REGEX}{REDIRECTION}{REGEX})	{yylval.csval = _strdup(yytext); return REGSTR;}
-"!exit"{WHITESPACE}	{consoleInterpreter.exit(); yyterminate();}
-"!help"{WHITESPACE}	{consoleInterpreter.help();}
+"!exit"{WHITESPACE}	{interpreter.exit(); yyterminate();}
 
 %%	/*----- User code section -----*/
