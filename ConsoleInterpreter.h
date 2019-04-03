@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-class Interpreter
+class ConsoleInterpreter
 {
 public: // public members
 	bool bExit;
@@ -11,8 +11,8 @@ public: // public members
 	int iHelp;
 
 public: // public methods
-	Interpreter();
-	Interpreter(const Interpreter &) = default;
+	ConsoleInterpreter();
+	ConsoleInterpreter(const ConsoleInterpreter &) = default;
 
 	/*---- Unique Commands ----*/
 	void exit();

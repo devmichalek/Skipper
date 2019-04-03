@@ -1,22 +1,22 @@
-#include "interpreter.h"
+#include "ConsoleInterpreter.h"
 #include "cmd.h"
 #include "cmd_list.h"
 #include "cmd_regex.h"
 #include "cmd_remove.h"
 
-Interpreter::Interpreter()
+ConsoleInterpreter::ConsoleInterpreter()
 {
 	bExit = false;
 	iHelp = 0;
 }
 
-void Interpreter::exit()
+void ConsoleInterpreter::exit()
 {
 	printf("Terminating...\n");
 	bExit = true;
 }
 
-void Interpreter::help()
+void ConsoleInterpreter::help()
 {
 	++iHelp;
 	printf("\nSyntax:\n");
@@ -33,7 +33,7 @@ void Interpreter::help()
 	printf("\n");
 }
 
-void Interpreter::parse(std::string* msg)
+void ConsoleInterpreter::parse(std::string* msg)
 {
 	if (bError)
 	{
