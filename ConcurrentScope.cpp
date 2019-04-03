@@ -1,7 +1,7 @@
 #include "ConcurrentScope.h"
 #include "RegularScope.h"
 
-ConcurrentScope::ConcurrentScope(RegularScope* upNode) : CommonScope(CONCURRENT)
+ConcurrentScope::ConcurrentScope(RegularScope* &upNode) : CommonScope(CONCURRENT)
 {
 	m_upNode = upNode;
 }
@@ -33,14 +33,14 @@ bool ConcurrentScope::addScope(CommonScope* newScope, M_TYPE newType)
 		while (ptrScope->getNextNode())
 			ptrScope = ptrScope->getNextNode();
 
-		((RegularScope*)newScope)->m_nextNode = nullptr;
-		((RegularScope*)ptrScope)->m_nextNode = (RegularScope*)newScope;
+		((RegularScope*)newScope)->m_next = nullptr;
+		((RegularScope*)ptrScope)->m_next = (RegularScope*)newScope;
 	}
 	else
 	{
 		m_nodes = (RegularScope*)newScope;
 		m_nodes->m_type = newType;
-		((RegularScope*)m_nodes)->m_nextNode = nullptr;
+		((RegularScope*)m_nodes)->m_next = nullptr;
 	}
 
 	return true; // success;
@@ -48,11 +48,32 @@ bool ConcurrentScope::addScope(CommonScope* newScope, M_TYPE newType)
 
 bool ConcurrentScope::execute()
 {
+	if (m_nodes)
+	{
+		RegularScope* node = m_nodes;
+		while (node)
+		{
+			node->execute();
+			node = node->m_next;
+		}
+	}
+	else
+	{
+		while (!m_tasks.empty())
+		{
+			Command* cmd = m_tasks.front().first;
+			void* fun = m_tasks.front().second;
+			cmd->force(fun);
+			if (cmd->parse())
+				cmd->run();
+			pop();
+		}
+	}
 
 	return true;
 }
 
 ConcurrentScope* ConcurrentScope::getNextNode()
 {
-	return m_nextNode;
+	return m_next;
 }

@@ -54,13 +54,13 @@ bool RegularScope::addScope(CommonScope* newScope, M_TYPE newType)
 
 		if (ptrScope->m_type == REGULAR)
 		{
-			((RegularScope*)newScope)->m_nextNode = nullptr;
-			((RegularScope*)ptrScope)->m_nextNode = (RegularScope*)newScope;
+			((RegularScope*)newScope)->m_next = nullptr;
+			((RegularScope*)ptrScope)->m_next = (RegularScope*)newScope;
 		}	
 		else
 		{
-			((ConcurrentScope*)newScope)->m_nextNode = nullptr;
-			((ConcurrentScope*)ptrScope)->m_nextNode = (ConcurrentScope*)newScope;
+			((ConcurrentScope*)newScope)->m_next = nullptr;
+			((ConcurrentScope*)ptrScope)->m_next = (ConcurrentScope*)newScope;
 		}
 	}
 	else
@@ -68,9 +68,9 @@ bool RegularScope::addScope(CommonScope* newScope, M_TYPE newType)
 		m_nodes = newScope;
 		m_nodes->m_type = newType;
 		if (newType == REGULAR)
-			((RegularScope*)m_nodes)->m_nextNode = nullptr;
+			((RegularScope*)m_nodes)->m_next = nullptr;
 		else
-			((ConcurrentScope*)m_nodes)->m_nextNode = nullptr;
+			((ConcurrentScope*)m_nodes)->m_next = nullptr;
 	}
 
 	return true; // success;
@@ -78,11 +78,45 @@ bool RegularScope::addScope(CommonScope* newScope, M_TYPE newType)
 
 bool RegularScope::execute()
 {
+	if (m_nodes)
+	{
+		if (m_nodes->m_type == REGULAR)
+		{	// regular
+			RegularScope* node = (RegularScope*)m_nodes;
+			while (node)
+			{
+				node->execute();
+				node = node->m_next;
+			}
+		}
+		else
+		{	// concurrent
+			ConcurrentScope* node = (ConcurrentScope*)m_nodes;
+			while (node)
+			{
+				std::thread thread([&]() { node->execute(); });
+				thread.detach();
+				node = node->m_next;
+			}
+		}
+	}
+	else
+	{
+		while (!m_tasks.empty())
+		{
+			Command* cmd = m_tasks.front().first;
+			void* fun = m_tasks.front().second;
+			cmd->force(fun);
+			if (cmd->parse())
+				cmd->run();
+			pop();
+		}
+	}
 
 	return true;
 }
 
 RegularScope* RegularScope::getNextNode()
 {
-	return m_nextNode;
+	return m_next;
 }
