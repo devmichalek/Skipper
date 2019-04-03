@@ -508,8 +508,8 @@ char *yytext;
 	#pragma warning (disable: 4005)
 	#include <iostream>
 	#include "parser.h"
-	#include "interpreter.h"
-	Interpreter interpreter;
+	#include "ConsoleInterpreter.h"
+	ConsoleInterpreter consoleInterpreter;
 #line 513 "lexer.cpp"
 #line 514 "lexer.cpp"
 
@@ -839,13 +839,13 @@ case 11:
 /* rule 11 can match eol */
 YY_RULE_SETUP
 #line 32 "lexer.l"
-{interpreter.exit(); yyterminate();}
+{consoleInterpreter.exit(); yyterminate();}
 	YY_BREAK
 case 12:
 /* rule 12 can match eol */
 YY_RULE_SETUP
 #line 33 "lexer.l"
-{interpreter.help();}
+{consoleInterpreter.help();}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
