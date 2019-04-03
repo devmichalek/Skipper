@@ -1,5 +1,7 @@
 #include "cmd.h"
 
+std::string Command::m_global_buffer = "";
+
 Command::Command(const std::vector<std::string> &options)
 {
 	m_flush = nullptr;
@@ -12,7 +14,7 @@ void Command::force(void* fun)
 	this->m_flush = fun;
 }
 
-void Command::output(std::string &&msg)
+void Command::output(std::string msg)
 {
 	void (*flush)(std::string &&, int &&) = (void(*) (std::string &&, int &&))m_flush;
 	flush(std::move(msg), std::move(m_index));

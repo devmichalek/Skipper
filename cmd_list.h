@@ -16,4 +16,22 @@ public:
 	~Command_List() {} // not needed
 	bool parse();
 	int run();
+
+	static std::string help()
+	{
+		std::string a = "\nDefinition:\n";
+		std::string b = "\tlist - prints files and directories for requested directory\n";
+		std::string c = "\nSyntax:\n";
+		std::string d = "\t[-h --help] - prints help\n";
+		std::string e = "\t[-f --directory <directory name>] - searches in requested directory, if not specified searches in current directory\n";
+		std::string f = "\t[-r --recursive] - searches recursively\n";
+		std::string g = "\t[<regular expression>] - searches directory with specified regular expression key\n";
+		std::string h = "\n";
+		return a + b + c + d + e + f + g + h;
+	}
+
+	static std::string assist()
+	{
+		return "  list\n\t[-h --help]\n\t[-d --directory <directory name>]\n\t[-r --recursive]\n\t[<regular expression>]\n";
+	}
 };

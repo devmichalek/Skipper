@@ -4,6 +4,7 @@
 
 Command_List::Command_List(std::vector<std::string> options) : Command(options)
 {
+	m_bEmpty = false;
 	m_bHelp = false;
 	m_bDirectory = false;
 	m_bRecursive = false;
@@ -31,7 +32,7 @@ bool Command_List::parse()
 			{
 				if (!validate(it, "hdr"))
 				{
-					printf("Error: cannot resolve %s switch\n", it.c_str());
+					output("Error: cannot resolve " + it  + " switch\n");
 					return false;
 				}
 
@@ -46,7 +47,7 @@ bool Command_List::parse()
 			else if (m_sRegex.empty()) { m_bRegex = true; m_sRegex = it; }
 			else
 			{
-				printf("Error: too many arguments for 'list' command\n");
+				output("Error: too many arguments for 'list' command\n");
 				return false;
 			}
 		}
@@ -58,16 +59,7 @@ bool Command_List::parse()
 int Command_List::run()
 {
 	if (m_bHelp)
-	{
-		printf("\nDefinition:\n");
-		printf("\tlist - prints files and directories for requested directory\n");
-		printf("\nSyntax:\n");
-		printf("\t[-h --help] - prints help\n");
-		printf("\t[-d --directory <directory name>] - searches in requested directory, if not specified searches in current directory\n");
-		printf("\t[-r --recursive] - searches recursively\n");
-		printf("\t[<regular expression>] - searches directory with specified regular expression key\n");
-		printf("\n");
-	}
+		output(help());
 	else
 	{
 		std::filesystem::path path;
@@ -75,8 +67,6 @@ int Command_List::run()
 			path = std::filesystem::current_path();
 		else if (m_bDirectory)
 			path = m_sDirectory;
-		else
-		{ /*error*/ }
 
 		std::vector<std::string> result;
 		if (m_bRecursive)
@@ -91,7 +81,7 @@ int Command_List::run()
 		}
 
 		if (result.empty())
-			printf("Warning: couldn't find any files\n");
+			output("Warning: couldn't find any files\n");
 		else if (m_bRegex)
 		{	// regex search
 			std::regex regex;
@@ -101,7 +91,7 @@ int Command_List::run()
 			}
 			catch (const std::regex_error &e)
 			{
-				printf("Error: regex_error caught: %s\n", e.what());
+				output("Error: regex_error caught: " + std::string(e.what()) + "\n");
 				return 1; // error
 			}
 
@@ -120,7 +110,7 @@ int Command_List::run()
 			}
 				
 			if (cells.empty())
-				printf("Warning: couldn't find any files by regex expression\n");
+				output("Warning: couldn't find any files by regex expression\n");
 			else
 			{
 				int count = 0;
@@ -129,9 +119,8 @@ int Command_List::run()
 					std::string &it = result[i];
 					count = (int)std::count_if(it.begin(), it.end(), [](char &i) { return i == '\\'; });
 					std::string buffer(count, ' ');
-					printf("%s%s\n", buffer.c_str(), it.c_str());
-				}
-					
+					output(buffer + it + "\n");
+				}	
 			}
 		}
 	}

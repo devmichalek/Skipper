@@ -36,7 +36,7 @@ bool Command_Regex::parse()
 				else if (it == "-s" && !m_bSetMode)	{ m_bSetMode = true; }
 				else
 				{
-					printf("Error: switch %s is already specified\n", it.c_str());
+					output("Error: switch " + it + " is already specified\n");
 					return false;
 				}
 			}
@@ -45,12 +45,12 @@ bool Command_Regex::parse()
 		{
 			if (!m_bSetMode)
 			{
-				printf("Error: too little arguments for 'regex' command\n");
+				output("Error: too little arguments for 'regex' command\n");
 				return false;
 			}
 			else if (m_bSetMode && !m_sSetMode.empty())
 			{
-				printf("Error: too many arguments for 'regex' command\n");
+				output("Error: too many arguments for 'regex' command\n");
 				return false;
 			}
 			else
@@ -65,56 +65,46 @@ int Command_Regex::run()
 {
 	if (m_bEmpty)
 	{
-		printf("Error: regex command must at least contain one argument\n");
+		output("Error: regex command must at least contain one argument\n");
 		return 1;
 	}
 	else if (m_bHelp)
-	{
-		printf("\nDefinition:\n");
-		printf("\tregex - gives regex information, changes regex behaviour\n");
-		printf("\nSyntax:\n");
-		printf("\t[-h --help] - prints help\n");
-		printf("\t[-m --mode] - prints current regex mode\n");
-		printf("\t[-l --list] - prints available regex mode\n");
-		printf("\t[-s --set <new mode>] - sets new regex mode\n");
-		printf("\n");
-	}
+		output(help());
 	else
 	{
 		if (m_bMode)
 		{
 			std::string str = getModeString(m_iMode);
-			printf("Current regex expression flavor is %s\n\n", str.c_str());
+			output("Current regex expression flavor is " + str + "\n\n");
 		}
 		else if (m_bList)
 		{
 			std::string str;
-			printf("\nAvailable modes are:\n");
+			output("\nAvailable modes are:\n");
 			for (int i = 1; i <= std::regex::flag_type::egrep; i *= 2)
 			{
 				str = getModeString(i);
-				printf("%s\n", str.c_str());
+				output(str + "\n");
 			}
-			printf("\n");
+			output("\n");
 		}
 		else if (m_bSetMode)
 		{
 			if (m_sSetMode.empty())
 			{
-				printf("Error: new regex mode is not specified, missing <new mode> expression\n");
+				output("Error: new regex mode is not specified, missing <new mode> expression\n");
 				return 1;
 			}
 
 			int iRes = getModeByString(m_sSetMode);
 			if (iRes < 0)
 			{
-				printf("Error: new regex mode is invalid\n");
+				output("Error: new regex mode is invalid\n");
 				return 1;
 			}
 
 			m_iMode = (std::regex::flag_type)iRes;
 		}
-		else {} // error
 	}
 
 	return 0; // no error

@@ -34,7 +34,7 @@ bool Command_Remove::parse()
 			{
 				if (!validate(it, "hdfr"))
 				{
-					printf("Error: cannot resolve %s switch\n", it.c_str());
+					output("Error: cannot resolve " + it + " switch\n");
 					return false;
 				}
 
@@ -50,7 +50,7 @@ bool Command_Remove::parse()
 			else if (m_sRegex.empty()) { m_bRegex = true; m_sRegex = it; }
 			else
 			{
-				printf("Error: too many arguments for 'remove' command\n");
+				output("Error: too many arguments for 'remove' command\n");
 				return false;
 			}
 		}
@@ -62,23 +62,13 @@ bool Command_Remove::parse()
 int Command_Remove::run()
 {
 	if (m_bHelp)
-	{
-		printf("\nDefinition:\n");
-		printf("\tremove - removes files and directories\n");
-		printf("\nSyntax:\n");
-		printf("\t[-h --help] - prints help\n");
-		printf("\t[-d --directory <directory name>] - searches in requested directory, if not specified searches in current directory\n");
-		printf("\t[-v --verbose] - explain at all times what is being done\n");
-		printf("\t[-r --recursive] - searches recursively\n");
-		printf("\t[<regular expression>] - searches directory with specified regular expression key\n");
-		printf("\n");
-	}
+		output(help());
 	else
 	{
 		std::filesystem::path path;
 		if (m_bEmpty)
 		{
-			printf("Error: too little arguments for 'remove' command\n");
+			output("Error: too little arguments for 'remove' command\n");
 			return 1;
 		}
 		else if (m_bDirectory)
@@ -99,7 +89,7 @@ int Command_Remove::run()
 		}
 
 		if (result.empty())
-			printf("Warning: couldn't find any files\n");
+			output("Warning: couldn't find any files\n");
 		else if (m_bRegex)
 		{	// regex search
 			std::regex regex;
@@ -109,7 +99,7 @@ int Command_Remove::run()
 			}
 			catch (const std::regex_error &e)
 			{
-				printf("Error: regex_error caught: %s\n", e.what());
+				output("Error: regex_error caught: " + std::string(e.what()) + "\n");
 				return 1; // error
 			}
 
@@ -128,7 +118,7 @@ int Command_Remove::run()
 			}
 
 			if (cells.empty())
-				printf("Warning: couldn't find any files by regex expression\n");
+				output("Warning: couldn't find any files by regex expression\n");
 			else
 			{
 				int count = 0;
@@ -138,13 +128,13 @@ int Command_Remove::run()
 					std::string &it = result[i];
 					iRes = std::filesystem::remove(it);
 					if (m_bVerbose && iRes > 0)
-						printf("Deleted %s\n", it.c_str());
+						output("Deleted " + it + "\n");
 				}
 			}
 		}
 		else
 		{
-			printf("Error: regular expression is not specified\n");
+			output("Error: regular expression is not specified\n");
 			return 1;
 		}
 	}
