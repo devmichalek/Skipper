@@ -1,39 +1,23 @@
-#include "ConsoleInterpreter.h"
+#include "Interpreter.h"
 #include "cmd.h"
+#include "cmd_help.h"
+#include "cmd_include.h"
 #include "cmd_list.h"
 #include "cmd_regex.h"
 #include "cmd_remove.h"
 
-ConsoleInterpreter::ConsoleInterpreter()
+Interpreter::Interpreter()
 {
 	bExit = false;
-	iHelp = 0;
 }
 
-void ConsoleInterpreter::exit()
+void Interpreter::exit()
 {
 	printf("Terminating...\n");
 	bExit = true;
 }
 
-void ConsoleInterpreter::help()
-{
-	++iHelp;
-	printf("\nSyntax:\n");
-	printf("  [] - optional\n");
-	printf("  <> - expression\n");
-	printf("\nExamples:\n");
-	printf("  list --recursive --directory \"a\\b\\c\" [a-z].txt\n");
-	printf("  list -r *.php\n");
-	printf("  list -rd \"foo\" [abc+]\\.js\n");
-	printf("\nCommands:\n");
-	printf("  list\n\t[-h --help]\n\t[-d --directory <directory name>]\n\t[-r --recursive]\n\t[<regular expression>]\n");
-	printf("  regex\n\t[-h --help]\n\t[-m --mode]\n\t[-l --list]\n\t[-s --set <new mode>]\n");
-	printf("  remove\n\t[-h --help]\n\t[-d --directory <directory name>]\n\t[-v --verbose]\n\t[-r --recursive]\n\t<regular expression>\n");
-	printf("\n");
-}
-
-void ConsoleInterpreter::parse(std::string* msg)
+void Interpreter::parse(std::string* msg)
 {
 	if (bError)
 	{

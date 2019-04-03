@@ -1,13 +1,13 @@
 #include <limits>
 #include <iostream>
 #include "parser.h"
-#include "ConsoleInterpreter.h"
+#include "Interpreter.h"
 
 // Syntax analyzer (parser).
 extern int yyparse();
 extern int yylex();
 extern FILE* yyin;
-extern ConsoleInterpreter consoleInterpreter;
+extern Interpreter interpreter;
 
 int main(int argc, char** argv)
 {
@@ -17,7 +17,7 @@ int main(int argc, char** argv)
 		if (fbuffer)
 		{
 			yyin = fbuffer;
-			while (yylex());
+			yyparse();
 		}
 		else
 			std::cout << "Cannot open " << argv[1] << std::endl;
@@ -27,12 +27,12 @@ int main(int argc, char** argv)
 		for (;;)
 		{
 			yyparse();
-			if (consoleInterpreter.bExit)
+			if (interpreter.bExit)
 				break;
 		}
 	}
 
-	if (!consoleInterpreter.bExit)
+	if (!interpreter.bExit)
 	{	// If terminated not by user.
 		std::cout << "Press Enter to Continue...";
 		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
