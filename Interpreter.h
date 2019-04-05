@@ -1,21 +1,37 @@
 #pragma once
-#include <stdio.h>
+#include "cmd.h"
+#include "CommonScope.h"
+#include "ConcurrentScope.h"
+#include "RegularScope.h"
+// include standard
+#include <limits>
 #include <string>
-#include <vector>
+#include <fstream>
+#include <iostream>
 
-class Interpreter
+class Interpreter final
 {
-public: // public members
-	bool bExit;
-	bool bError;
+	Command* m_pCmd;
+	std::string m_sPathToFile;
+public:
+	bool m_bExit;
+	bool m_bError;
+	RegularScope* m_pTree;
+public:
+	explicit Interpreter();
 
-public: // public methods
-	Interpreter();
-	Interpreter(const Interpreter &) = default;
-
-	/*---- Unique Commands ----*/
+	/*---- Unique ----*/
 	void exit();
 
-	/*---- Parse ----*/
-	void parse(std::string* msg);
+	/*---- Scans file, sends data to parse function ----*/
+	bool scan(const char*);
+private:
+	/*---- Connects nodes, creates a tree of scopes ----*/
+	bool connect(std::fstream &, CommonScope*&, int&);
+
+	/*---- Parses line to Yacc which calls analyze function ----*/
+	void parse(const char*);
+public:
+	/*---- Analyzes input from Yacc, sets output ----*/
+	void analyze(std::string*);
 };
