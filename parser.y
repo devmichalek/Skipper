@@ -3,7 +3,6 @@
 %defines "parser.h"
 %{
 	#pragma warning (disable: 4005)
-	#include <iostream>
 	#include <string>
 	#include "Interpreter.h"
 	extern Interpreter interpreter;
@@ -15,8 +14,8 @@
 	//extern void yyerror(const char*);
 	void yyerror(const char* msg)
 	{
-		interpreter.bError = true;
-		printf("Error: %s\n", msg);
+		interpreter.m_bError = true;
+		printf("Error: %s", msg);
 	}
 %}
 
@@ -52,8 +51,8 @@ input: /*empty*/
 line: '\n'
 	| int_exp '\n'		{std::cout << "=" << $1 << std::endl;}
 	| float_exp '\n'	{std::cout << "=" << $1 << std::endl;}
-	| cmd_exp_r '\n'	{interpreter.parse($1);}
-	| cmd_exp '\n'		{interpreter.parse($1);}
+	| cmd_exp_r '\n'	{interpreter.analyze($1);}
+	| cmd_exp '\n'		{interpreter.analyze($1);}
 	;
 
 int_exp: INT				{$$ = $1;}
