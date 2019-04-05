@@ -2,7 +2,7 @@
 %option noyywrap
 %{
 	#pragma warning (disable: 4005)
-	#include <iostream>
+	#include <string>
 	#include "parser.h"
 	#include "Interpreter.h"
 	Interpreter interpreter;
@@ -13,7 +13,7 @@ FLOATS [0-9]*\.[0-9]+
 OPTION (\"[a-zA-Z ]+\")|([a-zA-Z]+)|(\-[a-zA-Z]+)|(\-\-[a-zA-Z]+)
 REGEX [a-zA-Z0-9\!\@\#\$\%\^\&\*\.\,\(\)\<\>\?\/\\\;\:\'\"\{\}\[\]\+\=\~\-\_]+
 WHITESPACE [\n\r \t]
-COMMENT \#.*
+COMMENT \#.*\n
 REDIRECTION [\>]|[\>\>]
 
 %%	/*----- Definition section -----*/
@@ -32,3 +32,10 @@ REDIRECTION [\>]|[\>\>]
 "!exit"{WHITESPACE}	{interpreter.exit(); yyterminate();}
 
 %%	/*----- User code section -----*/
+
+// Syntax analyzer (parser).
+void Interpreter::parse(const char* msg)
+{
+	yy_scan_string(msg);
+	yyparse();
+}
