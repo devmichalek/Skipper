@@ -1,38 +1,20 @@
-#include <limits>
-#include <iostream>
-#include "parser.h"
 #include "Interpreter.h"
 
-// Syntax analyzer (parser).
-extern int yyparse();
-extern int yylex();
-extern FILE* yyin;
 extern Interpreter interpreter;
 
 int main(int argc, char** argv)
 {
-	if (argc > 1)
-	{	// Reading From File.
-		FILE* fbuffer = fopen(argv[1], "r");
-		if (fbuffer)
-		{
-			yyin = fbuffer;
-			yyparse();
-		}
+	if (argc == 2)
+	{
+		if (interpreter.scan(argv[1]))
+			interpreter.m_pTree->execute();
 		else
-			std::cout << "Cannot open " << argv[1] << std::endl;
+			printf("Error: Interpreter scanning process failed\n");
 	}
 	else
-	{	// Standard Input.
-		for (;;)
-		{
-			yyparse();
-			if (interpreter.bExit)
-				break;
-		}
-	}
+		printf("Error: Only one argument <filename> is available\n");
 
-	if (!interpreter.bExit)
+	if (!interpreter.m_bExit)
 	{	// If terminated not by user.
 		std::cout << "Press Enter to Continue...";
 		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
