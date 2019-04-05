@@ -52,7 +52,7 @@ int Command_Help::run()
 		output("  [] - optional\n");
 		output("  <> - expression\n");
 		output("\nExamples:\n");
-		output("  list --recursive --directory \"a\\b\\c\" [a-z].txt\n");
+		output("  list --recursive --directory \"a\\b\\c\" [a-z]+\\.txt\n");
 		output("  list -r *.php\n");
 		output("  list -rd \"foo\" [abc+]\\.js\n");
 		output("\nCommands (in alphabetical order):\n");

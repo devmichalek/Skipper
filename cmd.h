@@ -17,6 +17,7 @@ public:
 	virtual bool parse() = 0;
 	virtual int run(void) = 0;
 	void force(void*);
+protected:
 	void output(std::string msg);
 };
 
