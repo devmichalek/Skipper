@@ -13,8 +13,8 @@ public:
 	explicit ConcurrentScope(RegularScope*&);
 	~ConcurrentScope();
 
-	bool addTask(Command*, std::string);
-	bool addScope(CommonScope*, M_TYPE);
+	bool addTask(Command*, std::string, int&);
+	bool addScope(CommonScope*, M_TYPE, int&);
 	bool execute();
 	ConcurrentScope* getNextNode();
 };

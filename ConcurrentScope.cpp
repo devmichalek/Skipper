@@ -12,18 +12,18 @@ ConcurrentScope::~ConcurrentScope()
 	// ...
 }
 
-bool ConcurrentScope::addTask(Command* cmd, std::string pathToFile)
+bool ConcurrentScope::addTask(Command* cmd, std::string pathToFile, int &line)
 {
 	push(cmd, pathToFile);
 	return true;
 }
 
 
-bool ConcurrentScope::addScope(CommonScope* newScope, M_TYPE newType)
+bool ConcurrentScope::addScope(CommonScope* newScope, M_TYPE newType, int &line)
 {
 	if (newType == CONCURRENT)
-	{	// error, concurrent scope is not possible inside concurrent scope
-
+	{
+		printf("Error: Concurrent scope cannot be the child of concurrent scope %d line\n", line);
 		return false;
 	}
 

@@ -20,11 +20,11 @@ RegularScope::~RegularScope()
 	}
 }
 
-bool RegularScope::addTask(Command* cmd, std::string pathToFile)
+bool RegularScope::addTask(Command* cmd, std::string pathToFile, int &line)
 {
 	if (m_nodes && m_nodes->m_type == CONCURRENT)
-	{	// error, tasks are not possible inside regular scope with concurrent scope
-
+	{
+		printf("Error: Tasks are not possible inside regular scope with concurrent scopes %d line\n", line);
 		return false;
 	}
 
@@ -32,7 +32,7 @@ bool RegularScope::addTask(Command* cmd, std::string pathToFile)
 	return true;
 }
 
-bool RegularScope::addScope(CommonScope* newScope, M_TYPE newType)
+bool RegularScope::addScope(CommonScope* newScope, M_TYPE newType, int &line)
 {
 	if (newType == CONCURRENT && !m_tasks.empty())
 	{	// error, concurrent scope is not possible inside regular scope with tasks
@@ -47,8 +47,8 @@ bool RegularScope::addScope(CommonScope* newScope, M_TYPE newType)
 			ptrScope = ptrScope->getNextNode();
 
 		if (ptrScope->m_type != newType)
-		{	// error, only one type possible
-
+		{
+			printf("Error: Only one type of nested scope is possible inside regular scope %d line\n", line);
 			return false;
 		}
 

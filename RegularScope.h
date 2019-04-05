@@ -13,8 +13,8 @@ public:
 	explicit RegularScope(CommonScope*);
 	~RegularScope();
 
-	bool addTask(Command*, std::string);
-	bool addScope(CommonScope*, M_TYPE);
+	bool addTask(Command*, std::string, int&);
+	bool addScope(CommonScope*, M_TYPE, int&);
 	bool execute();
 	RegularScope* getNextNode();
 };

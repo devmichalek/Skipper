@@ -31,8 +31,8 @@ public:
 	explicit CommonScope(const M_TYPE &newType) { m_type = newType; }
 	~CommonScope() {}
 
-	virtual bool addTask(Command*, std::string) = 0;
-	virtual bool addScope(CommonScope*, M_TYPE) = 0;
+	virtual bool addTask(Command*, std::string, int&) = 0;
+	virtual bool addScope(CommonScope*, M_TYPE, int&) = 0;
 	virtual bool execute() = 0;
 	virtual CommonScope* getNextNode();
 
