@@ -20,7 +20,7 @@ void CommonScope::redirect(std::string &&msg, int &&index)
 
 void CommonScope::push(Command* &cmd, std::string &pathToFile)
 {
-	unsigned output_index = -1;
+	int output_index = -1;
 	if (!pathToFile.empty())
 	{	// open next file...
 		auto it = m_rofiles.begin();
