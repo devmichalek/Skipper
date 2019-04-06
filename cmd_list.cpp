@@ -123,6 +123,16 @@ int Command_List::run()
 				}	
 			}
 		}
+		else
+		{
+			int count = 0;
+			for (auto &it : result)
+			{
+				count = (int)std::count_if(it.begin(), it.end(), [](char &i) { return i == '\\'; });
+				std::string buffer(count, ' ');
+				output(buffer + it + "\n");
+			}
+		}
 	}
 
 	return 0; // no error
