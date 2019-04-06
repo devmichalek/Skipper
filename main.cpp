@@ -11,6 +11,8 @@ int main(int argc, char** argv)
 		else
 			printf("Error: Interpreter scanning process failed\n");
 	}
+	else if (argc < 2)
+		printf("Error: Argument <filename> is not specified\n");
 	else
 		printf("Error: Only one argument <filename> is available\n");
 

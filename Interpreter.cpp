@@ -24,7 +24,9 @@ bool Interpreter::scan(const char* filename)
 		m_pTree = new RegularScope(nullptr);
 		CommonScope* tree = m_pTree;
 		int line = 1;
-		return connect(file, tree, line);
+		int openRegular = 0;
+		int openConcurrent = 0;
+		return connect(file, tree, line, openRegular, openConcurrent);
 	}
 	else
 		printf("Cannot open %s file\n", filename);
@@ -32,13 +34,10 @@ bool Interpreter::scan(const char* filename)
 	return false; // error
 }
 
-bool Interpreter::connect(std::fstream &file, CommonScope* &upNode, int &line)
+bool Interpreter::connect(std::fstream &file, CommonScope* &upNode, int &line, int &ore, int &oco)
 {
 	char c;
 	CommonScope* ptr = nullptr;
-	bool openRegular = false;
-	bool openConcurrent = false;
-
 	while (c = file.get())
 	{
 		while (true)
@@ -53,56 +52,55 @@ bool Interpreter::connect(std::fstream &file, CommonScope* &upNode, int &line)
 				break;
 			c = file.get();
 		}
-	
-		if (c == '{')
-		{	// new regular scope
-			if (openRegular)
+		
+		if (c == EOF)
+			break;
+		else if (c == '#')
+		{	// skip comment
+			while (c = file.get())
 			{
-				printf("Error: Syntax error missing closing bracket } at %d line\n", line);
-				return false;
+				if (c == '\n' || c == EOF)
+					break;
 			}
-
-			openRegular = true;
+			continue;
+		}
+		else if (c == '{')
+		{	// new regular scope
+			++ore;
 			ptr = new RegularScope(upNode);
 			upNode->addScope(ptr, CommonScope::REGULAR, line);
-			if (!connect(file, ptr, line))
+			if (!connect(file, ptr, line, ore, oco))
 				return false;
 		}
 		else if (c == '}')
 		{
-			if (!openRegular)
+			if (ore == 0)
 			{
 				printf("Error: Syntax error too many closing brackets } at %d line\n", line);
 				return false;
 			}
 
-			openRegular = false;
+			--ore;
 			return true;
 		}
 		else if (c == '[')
 		{	// new concurrent scope
-			if (openConcurrent)
-			{
-				printf("Error: Syntax error missing closing bracket ] at %d line\n", line);
-				return false;
-			}
-
-			openConcurrent = true;
+			++oco;
 			RegularScope* up = dynamic_cast<RegularScope*>(upNode);
 			ptr = new ConcurrentScope(up);
 			upNode->addScope(ptr, CommonScope::CONCURRENT, line);
-			if (!connect(file, ptr, line))
+			if (!connect(file, ptr, line, ore, oco))
 				return false;
 		}
 		else if (c == ']')
 		{
-			if (!openConcurrent)
+			if (!oco)
 			{
 				printf("Error: Syntax error too many closing brackets ] at %d line\n", line);
 				return false;
 			}
 
-			openConcurrent = false;
+			--oco;
 			return true;
 		}
 		else
@@ -111,14 +109,8 @@ bool Interpreter::connect(std::fstream &file, CommonScope* &upNode, int &line)
 			sline += c;
 			while (c = file.get())
 			{
-				if (c == '\n')
+				if (c == '\n' || c == '#' || c == EOF)
 					break;
-				else if (c == '}' || c == ']')
-				{
-					std::streamoff off = -1;
-					file.seekg(off);
-					break;
-				}
 				sline += c;
 			}
 
@@ -137,6 +129,12 @@ bool Interpreter::connect(std::fstream &file, CommonScope* &upNode, int &line)
 				return false;
 			}
 		}
+	}
+
+	if (ore || oco)
+	{
+		printf("Error: Number of opening brackets and closing brackets is different, %d line\n", line);
+		return false;
 	}
 
 	return true; // ok
@@ -162,9 +160,13 @@ void Interpreter::analyze(std::string* msg)
 	}
 
 	if (!msg)
+	{
+		printf("Error: Yacc message is corrupted");
 		return;
+	}
 
-	std::string &ref = (*msg);
+	std::string ref = *msg;
+	ref += " ";
 	if (ref[0] == '!')
 	{
 		if (ref[1] == 'l')

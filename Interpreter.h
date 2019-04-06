@@ -27,7 +27,7 @@ public:
 	bool scan(const char*);
 private:
 	/*---- Connects nodes, creates a tree of scopes ----*/
-	bool connect(std::fstream &, CommonScope*&, int&);
+	bool connect(std::fstream &, CommonScope*&, int&, int&, int&);
 
 	/*---- Parses line to Yacc which calls analyze function ----*/
 	void parse(const char*);
