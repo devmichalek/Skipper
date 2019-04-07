@@ -92,12 +92,16 @@ bool RegularScope::execute()
 		else
 		{	// concurrent
 			ConcurrentScope* node = (ConcurrentScope*)m_nodes;
+			std::vector<std::thread> threads;
 			while (node)
 			{
-				std::thread thread([&]() { node->execute(); });
-				thread.detach();
+				threads.push_back(std::thread([&]() { node->execute(); }));
 				node = node->m_next;
 			}
+
+			// wait for all threads to finish
+			// temporary solution
+			std::for_each(threads.begin(), threads.end(), std::mem_fn(&std::thread::join));
 		}
 	}
 	else
