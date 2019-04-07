@@ -59,7 +59,12 @@ bool Interpreter::connect(std::fstream &file, CommonScope* &upNode, int &line, i
 		{	// skip comment
 			while (c = file.get())
 			{
-				if (c == '\n' || c == EOF)
+				if (c == '\n')
+				{
+					++line;
+					break;
+				}
+				else if (c == EOF)
 					break;
 			}
 			continue;
@@ -109,9 +114,28 @@ bool Interpreter::connect(std::fstream &file, CommonScope* &upNode, int &line, i
 			sline += c;
 			while (c = file.get())
 			{
-				if (c == '\n' || c == '#' || c == EOF)
+				if (c == '\n' || c == EOF)
 					break;
 				sline += c;
+			}
+
+			{	// remove whitespaces and comment
+				size_t pos = sline.rfind('#');
+				if (pos != std::string::npos)
+					sline = sline.substr(0, pos);
+				int j = sline.size();
+				for (int i = sline.size() - 1; i >= 0; --i)
+				{
+					if (sline[i] == '\f' ||
+						sline[i] == '\r' ||
+						sline[i] == '\t' ||
+						sline[i] == '\v' ||
+						sline[i] == ' ')
+						j = i;
+					else
+						break;
+				}
+				sline = sline.substr(0, j);
 			}
 
 			sline += "\n";
