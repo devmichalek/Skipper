@@ -63,7 +63,7 @@
 
 /* Copy the first part of user declarations.  */
 /* Line 371 of yacc.c  */
-#line 4 "parser.y"
+#line 4 "Bison Flex\\Parser.y"
 
 	#pragma warning (disable: 4005)
 	#include <string>
@@ -82,7 +82,7 @@
 	}
 
 /* Line 371 of yacc.c  */
-#line 86 "parser.cpp"
+#line 86 ".\\Generated\\Parser.cpp"
 
 # ifndef YY_NULL
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -101,9 +101,9 @@
 #endif
 
 /* In a future release of Bison, this section will be replaced
-   by #include "parser.h".  */
-#ifndef YY_YY_PARSER_H_INCLUDED
-# define YY_YY_PARSER_H_INCLUDED
+   by #include "Parser.h".  */
+#ifndef YY_YY_GENERATED_PARSER_H_INCLUDED
+# define YY_YY_GENERATED_PARSER_H_INCLUDED
 /* Enabling traces.  */
 #ifndef YYDEBUG
 # define YYDEBUG 0
@@ -132,7 +132,7 @@ extern int yydebug;
 typedef union YYSTYPE
 {
 /* Line 387 of yacc.c  */
-#line 23 "parser.y"
+#line 23 "Bison Flex\\Parser.y"
 
 	int ival;
 	float fval;
@@ -141,7 +141,7 @@ typedef union YYSTYPE
 
 
 /* Line 387 of yacc.c  */
-#line 145 "parser.cpp"
+#line 145 ".\\Generated\\Parser.cpp"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -164,12 +164,12 @@ int yyparse ();
 #endif
 #endif /* ! YYPARSE_PARAM */
 
-#endif /* !YY_YY_PARSER_H_INCLUDED  */
+#endif /* !YY_YY_GENERATED_PARSER_H_INCLUDED  */
 
 /* Copy the second part of user declarations.  */
 
 /* Line 390 of yacc.c  */
-#line 173 "parser.cpp"
+#line 173 ".\\Generated\\Parser.cpp"
 
 #ifdef short
 # undef short
@@ -1387,103 +1387,103 @@ yyreduce:
     {
         case 5:
 /* Line 1792 of yacc.c  */
-#line 52 "parser.y"
+#line 52 "Bison Flex\\Parser.y"
     {std::cout << "=" << (yyvsp[(1) - (2)].ival) << std::endl;}
     break;
 
   case 6:
 /* Line 1792 of yacc.c  */
-#line 53 "parser.y"
+#line 53 "Bison Flex\\Parser.y"
     {std::cout << "=" << (yyvsp[(1) - (2)].fval) << std::endl;}
     break;
 
   case 7:
 /* Line 1792 of yacc.c  */
-#line 54 "parser.y"
+#line 54 "Bison Flex\\Parser.y"
     {interpreter.analyze((yyvsp[(1) - (2)].sval));}
     break;
 
   case 8:
 /* Line 1792 of yacc.c  */
-#line 55 "parser.y"
+#line 55 "Bison Flex\\Parser.y"
     {interpreter.analyze((yyvsp[(1) - (2)].sval));}
     break;
 
   case 9:
 /* Line 1792 of yacc.c  */
-#line 58 "parser.y"
+#line 58 "Bison Flex\\Parser.y"
     {(yyval.ival) = (yyvsp[(1) - (1)].ival);}
     break;
 
   case 10:
 /* Line 1792 of yacc.c  */
-#line 59 "parser.y"
+#line 59 "Bison Flex\\Parser.y"
     {(yyval.ival) = (yyvsp[(1) - (3)].ival) + (yyvsp[(3) - (3)].ival);}
     break;
 
   case 11:
 /* Line 1792 of yacc.c  */
-#line 60 "parser.y"
+#line 60 "Bison Flex\\Parser.y"
     {(yyval.ival) = (yyvsp[(1) - (3)].ival) - (yyvsp[(3) - (3)].ival);}
     break;
 
   case 12:
 /* Line 1792 of yacc.c  */
-#line 61 "parser.y"
+#line 61 "Bison Flex\\Parser.y"
     {(yyval.ival) = (yyvsp[(1) - (3)].ival) * (yyvsp[(3) - (3)].ival);}
     break;
 
   case 13:
 /* Line 1792 of yacc.c  */
-#line 62 "parser.y"
+#line 62 "Bison Flex\\Parser.y"
     {(yyval.ival) = (yyvsp[(1) - (3)].ival) / (yyvsp[(3) - (3)].ival);}
     break;
 
   case 14:
 /* Line 1792 of yacc.c  */
-#line 63 "parser.y"
+#line 63 "Bison Flex\\Parser.y"
     {(yyval.ival) = (yyvsp[(2) - (3)].ival);}
     break;
 
   case 15:
 /* Line 1792 of yacc.c  */
-#line 66 "parser.y"
+#line 66 "Bison Flex\\Parser.y"
     {(yyval.fval) = (yyvsp[(1) - (1)].fval);}
     break;
 
   case 16:
 /* Line 1792 of yacc.c  */
-#line 67 "parser.y"
+#line 67 "Bison Flex\\Parser.y"
     {(yyval.fval) = (yyvsp[(1) - (3)].fval) + (yyvsp[(3) - (3)].fval);}
     break;
 
   case 17:
 /* Line 1792 of yacc.c  */
-#line 68 "parser.y"
+#line 68 "Bison Flex\\Parser.y"
     {(yyval.fval) = (yyvsp[(1) - (3)].fval) - (yyvsp[(3) - (3)].fval);}
     break;
 
   case 18:
 /* Line 1792 of yacc.c  */
-#line 69 "parser.y"
+#line 69 "Bison Flex\\Parser.y"
     {(yyval.fval) = (yyvsp[(1) - (3)].fval) * (yyvsp[(3) - (3)].fval);}
     break;
 
   case 19:
 /* Line 1792 of yacc.c  */
-#line 70 "parser.y"
+#line 70 "Bison Flex\\Parser.y"
     {(yyval.fval) = (yyvsp[(1) - (3)].fval) / (yyvsp[(3) - (3)].fval);}
     break;
 
   case 20:
 /* Line 1792 of yacc.c  */
-#line 71 "parser.y"
+#line 71 "Bison Flex\\Parser.y"
     {(yyval.fval) = (yyvsp[(2) - (3)].fval);}
     break;
 
   case 21:
 /* Line 1792 of yacc.c  */
-#line 74 "parser.y"
+#line 74 "Bison Flex\\Parser.y"
     {
 								std::string* str = (yyvsp[(1) - (2)].sval);
 								(*str) += " " + std::string((yyvsp[(2) - (2)].csval));
@@ -1493,7 +1493,7 @@ yyreduce:
 
   case 22:
 /* Line 1792 of yacc.c  */
-#line 81 "parser.y"
+#line 81 "Bison Flex\\Parser.y"
     {
 					std::string* str = new std::string((yyvsp[(1) - (1)].csval));
 					(yyval.sval) = str;
@@ -1502,7 +1502,7 @@ yyreduce:
 
   case 23:
 /* Line 1792 of yacc.c  */
-#line 85 "parser.y"
+#line 85 "Bison Flex\\Parser.y"
     {
 						std::string* str = new std::string((yyvsp[(1) - (2)].csval));
 						(*str) += " " + std::string((yyvsp[(2) - (2)].csval));
@@ -1512,7 +1512,7 @@ yyreduce:
 
   case 24:
 /* Line 1792 of yacc.c  */
-#line 90 "parser.y"
+#line 90 "Bison Flex\\Parser.y"
     {
 								std::string* str = new std::string((yyvsp[(1) - (3)].csval));
 								(*str) += " " + std::string((yyvsp[(2) - (3)].csval));
@@ -1523,7 +1523,7 @@ yyreduce:
 
   case 25:
 /* Line 1792 of yacc.c  */
-#line 96 "parser.y"
+#line 96 "Bison Flex\\Parser.y"
     {
 										std::string* str = new std::string((yyvsp[(1) - (4)].csval));
 										(*str) += " " + std::string((yyvsp[(2) - (4)].csval));
@@ -1535,7 +1535,7 @@ yyreduce:
 
   case 26:
 /* Line 1792 of yacc.c  */
-#line 103 "parser.y"
+#line 103 "Bison Flex\\Parser.y"
     {
 												std::string* str = new std::string((yyvsp[(1) - (5)].csval));
 												(*str) += " " + std::string((yyvsp[(2) - (5)].csval));
@@ -1548,7 +1548,7 @@ yyreduce:
 
   case 27:
 /* Line 1792 of yacc.c  */
-#line 111 "parser.y"
+#line 111 "Bison Flex\\Parser.y"
     {
 													std::string* str = new std::string((yyvsp[(1) - (6)].csval));
 													(*str) += " " + std::string((yyvsp[(2) - (6)].csval));
@@ -1562,7 +1562,7 @@ yyreduce:
 
 
 /* Line 1792 of yacc.c  */
-#line 1566 "parser.cpp"
+#line 1566 ".\\Generated\\Parser.cpp"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1794,5 +1794,5 @@ yyreturn:
 
 
 /* Line 2055 of yacc.c  */
-#line 122 "parser.y"
+#line 122 "Bison Flex\\Parser.y"
 	/*----- User code section -----*/

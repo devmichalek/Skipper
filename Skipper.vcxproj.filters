@@ -4,9 +4,6 @@
     <Filter Include="Commands">
       <UniqueIdentifier>{7e7fc158-e65b-4111-8a5d-f4c58cce1722}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Bison Flex">
-      <UniqueIdentifier>{8c3a4a7a-ba50-4bc1-98b1-ea193be544ce}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Generated">
       <UniqueIdentifier>{f36843d2-f61b-4190-b265-aa2b156359c1}</UniqueIdentifier>
     </Filter>
@@ -15,6 +12,9 @@
     </Filter>
     <Filter Include="Scope Tree">
       <UniqueIdentifier>{ebd0a5b0-7313-42b0-a291-a0c4c2913182}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Bison Flex">
+      <UniqueIdentifier>{843aa486-44d3-4ecb-bcec-7e0ce3019e08}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -92,11 +92,11 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Bison Flex\Lexer.l">
+    <CustomBuild Include="Bison Flex\Lexer.l">
       <Filter>Bison Flex</Filter>
-    </None>
-    <None Include="Bison Flex\Parser.y">
+    </CustomBuild>
+    <CustomBuild Include="Bison Flex\Parser.y">
       <Filter>Bison Flex</Filter>
-    </None>
+    </CustomBuild>
   </ItemGroup>
 </Project>
