@@ -60,7 +60,7 @@ extern int yydebug;
 typedef union YYSTYPE
 {
 /* Line 2058 of yacc.c  */
-#line 23 "Bison Flex\\Parser.y"
+#line 23 "parser.y"
 
 	int ival;
 	float fval;
@@ -69,7 +69,7 @@ typedef union YYSTYPE
 
 
 /* Line 2058 of yacc.c  */
-#line 73 "Parser.h"
+#line 73 "parser.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

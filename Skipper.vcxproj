@@ -93,6 +93,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <AdditionalIncludeDirectories>./Bison Flex;./Generated;./Commands;./Interpreter;./Scope Tree;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -103,6 +104,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <AdditionalIncludeDirectories>./Bison Flex;./Generated;./Commands;./Interpreter;./Scope Tree;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -115,6 +117,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <AdditionalIncludeDirectories>./Bison Flex;./Generated;./Commands;./Interpreter;./Scope Tree;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -131,6 +134,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <AdditionalIncludeDirectories>./Bison Flex;./Generated;./Commands;./Interpreter;./Scope Tree;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -138,60 +142,68 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="cmd.cpp" />
-    <ClCompile Include="cmd_help.cpp" />
-    <ClCompile Include="cmd_include.cpp" />
-    <ClCompile Include="cmd_list.cpp" />
-    <ClCompile Include="cmd_regex.cpp" />
-    <ClCompile Include="cmd_remove.cpp" />
-    <ClCompile Include="CommonScope.cpp" />
-    <ClCompile Include="ConcurrentScope.cpp" />
-    <ClCompile Include="Interpreter.cpp" />
-    <ClCompile Include="lexer.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="parser.cpp" />
-    <ClCompile Include="RegularScope.cpp" />
+    <ClCompile Include="Commands\cmd.cpp" />
+    <ClCompile Include="Commands\cmd_help.cpp" />
+    <ClCompile Include="Commands\cmd_include.cpp" />
+    <ClCompile Include="Commands\cmd_list.cpp" />
+    <ClCompile Include="Commands\cmd_regex.cpp" />
+    <ClCompile Include="Commands\cmd_remove.cpp" />
+    <ClCompile Include="Generated\Lexer.cpp" />
+    <ClCompile Include="Generated\Parser.cpp" />
+    <ClCompile Include="Interpreter\Interpreter.cpp" />
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Scope Tree\CommonScope.cpp" />
+    <ClCompile Include="Scope Tree\ConcurrentScope.cpp" />
+    <ClCompile Include="Scope Tree\RegularScope.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="lexer.l">
-      <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\ignore\Flex.exe --wincompat -o %(Filename).cpp %(Identity)</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename).cpp</Outputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">parser.h</AdditionalInputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\ignore\Flex.exe --wincompat -o %(Filename).cpp %(Identity)</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename).cpp</Outputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">parser.h</AdditionalInputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\ignore\Flex.exe --wincompat -o %(Filename).cpp %(Identity)</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).cpp</Outputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">parser.h</AdditionalInputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\ignore\Flex.exe --wincompat -o %(Filename).cpp %(Identity)</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).cpp</Outputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">parser.h</AdditionalInputs>
-    </CustomBuild>
-    <CustomBuild Include="parser.y">
-      <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\ignore\bison.exe -o %(Filename).cpp %(Identity)</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename).cpp; %(Filename).h</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\ignore\bison.exe -o %(Filename).cpp %(Identity)</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename).cpp; %(Filename).h</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\ignore\bison.exe -o %(Filename).cpp %(Identity)</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).cpp; %(Filename).h</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\ignore\bison.exe -o %(Filename).cpp %(Identity)</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).cpp; %(Filename).h</Outputs>
-    </CustomBuild>
+    <ClInclude Include="Commands\cmd.h" />
+    <ClInclude Include="Commands\cmd_help.h" />
+    <ClInclude Include="Commands\cmd_include.h" />
+    <ClInclude Include="Commands\cmd_list.h" />
+    <ClInclude Include="Commands\cmd_regex.h" />
+    <ClInclude Include="Commands\cmd_remove.h" />
+    <ClInclude Include="Generated\Parser.h" />
+    <ClInclude Include="Interpreter\Interpreter.h" />
+    <ClInclude Include="Scope Tree\CommonScope.h" />
+    <ClInclude Include="Scope Tree\ConcurrentScope.h" />
+    <ClInclude Include="Scope Tree\RegularScope.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="cmd.h" />
-    <ClInclude Include="cmd_help.h" />
-    <ClInclude Include="cmd_include.h" />
-    <ClInclude Include="cmd_list.h" />
-    <ClInclude Include="cmd_regex.h" />
-    <ClInclude Include="cmd_remove.h" />
-    <ClInclude Include="CommonScope.h" />
-    <ClInclude Include="ConcurrentScope.h" />
-    <ClInclude Include="Interpreter.h" />
-    <ClInclude Include="parser.h" />
-    <ClInclude Include="RegularScope.h" />
+    <CustomBuild Include="Bison Flex\Lexer.l">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\ignore\Flex.exe --wincompat -o %(Filename).cpp "%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\ignore\Flex.exe --wincompat -o %(Filename).cpp "%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\ignore\Flex.exe --wincompat -o %(Filename).cpp "%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\ignore\Flex.exe --wincompat -o %(Filename).cpp "%(Identity)"</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">./Generated/%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">./Generated/%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">./Generated/%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">./Generated/%(Filename).cpp</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">./Generated/Parser.h</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">./Generated/Parser.h</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">./Generated/Parser.h</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">./Generated/Parser.h</AdditionalInputs>
+    </CustomBuild>
+    <CustomBuild Include="Bison Flex\Parser.y">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\ignore\bison.exe -o %(Filename).cpp "%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\ignore\bison.exe -o %(Filename).cpp "%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\ignore\bison.exe -o %(Filename).cpp "%(Identity)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\ignore\bison.exe -o %(Filename).cpp "%(Identity)"</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">./Generated/%(Filename).cpp; ./Generated/%(Filename).h</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">./Generated/%(Filename).cpp; ./Generated/%(Filename).h</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">./Generated/%(Filename).cpp; ./Generated/%(Filename).h</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">./Generated/%(Filename).cpp; ./Generated/%(Filename).h</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </AdditionalInputs>
+    </CustomBuild>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

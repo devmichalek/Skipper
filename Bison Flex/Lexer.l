@@ -3,7 +3,7 @@
 %{
 	#pragma warning (disable: 4005)
 	#include <string>
-	#include "parser.h"
+	#include "Parser.h"
 	#include "Interpreter.h"
 	Interpreter interpreter;
 %}

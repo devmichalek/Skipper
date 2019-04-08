@@ -1,6 +1,6 @@
 /*----- Prolog section -----*/
 /*Create parser.h file.*/
-%defines "parser.h"
+%defines "Parser.h"
 %{
 	#pragma warning (disable: 4005)
 	#include <string>

@@ -1,5 +1,5 @@
 #include "Interpreter.h"
-#include "parser.h"
+#include "Parser.h"
 #include "cmd_help.h"
 #include "cmd_include.h"
 #include "cmd_list.h"
@@ -123,8 +123,8 @@ bool Interpreter::connect(std::fstream &file, CommonScope* &upNode, int &line, i
 				size_t pos = sline.rfind('#');
 				if (pos != std::string::npos)
 					sline = sline.substr(0, pos);
-				int j = sline.size();
-				for (int i = sline.size() - 1; i >= 0; --i)
+				size_t j = sline.size();
+				for (int i = (int)sline.size() - 1; i >= 0; --i)
 				{
 					if (sline[i] == '\f' ||
 						sline[i] == '\r' ||
