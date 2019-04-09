@@ -1,12 +1,16 @@
-## Skipper
-Skipper is a self acting interpreter for file managing. Compare, move, rename multiple files by regular expression rules. Program has simple 
-syntax which you have to follow if you want to execute commands correctly.
+## Welcome To Skipper
+Skipper is a self acting interpreter for file managing. Compare, move, rename (and more) multiple files by regular expression rules. Program has simple syntax which you have to follow to execute commands correctly.
+#### Key features:
+- Built-in basic commands
+- Compatible with external commands (running batch, exe etc.)
+- Input and output redirection
+- Concurrent or singe-threaded execution structure
 
-## Syntax - {}, [], # and !
-Regular Scope followed by **{}** brackets,<br>
-Concurrent Scope followed by **[]** brackets,<br>
-Comments followed by **#** sign,<br>
-Commands followed by **!** sign.<br>
+## Simple Syntax - {}, [], # and !
+**Regular scope** followed by ```{}``` - everything inside this scope will be executed line by line. The restriction is that regular scope cannot be next to the concurrent scope. Parent can be either a regular scope or the concurrent scope (no limit here). Every execution starts with global scope as a regular scope itself.<br><br>
+**Concurrent scope** followed by ```[]``` brackets - run on the another thread, its insides are executed line by line. Regular scope can be the only parent for concurrent scope. Concurrent scope next to regular scope is not permitted.<br><br>
+**Comments** followed by ```#``` - everything after is treated as comment i.e. skipped by interpreter.<br><br>
+**Commands** followed by ```!``` - to distinguish regular text commands start with ```!<command name> <command args> ...``` Note that some command arguments can be mixed so insted of calling ```!command -a -b -c``` use shorter version ```!command -abc```<br>
 
 ## Examples
 ```
@@ -19,7 +23,10 @@ Commands followed by **!** sign.<br>
     ]
     [ # Concurrent Scope 0.1
       # Do other things
+      # [] # <- syntax error, concurrent scope cannot be a child of concurrent scope
     ]
+    # Scopes 0.0 and 0.1 will run simultaneously (on different threads).
+    # {} # <- syntax error, regular scope next to concurrent scope is not allowed
   }
   
   { # Regular Scope 1
@@ -28,14 +35,13 @@ Commands followed by **!** sign.<br>
         [ # Regular Scope 1.0.0.0
           {} # Regular Scope 1.0.0.0.0
           {} # Regular Scope 1.0.0.0.1
+          # [] # <- syntax error, concurrent scope next to regular scope is not allowed
         ]
       }
     ]
     
     [ # Concurrent Scope 1.1
-    
     ]
+    # Scopes 1.0 (or 1.0.0.0) and 1.1 will run simultaneously (on different threads).
   }
-  
-  # Scopes 0.0 and 0.1 will run simultaneously.
 ```
