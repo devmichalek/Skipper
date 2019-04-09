@@ -50,6 +50,7 @@ Skipper is a self acting interpreter for file managing. Compare, move, rename (a
   # ... some work
 ```
 ```
+  # main.log
   [ # Concurrent Scope A
     # Do work A
     !run a.bat
@@ -63,4 +64,4 @@ Skipper is a self acting interpreter for file managing. Compare, move, rename (a
 ```
 
 ## Project Structure
-Project is being managed with Visual Studio 2017. Interpreter is partly managed by Yacc & Bison. Code uses the newest C++17 standard (filesystem) as well as C++14 and C++11 (regex and its many other features. FTP file managing system is upon the Boost.Asio library.
+Project is make with Visual Studio 2017. Interpreter is partly managed by Yacc & Bison. Code uses the newest C++17 standard (filesystem) as well as C++14 and C++11 (regex and its many other features. FTP file managing system is upon the Boost.Asio library.
