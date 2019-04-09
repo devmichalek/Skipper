@@ -63,5 +63,15 @@ Skipper is a self acting interpreter for file managing. Compare, move, rename (a
   ]
 ```
 
+## Commands
+#### Syntax:<br>
+  [] - optional<br>
+  <> - expression<br>
+#### Examples:<br>
+  list --recursive --directory "a\\b\\c" [a-z]+\\.txt<br>
+  list -r \*.php<br>
+  list -rd "foo" [abc+]\\.js<br>
+#### Commands (in alphabetical order):<br>
+
 ## Project Structure
-Project is make with Visual Studio 2017. Interpreter is partly managed by Yacc & Bison. Code uses the newest C++17 standard (filesystem) as well as C++14 and C++11 (regex and its many other features. FTP file managing system is upon the Boost.Asio library.
+Project is make with Visual Studio 2017. Interpreter is partly managed by Yacc & Bison. Code uses the newest C++17 standard (filesystem) as well as C++14 and C++11 (regex and its many other features). FTP file managing system is upon the Boost.Asio library.
