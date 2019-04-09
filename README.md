@@ -10,7 +10,7 @@ Skipper is a self acting interpreter for file managing. Compare, move, rename (a
 **Regular scope** followed by ```{}``` - everything inside this scope will be executed line by line. The restriction is that regular scope cannot be next to the concurrent scope. Parent can be either a regular scope or the concurrent scope (no limit here). Every execution starts with global scope as a regular scope itself.<br><br>
 **Concurrent scope** followed by ```[]``` brackets - run on the another thread, its insides are executed line by line. Regular scope can be the only parent for concurrent scope. Concurrent scope next to regular scope is not permitted.<br><br>
 **Comments** followed by ```#``` - everything after is treated as comment i.e. skipped by interpreter.<br><br>
-**Commands** followed by ```!``` - to distinguish regular text commands start with ```!<command name> <command args> ...``` Note that some command arguments can be mixed so insted of calling ```!command -a -b -c``` use shorter version ```!command -abc```<br>
+**Commands** followed by ```!``` - to distinguish regular text commands start with ```!<command name> <command args> ...``` Note that some command arguments can be mixed so instead of calling ```!command -a -b -c``` use shorter version ```!command -abc```<br>
 
 ## Examples
 ```
@@ -19,7 +19,7 @@ Skipper is a self acting interpreter for file managing. Compare, move, rename (a
   { # Regular Scope 0
     [ # Concurrent Scope 0.0
       !list -r .*\.php$ >> phps.log # Search recursively for all .php files and redirect output to phps.log
-      !remove -r -v -l << phps.log # Remove all files listed in phps.log and print the result to the console
+      !remove -r -v << phps.log # Remove all files listed in phps.log and print the result to the console
     ]
     [ # Concurrent Scope 0.1
       # Do other things
