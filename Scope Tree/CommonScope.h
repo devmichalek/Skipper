@@ -31,14 +31,15 @@ public:
 	explicit CommonScope(const M_TYPE &newType) { m_type = newType; }
 	~CommonScope() {}
 
-	virtual bool addTask(Command*, std::string, int&) = 0;
+	virtual bool addTask(Command*&, std::string&, int&) = 0;
 	virtual bool addScope(CommonScope*, M_TYPE, int&) = 0;
 	virtual bool execute() = 0;
+	virtual void destroy() = 0;
 	virtual CommonScope* getNextNode();
 
 protected:
 	static void print(std::string &&, int &&);
 	static void redirect(std::string &&, int &&);
-	void push(Command*&, std::string &);
+	bool push(Command*&, std::string &, int &);
 	void pop();
 };

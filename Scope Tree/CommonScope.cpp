@@ -18,7 +18,7 @@ void CommonScope::redirect(std::string &&msg, int &&index)
 		*m_rofiles[index].first << msg;
 }
 
-void CommonScope::push(Command* &cmd, std::string &pathToFile)
+bool CommonScope::push(Command* &cmd, std::string &pathToFile, int &line)
 {
 	int output_index = -1;
 	if (!pathToFile.empty())
@@ -32,6 +32,15 @@ void CommonScope::push(Command* &cmd, std::string &pathToFile)
 		{
 			std::fstream* file = new std::fstream;
 			file->open(pathToFile, std::ios::app);
+
+			if (!file->is_open())
+			{	// File error.
+				delete cmd;
+				cmd = nullptr;
+				pathToFile.clear();
+				return false;
+			}
+
 			output_index = (int)m_rofiles.size();
 			m_rofiles.push_back(std::make_pair(file, pathToFile));
 		}
@@ -39,9 +48,10 @@ void CommonScope::push(Command* &cmd, std::string &pathToFile)
 			output_index = (int)std::distance(m_rofiles.begin(), it);
 	}
 
-	// add next task...
+	// Add next task.
 	void(*fun)(std::string &&, int &&) = output_index < 0 ? &print : &redirect;
 	m_tasks.push(std::make_pair(cmd, (void*)fun));
+	return true;
 }
 
 void CommonScope::pop()

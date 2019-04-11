@@ -4,6 +4,8 @@
 ConcurrentScope::ConcurrentScope(RegularScope* &upNode) : CommonScope(CONCURRENT)
 {
 	m_upNode = upNode;
+	m_nodes = nullptr;
+	m_next = nullptr;
 }
 
 ConcurrentScope::~ConcurrentScope()
@@ -12,10 +14,9 @@ ConcurrentScope::~ConcurrentScope()
 	// ...
 }
 
-bool ConcurrentScope::addTask(Command* cmd, std::string pathToFile, int &line)
+bool ConcurrentScope::addTask(Command* &cmd, std::string &pathToFile, int &line)
 {
-	push(cmd, pathToFile);
-	return true;
+	return push(cmd, pathToFile, line);
 }
 
 
@@ -57,7 +58,7 @@ bool ConcurrentScope::execute()
 			node = node->m_next;
 		}
 	}
-	else
+	else if (!m_tasks.empty())
 	{
 		while (!m_tasks.empty())
 		{
@@ -70,6 +71,69 @@ bool ConcurrentScope::execute()
 		}
 	}
 
+	return true;
+}
+
+void ConcurrentScope::destroy()
+{
+	if (m_nodes)
+	{
+		RegularScope* node = m_nodes;
+		while (node)
+		{
+			RegularScope* to_delete = node;
+			node = node->m_next;
+			to_delete->destroy();
+			delete to_delete;
+		}
+		m_nodes = nullptr;
+	}
+	else if (!m_tasks.empty())
+	{
+		while (!m_tasks.empty())
+		{
+			delete m_tasks.front().first;
+			m_tasks.pop();
+		}
+	}
+}
+
+bool ConcurrentScope::capture(RegularScope* &branch, int &line)
+{
+	if (!branch->m_tasks.empty())
+	{	// branch has tasks
+		std::string nofile = "";
+		while (!m_tasks.empty())
+		{
+			push(m_tasks.front().first, nofile, line); // this scope is now owner of new tasks
+			m_tasks.pop(); // popping without deleting pointer
+		}
+	}
+
+	if (branch->m_nodes)
+	{	// branch has nodes
+		if (branch->m_nodes->m_type == CONCURRENT)
+		{
+			printf("Error: Cannot capture other branch's concurrent scopes. This concurrent scope may contain only regular scopes, line %d\n", line);
+			return false;
+		}
+
+		// this is now owner of new nodes
+		if (m_nodes)
+		{
+			CommonScope* ptrScope = m_nodes;
+			while (ptrScope->getNextNode())
+				ptrScope = ptrScope->getNextNode();
+			((RegularScope*)ptrScope)->m_next = (RegularScope*)branch->m_nodes;
+		}
+		else
+			m_nodes = (RegularScope*)branch->m_nodes;
+	}
+
+	branch->m_nodes = nullptr;
+	branch->m_next = nullptr;
+	delete branch;
+	branch = nullptr;
 	return true;
 }
 
