@@ -11,20 +11,23 @@
 
 class Interpreter final
 {
-	Command* m_pCmd;
+	std::unique_ptr<Command> m_pCmd;
+	Interpreter* m_child;
 	std::string m_sPathToFile;
 public:
 	bool m_bExit;
 	bool m_bError;
+	std::string m_sFileName;
 	RegularScope* m_pTree;
 public:
-	explicit Interpreter();
+	explicit Interpreter(RegularScope*&);
+	~Interpreter();
 
 	/*---- Unique ----*/
 	void exit();
 
 	/*---- Scans file, sends data to parse function ----*/
-	bool scan(const char*);
+	bool scan(const char*, const char*, int);
 private:
 	/*---- Connects nodes, creates a tree of scopes ----*/
 	bool connect(std::fstream &, CommonScope*&, int&, int&, int&);
