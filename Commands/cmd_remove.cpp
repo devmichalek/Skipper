@@ -2,7 +2,7 @@
 #include "cmd_regex.h"
 #include <filesystem>
 
-Command_Remove::Command_Remove(std::vector<std::string> options) : Command(options)
+Command_Remove::Command_Remove(std::vector<std::string> options) : Command(options, Handler::CMD_REMOVE)
 {
 	m_bEmpty = false;
 	m_bHelp = false;

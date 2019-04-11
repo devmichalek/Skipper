@@ -4,7 +4,7 @@
 #include "cmd_regex.h"
 #include "cmd_remove.h"
 
-Command_Help::Command_Help(std::vector<std::string> options) : Command(options)
+Command_Help::Command_Help(std::vector<std::string> options) : Command(options, Handler::CMD_HELP)
 {
 	m_bEmpty = false;
 	m_bHelp = false;

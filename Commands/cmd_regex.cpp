@@ -2,7 +2,7 @@
 
 std::regex::flag_type Command_Regex::m_iMode = std::regex::flag_type::ECMAScript;
 
-Command_Regex::Command_Regex(std::vector<std::string> options) : Command(options)
+Command_Regex::Command_Regex(std::vector<std::string> options) : Command(options, Handler::CMD_REGEX)
 {
 	m_bEmpty = false;
 	m_bHelp = false;

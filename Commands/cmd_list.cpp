@@ -2,7 +2,7 @@
 #include "cmd_regex.h"
 #include <filesystem>
 
-Command_List::Command_List(std::vector<std::string> options) : Command(options)
+Command_List::Command_List(std::vector<std::string> options) : Command(options, Handler::CMD_LIST)
 {
 	m_bEmpty = false;
 	m_bHelp = false;

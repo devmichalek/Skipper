@@ -1,7 +1,7 @@
 #include "cmd_include.h"
 #include <fstream>
 
-Command_Include::Command_Include(std::vector<std::string> options) : Command(options)
+Command_Include::Command_Include(std::vector<std::string> options) : Command(options, Handler::CMD_INCLUDE)
 {
 	m_bEmpty = false;
 	m_bHelp = false;
@@ -42,7 +42,7 @@ bool Command_Include::parse()
 		else
 		{
 			if (m_bFile && m_sFile.empty()) { m_sFile = it; }
-			if (m_bDirectory && m_sDirectory.empty()) { m_sDirectory = it; }
+			else if (m_bDirectory && m_sDirectory.empty()) { m_sDirectory = it; }
 			else
 			{
 				output("Error: too many arguments for 'include' command\n");
@@ -56,6 +56,7 @@ bool Command_Include::parse()
 
 int Command_Include::run()
 {
+	m_global_buffer = "";
 	if (m_bEmpty)
 	{
 		output("Error: include command must at least contain one argument\n");
@@ -65,8 +66,44 @@ int Command_Include::run()
 		output(help());
 	else
 	{
-		
+		if (m_bDirectory && m_sDirectory.empty())
+		{
+			output("Error: missing <directory name> for --directory option for 'include' command\n");
+			return 1;
+		}
+
+		if (m_bFile && m_sFile.empty())
+		{
+			output("Error: missing <file name> for --file option for 'include' command\n");
+			return 1;
+		}
+		else if (!m_bFile)
+		{
+			output("Error: missing --file switch for 'include' command\n");
+			return 1;
+		}
+
+		if (m_bDirectory)
+		{
+			m_global_buffer += m_sDirectory;
+			if (m_global_buffer.back() != '/' && m_global_buffer.back() != '\\')
+				m_global_buffer += '\\';
+		}
+			
+		if (m_bFile)
+			m_global_buffer += m_sFile;
 	}
 
 	return 0; // no error
+}
+
+void Command_Include::output(std::string msg)
+{
+	if (m_flush)
+	{
+		void(*flush)(std::string &&, int &&) = (void(*) (std::string &&, int &&))m_flush;
+		flush(std::move(msg), std::move(m_index));
+	}
+	else
+		printf("%s\n", msg.c_str());
 }

@@ -2,10 +2,11 @@
 
 std::string Command::m_global_buffer = "";
 
-Command::Command(const std::vector<std::string> &options)
+Command::Command(const std::vector<std::string> &options, Handler handler)
 {
-	m_flush = nullptr;
+	m_handler = handler;
 	m_index = -1;
+	m_flush = nullptr;
 	m_options = options;
 }
 
