@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Commands\cmd.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\cmd_help.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\cmd_include.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\cmd_list.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\cmd_regex.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\cmd_remove.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Scope Tree\CommonScope.cpp">
+      <Filter>Scope Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="Scope Tree\ConcurrentScope.cpp">
+      <Filter>Scope Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="Scope Tree\RegularScope.cpp">
+      <Filter>Scope Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="Interpreter\Interpreter.cpp">
+      <Filter>Interpreter</Filter>
+    </ClCompile>
+    <ClCompile Include="Generated\Parser.cpp">
+      <Filter>Generated</Filter>
+    </ClCompile>
+    <ClCompile Include="Generated\Lexer.cpp">
+      <Filter>Generated</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Commands\cmd.h">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\cmd_help.h">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\cmd_include.h">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\cmd_list.h">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\cmd_regex.h">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\cmd_remove.h">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Scope Tree\CommonScope.h">
+      <Filter>Scope Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="Scope Tree\ConcurrentScope.h">
+      <Filter>Scope Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="Scope Tree\RegularScope.h">
+      <Filter>Scope Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="Interpreter\Interpreter.h">
+      <Filter>Interpreter</Filter>
+    </ClInclude>
+    <ClInclude Include="Generated\Parser.h">
+      <Filter>Generated</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\handlers.h">
+      <Filter>Commands</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="Bison Flex\Lexer.l">
+      <Filter>Bison Flex</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Bison Flex\Parser.y">
+      <Filter>Bison Flex</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Commands">
+      <UniqueIdentifier>{63d72e5e-e009-4655-85f0-3f413139f4c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scope Tree">
+      <UniqueIdentifier>{e7ab9fac-0c00-49c5-8e17-d66503cacba7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Interpreter">
+      <UniqueIdentifier>{6f757526-a483-45d3-8da1-28d6c0343db6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Generated">
+      <UniqueIdentifier>{edb1bc45-bc20-421f-b048-c728084d0462}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Bison Flex">
+      <UniqueIdentifier>{f289a9e7-b940-45f3-8f73-3a7fb4e8b26e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
