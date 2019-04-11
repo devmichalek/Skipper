@@ -1,15 +1,14 @@
 #include "Interpreter.h"
 
+//extern RegularScope globalScope;
 extern Interpreter interpreter;
 
 int main(int argc, char** argv)
 {
 	if (argc == 2)
 	{
-		if (interpreter.scan(argv[1]))
+		if (interpreter.scan(argv[1], nullptr, -1))
 			interpreter.m_pTree->execute();
-		else
-			printf("Error: Interpreter scanning process failed\n");
 	}
 	else if (argc < 2)
 		printf("Error: Argument <filename> is not specified\n");
@@ -22,5 +21,7 @@ int main(int argc, char** argv)
 		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 	}
 	
+	// Destroy tree.
+	interpreter.m_pTree->destroy();
 	return 0;
 }
