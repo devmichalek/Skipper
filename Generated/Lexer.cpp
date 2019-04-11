@@ -496,9 +496,10 @@ char *yytext;
 	#include <string>
 	#include "Parser.h"
 	#include "Interpreter.h"
-	Interpreter interpreter;
-#line 500 ".\\Generated\\Lexer.cpp"
+	RegularScope* globalScope = nullptr;
+	Interpreter interpreter(globalScope);
 #line 501 ".\\Generated\\Lexer.cpp"
+#line 502 ".\\Generated\\Lexer.cpp"
 
 #define INITIAL 0
 
@@ -712,9 +713,9 @@ YY_DECL
 		}
 
 	{
-#line 19 "Bison Flex\\Lexer.l"
+#line 20 "Bison Flex\\Lexer.l"
 
-#line 717 ".\\Generated\\Lexer.cpp"
+#line 718 ".\\Generated\\Lexer.cpp"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -773,68 +774,68 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 20 "Bison Flex\\Lexer.l"
+#line 21 "Bison Flex\\Lexer.l"
 {yylval.ival = atoi(yytext);	return INT;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 21 "Bison Flex\\Lexer.l"
+#line 22 "Bison Flex\\Lexer.l"
 {yylval.fval = (float)atof(yytext);	return FLOAT;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 23 "Bison Flex\\Lexer.l"
+#line 24 "Bison Flex\\Lexer.l"
 {return yytext[0];}
 	YY_BREAK
 case 4:
 /* rule 4 can match eol */
 YY_RULE_SETUP
-#line 24 "Bison Flex\\Lexer.l"
+#line 25 "Bison Flex\\Lexer.l"
 {return '\n';}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 25 "Bison Flex\\Lexer.l"
+#line 26 "Bison Flex\\Lexer.l"
 {/*empty*/}
 	YY_BREAK
 case 6:
 /* rule 6 can match eol */
 YY_RULE_SETUP
-#line 26 "Bison Flex\\Lexer.l"
+#line 27 "Bison Flex\\Lexer.l"
 {/*empty*/}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 27 "Bison Flex\\Lexer.l"
+#line 28 "Bison Flex\\Lexer.l"
 {/*empty*/}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 29 "Bison Flex\\Lexer.l"
+#line 30 "Bison Flex\\Lexer.l"
 {yylval.csval = _strdup(yytext); return OPTSTR;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 30 "Bison Flex\\Lexer.l"
+#line 31 "Bison Flex\\Lexer.l"
 {yylval.csval = _strdup(yytext); return CMDSTR;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 31 "Bison Flex\\Lexer.l"
+#line 32 "Bison Flex\\Lexer.l"
 {yylval.csval = _strdup(yytext); return REGSTR;}
 	YY_BREAK
 case 11:
 /* rule 11 can match eol */
 YY_RULE_SETUP
-#line 32 "Bison Flex\\Lexer.l"
+#line 33 "Bison Flex\\Lexer.l"
 {interpreter.exit(); yyterminate();}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 34 "Bison Flex\\Lexer.l"
+#line 35 "Bison Flex\\Lexer.l"
 ECHO;
 	YY_BREAK
-#line 837 ".\\Generated\\Lexer.cpp"
+#line 838 ".\\Generated\\Lexer.cpp"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1839,7 +1840,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 34 "Bison Flex\\Lexer.l"
+#line 35 "Bison Flex\\Lexer.l"
 
 
 // Syntax analyzer (parser).

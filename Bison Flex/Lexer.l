@@ -5,7 +5,8 @@
 	#include <string>
 	#include "Parser.h"
 	#include "Interpreter.h"
-	Interpreter interpreter;
+	RegularScope* globalScope = nullptr;
+	Interpreter interpreter(globalScope);
 %}
 
 INTEGERS [0-9]+
