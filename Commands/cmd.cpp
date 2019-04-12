@@ -10,15 +10,16 @@ Command::Command(const std::vector<std::string> &options, Handler handler)
 	m_options = options;
 }
 
-void Command::force(void* fun)
+void Command::force(void* fun, int index)
 {
 	this->m_flush = fun;
+	this->m_index = index;
 }
 
 void Command::output(std::string msg)
 {
-	void (*flush)(std::string &&, int &&) = (void(*) (std::string &&, int &&))m_flush;
-	flush(std::move(msg), std::move(m_index));
+	void (*flush)(std::string &, int &&) = (void(*) (std::string &, int &&))m_flush;
+	flush(msg, std::move(m_index));
 }
 
 bool validate(const std::string &base, std::string search)

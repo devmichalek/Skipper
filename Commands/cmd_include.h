@@ -32,7 +32,4 @@ public:
 	{
 		return "  include\n\t[-h --help]\n\t[-d --directory <directory name>]\n\t[-f --file <file name>]\n";
 	}
-
-protected:
-	void output(std::string msg);
 };

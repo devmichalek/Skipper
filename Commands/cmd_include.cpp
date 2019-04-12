@@ -1,5 +1,5 @@
 #include "cmd_include.h"
-#include <fstream>
+#include "Console.h"
 
 Command_Include::Command_Include(std::vector<std::string> options) : Command(options, Handler::CMD_INCLUDE)
 {
@@ -87,7 +87,7 @@ int Command_Include::run()
 		{
 			m_global_buffer += m_sDirectory;
 			if (m_global_buffer.back() != '/' && m_global_buffer.back() != '\\')
-				m_global_buffer += '\\';
+				m_global_buffer += '/';
 		}
 			
 		if (m_bFile)
@@ -95,15 +95,4 @@ int Command_Include::run()
 	}
 
 	return 0; // no error
-}
-
-void Command_Include::output(std::string msg)
-{
-	if (m_flush)
-	{
-		void(*flush)(std::string &&, int &&) = (void(*) (std::string &&, int &&))m_flush;
-		flush(std::move(msg), std::move(m_index));
-	}
-	else
-		printf("%s\n", msg.c_str());
 }
