@@ -7,16 +7,16 @@
 
 class CommonScope
 {
+public:
+	using m_rofile_type = std::pair<std::fstream*, std::string>;
 protected:
-	// task manipulation
-	typedef std::pair<Command*, void*> m_task_type;
-	std::queue<m_task_type> m_tasks;
+	// Task manipulation.
+	std::queue<Command*> m_tasks;
 
-	// output manipulation
+	// Output manipulation.
 	inline static std::mutex m_omutex;
 
-	// redirected output manipulation
-	using m_rofile_type = std::pair<std::fstream*, std::string>;
+	// Redirected output manipulation.
 	inline static std::vector<m_rofile_type> m_rofiles;
 	inline static std::vector<std::mutex> m_romutexes;
 
@@ -31,15 +31,19 @@ public:
 	explicit CommonScope(const M_TYPE &newType) { m_type = newType; }
 	~CommonScope() {}
 
-	virtual bool addTask(Command*&, std::string&, int&) = 0;
-	virtual bool addScope(CommonScope*, M_TYPE, int&) = 0;
+	virtual bool addTask(Command*&, std::string&, const char*, int&) = 0;
+	virtual bool addScope(CommonScope*, M_TYPE, const char*, int&) = 0;
 	virtual bool execute() = 0;
 	virtual void destroy() = 0;
 	virtual CommonScope* getNextNode();
 
+	static std::vector<m_rofile_type>& rofiles() {
+		return m_rofiles;
+	}
+
 protected:
-	static void print(std::string &&, int &&);
-	static void redirect(std::string &&, int &&);
-	bool push(Command*&, std::string &, int &);
+	static void print(std::string&&, int&&);
+	static void redirect(std::string&&, int&&);
+	bool push(Command*&, std::string&, const char*, int&);
 	void pop();
 };

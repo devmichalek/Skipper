@@ -1,4 +1,5 @@
 #include "CommonScope.h"
+#include "Console.h"
 
 CommonScope* CommonScope::getNextNode()
 {
@@ -18,7 +19,7 @@ void CommonScope::redirect(std::string &&msg, int &&index)
 		*m_rofiles[index].first << msg;
 }
 
-bool CommonScope::push(Command* &cmd, std::string &pathToFile, int &line)
+bool CommonScope::push(Command* &cmd, std::string &pathToFile, const char* filename, int &line)
 {
 	int output_index = -1;
 	if (!pathToFile.empty())
@@ -35,6 +36,8 @@ bool CommonScope::push(Command* &cmd, std::string &pathToFile, int &line)
 
 			if (!file->is_open())
 			{	// File error.
+				std::string msg = "Cannot open " + pathToFile;
+				PrintError(filename, line, msg.c_str());
 				delete cmd;
 				cmd = nullptr;
 				pathToFile.clear();
@@ -50,12 +53,13 @@ bool CommonScope::push(Command* &cmd, std::string &pathToFile, int &line)
 
 	// Add next task.
 	void(*fun)(std::string &&, int &&) = output_index < 0 ? &print : &redirect;
-	m_tasks.push(std::make_pair(cmd, (void*)fun));
+	cmd->force((void*)fun, output_index);
+	m_tasks.push(cmd);
 	return true;
 }
 
 void CommonScope::pop()
 {
-	delete m_tasks.front().first;
+	delete m_tasks.front();
 	m_tasks.pop();
 }
