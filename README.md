@@ -1,10 +1,11 @@
 ## Welcome To Skipper
 Skipper is a self acting interpreter for file managing. Compare, move, rename (and more) multiple files by regular expression rules. Program has simple syntax which you have to follow to execute commands correctly.
 #### Key features:
-- Built-in basic commands
-- Compatible with external commands (running batch, exe etc.)
-- Input and output redirection
-- Concurrent or singe-threaded execution structure
+- [x] Built-in basic commands
+- [x] Compatible with external commands (running batch, exe etc.)
+- [x] Input and output redirection
+- [x] Concurrent or singe-threaded execution structure
+- [ ] Control of optimisation level (nodes and its order)
 
 ## Simple Syntax - {}, [], # and !
 **Regular scope** followed by ```{}``` - everything inside this scope will be executed line by line. The restriction is that regular scope cannot be next to the concurrent scope. Parent can be either a regular scope or the concurrent scope (no limit here). Every execution starts with global scope as a regular scope itself.<br><br>
@@ -69,9 +70,14 @@ Skipper is a self acting interpreter for file managing. Compare, move, rename (a
   <> - expression<br>
 #### Examples:<br>
   list --recursive --directory "a\\b\\c" [a-z]+\\.txt<br>
-  list -r \*.php<br>
-  list -rd "foo" [abc+]\\.js<br>
+  list -r .*\\.php<br>
+  list -rd "foo" [abc+]\.js<br>
 #### Commands (in alphabetical order):<br>
-
+- help [-h --help]<br>
+- include [-h --help] [-d --directory <directory name>] [-f --file <file name>]<br>
+- list [-h --help] [-d --directory <directory name>] [-r --recursive] [<regular expression>]<br>
+- regex [-h --help] [-m --mode] [-l --list] [-s --set <new mode>]<br>
+- remove [-h --help] [-d --directory <directory name>] [-v --verbose] [-r --recursive]\n\t<regular expression><br>
+  
 ## Project Structure
-Project is make with Visual Studio 2017. Interpreter is partly managed by Yacc & Bison. Code uses the newest C++17 standard (filesystem) as well as C++14 and C++11 (regex and its many other features). FTP file managing system is upon the Boost.Asio library.
+Project is make with Visual Studio 2017. Interpreter is partly managed by Bison & Flex. Code uses the newest C++17 standard (filesystem) as well as C++14 and C++11 (regex and its many other features). FTP file managing system is upon the Boost.Asio library.
