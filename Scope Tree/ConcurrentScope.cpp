@@ -1,5 +1,6 @@
 #include "ConcurrentScope.h"
 #include "RegularScope.h"
+#include "Console.h"
 
 ConcurrentScope::ConcurrentScope(RegularScope* &upNode) : CommonScope(CONCURRENT)
 {
@@ -14,17 +15,17 @@ ConcurrentScope::~ConcurrentScope()
 	// ...
 }
 
-bool ConcurrentScope::addTask(Command* &cmd, std::string &pathToFile, int &line)
+bool ConcurrentScope::addTask(Command* &cmd, std::string &pathToFile, const char* filename, int &line)
 {
-	return push(cmd, pathToFile, line);
+	return push(cmd, pathToFile, filename, line);
 }
 
 
-bool ConcurrentScope::addScope(CommonScope* newScope, M_TYPE newType, int &line)
+bool ConcurrentScope::addScope(CommonScope* newScope, M_TYPE newType, const char* filename, int &line)
 {
 	if (newType == CONCURRENT)
 	{
-		printf("Error: Concurrent scope cannot be the child of concurrent scope %d line\n", line);
+		PrintError(filename, line, "Concurrent scope cannot be the child of concurrent scope");
 		return false;
 	}
 
@@ -58,13 +59,12 @@ bool ConcurrentScope::execute()
 			node = node->m_next;
 		}
 	}
-	else if (!m_tasks.empty())
+	
+	if (!m_tasks.empty())
 	{
 		while (!m_tasks.empty())
 		{
-			Command* cmd = m_tasks.front().first;
-			void* fun = m_tasks.front().second;
-			cmd->force(fun);
+			Command* cmd = m_tasks.front();
 			if (cmd->parse())
 				cmd->run();
 			pop();
@@ -92,29 +92,29 @@ void ConcurrentScope::destroy()
 	{
 		while (!m_tasks.empty())
 		{
-			delete m_tasks.front().first;
+			delete m_tasks.front();
 			m_tasks.pop();
 		}
 	}
 }
 
-bool ConcurrentScope::capture(RegularScope* &branch, int &line)
+bool ConcurrentScope::capture(RegularScope* &branch, const char* filename, int &line)
 {
 	if (!branch->m_tasks.empty())
-	{	// branch has tasks
+	{	// Branch contains tasks.
 		std::string nofile = "";
 		while (!m_tasks.empty())
 		{
-			push(m_tasks.front().first, nofile, line); // this scope is now owner of new tasks
-			m_tasks.pop(); // popping without deleting pointer
+			push(m_tasks.front(), nofile, filename, line); // this scope is now owner of new tasks
+			branch->m_tasks.pop(); // popping without deleting pointer
 		}
 	}
 
 	if (branch->m_nodes)
-	{	// branch has nodes
+	{	// Branch contains nodes.
 		if (branch->m_nodes->m_type == CONCURRENT)
 		{
-			printf("Error: Cannot capture other branch's concurrent scopes. This concurrent scope may contain only regular scopes, line %d\n", line);
+			PrintError(filename, line, "Cannot capture other branch's concurrent scopes. This concurrent scope can contain only regular scopes");
 			return false;
 		}
 

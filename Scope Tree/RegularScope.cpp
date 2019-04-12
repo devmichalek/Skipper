@@ -1,5 +1,6 @@
 #include "RegularScope.h"
 #include "ConcurrentScope.h"
+#include "Console.h"
 
 RegularScope::RegularScope(CommonScope* upNode) : CommonScope(REGULAR)
 {
@@ -10,37 +11,28 @@ RegularScope::RegularScope(CommonScope* upNode) : CommonScope(REGULAR)
 
 RegularScope::~RegularScope()
 {
-	if (!m_upNode && !m_rofiles.empty())
-	{	// only global scope can access this code
-		for (auto it = m_rofiles.begin(); it != m_rofiles.end(); ++it)
-		{
-			if ((*it).first->is_open())
-				(*it).first->close();
-			delete (*it).first;
-		}
-		m_rofiles.clear();
-	}
+	// ...
 }
 
-bool RegularScope::addTask(Command* &cmd, std::string &pathToFile, int &line)
+bool RegularScope::addTask(Command* &cmd, std::string &pathToFile, const char* filename, int &line)
 {
 	if (m_nodes && m_nodes->m_type == CONCURRENT)
 	{
-		printf("Error: Tasks are not possible inside regular scope with concurrent scopes %d line\n", line);
+		PrintError(filename, line, "Tasks are not possible inside regular scope with concurrent scopes");
 		delete cmd;
 		cmd = nullptr;
 		pathToFile.clear();
 		return false;
 	}
 	
-	return push(cmd, pathToFile, line);
+	return push(cmd, pathToFile, filename, line);
 }
 
-bool RegularScope::addScope(CommonScope* newScope, M_TYPE newType, int &line)
+bool RegularScope::addScope(CommonScope* newScope, M_TYPE newType, const char* filename, int &line)
 {
 	if (newType == CONCURRENT && !m_tasks.empty())
 	{
-		printf("Error: Concurrent scopes are not possible inside regular scope with tasks %d line\n", line);
+		PrintError(filename, line, "Concurrent scopes are not possible inside regular scope with tasks");
 		return false;
 	}
 
@@ -52,7 +44,7 @@ bool RegularScope::addScope(CommonScope* newScope, M_TYPE newType, int &line)
 
 		if (ptrScope->m_type != newType)
 		{
-			printf("Error: Only one type of nested scope is possible inside regular scope %d line\n", line);
+			PrintError(filename, line, "Only one type of nested scope is possible inside regular scope");
 			return false;
 		}
 
@@ -85,7 +77,7 @@ bool RegularScope::execute()
 	if (m_nodes)
 	{
 		if (m_nodes->m_type == REGULAR)
-		{	// regular
+		{	// Regular Scope Type.
 			RegularScope* node = (RegularScope*)m_nodes;
 			while (node)
 			{
@@ -94,27 +86,25 @@ bool RegularScope::execute()
 			}
 		}
 		else
-		{	// concurrent
+		{	// Concurrent Scope Type.
 			ConcurrentScope* node = (ConcurrentScope*)m_nodes;
 			std::vector<std::thread> threads;
 			while (node)
 			{
-				threads.push_back(std::thread([&]() { node->execute(); }));
+				threads.push_back(std::thread([=]() { node->execute(); }));
 				node = node->m_next;
 			}
 
-			// wait for all threads to finish
-			// temporary solution
+			// Wait for all threads to finish.
 			std::for_each(threads.begin(), threads.end(), std::mem_fn(&std::thread::join));
 		}
 	}
-	else if (!m_tasks.empty())
+	
+	if (!m_tasks.empty())
 	{
 		while (!m_tasks.empty())
 		{
-			Command* cmd = m_tasks.front().first;
-			void* fun = m_tasks.front().second;
-			cmd->force(fun);
+			Command* cmd = m_tasks.front();
 			if (cmd->parse())
 				cmd->run();
 			pop();
@@ -129,7 +119,7 @@ void RegularScope::destroy()
 	if (m_nodes)
 	{
 		if (m_nodes->m_type == REGULAR)
-		{	// regular
+		{	// Regular Scope Type.
 			RegularScope* node = (RegularScope*)m_nodes;
 			while (node)
 			{
@@ -141,7 +131,7 @@ void RegularScope::destroy()
 			m_nodes = nullptr;
 		}
 		else
-		{	// concurrent
+		{	// Concurrent Scope Type.
 			ConcurrentScope* node = (ConcurrentScope*)m_nodes;
 			while (node)
 			{
@@ -157,40 +147,40 @@ void RegularScope::destroy()
 	{
 		while (!m_tasks.empty())
 		{
-			delete m_tasks.front().first;
+			delete m_tasks.front();
 			m_tasks.pop();
 		}
 	}
 }
 
-bool RegularScope::capture(RegularScope* &branch, int &line)
+bool RegularScope::capture(RegularScope* &branch, const char* filename, int &line)
 {
 	if (!branch->m_tasks.empty())
-	{	// branch has tasks
+	{	// Branch contains tasks.
 		if (m_nodes && m_nodes->m_type == CONCURRENT)
 		{
-			printf("Error: Cannot capture other branch's tasks. This regular scope contains concurrent scopes, line %d\n", line);
+			PrintError(filename, line, "Cannot capture other branch's tasks. This regular scope contains concurrent scopes");
 			return false;
 		}
 
 		std::string nofile = "";
 		while (!m_tasks.empty())
 		{
-			push(m_tasks.front().first, nofile, line); // this scope is now owner of new tasks
-			m_tasks.pop(); // popping without deleting pointer
+			push(m_tasks.front(), nofile, filename, line); // this is now new owner of branch's tasks
+			branch->m_tasks.pop(); // Popping without deleting pointer.
 		}
 	}
 	
 	if (branch->m_nodes)
-	{	// branch has nodes
+	{	// Branch contains nodes.
 		if (branch->m_nodes->m_type == CONCURRENT && !m_tasks.empty())
 		{
-			printf("Error: Cannot capture other branch's concurrent scopes. This regular scope contains tasks, line %d\n", line);
+			PrintError(filename, line, "Cannot capture other branch's concurrent scopes. This regular scope contains tasks");
 			return false;
 		}
 		else if (branch->m_nodes->m_type == CONCURRENT && m_nodes && m_nodes->m_type == REGULAR)
 		{
-			printf("Error: Cannot capture other branch's concurrent scopes. This regular scope contains regular scopes, line %d\n", line);
+			PrintError(filename, line, "Cannot capture other branch's concurrent scopes. This regular scope contains regular scopes");
 			return false;
 		}
 
