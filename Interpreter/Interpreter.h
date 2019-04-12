@@ -11,12 +11,13 @@
 
 class Interpreter final
 {
-	std::unique_ptr<Command> m_pCmd;
+	Command* m_pCmd;
 	Interpreter* m_child;
 	std::string m_sPathToFile;
 public:
 	bool m_bExit;
 	bool m_bError;
+	std::string m_sCatchedMsg;
 	std::string m_sFileName;
 	RegularScope* m_pTree;
 public:

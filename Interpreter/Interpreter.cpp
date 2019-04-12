@@ -1,4 +1,5 @@
 #include "Interpreter.h"
+#include "Console.h"
 #include "Parser.h"
 #include "cmd_help.h"
 #include "cmd_include.h"
@@ -10,10 +11,19 @@ Interpreter::Interpreter(RegularScope* &parent)
 {
 	m_bExit = false;
 	m_bError = false;
-	m_pCmd.reset(nullptr);
+	m_pCmd = nullptr;
 	m_child = nullptr;
+
 	m_pTree = new RegularScope(parent);
+	if (parent)
+	{
+		int line = -1;
+		parent->addScope((CommonScope*)m_pTree, CommonScope::REGULAR, "", line);
+	}
+
 	m_sPathToFile = "";
+	m_sFileName = "";
+	m_sCatchedMsg = "";
 }
 
 Interpreter::~Interpreter()
@@ -25,7 +35,7 @@ Interpreter::~Interpreter()
 	}
 }
 
-bool Interpreter::scan(const char* filename, const char* parentfile, int line)
+bool Interpreter::scan(const char* filename, const char* parentfile, int linef)
 {
 	std::fstream file;
 	file.open(filename, std::ios::in);
@@ -38,15 +48,13 @@ bool Interpreter::scan(const char* filename, const char* parentfile, int line)
 		int openConcurrent = 0;
 		bool status = connect(file, tree, line, openRegular, openConcurrent);
 		if (!status)
-			printf("Error: Interpreter scanning process failed\n");
+			PrintError(parentfile ? parentfile : filename, linef, "Interpreter scanning process failed");
 		return status;
 	}
 	else
 	{
-		if (parentfile && line != -1)
-			printf("Error: Cannot open %s file, %s line %d\n", filename, parentfile, line);
-		else
-			printf("Error: Cannot open %s file\n", filename);
+		std::string buf = "Cannot open " + std::string(filename) + " file";
+		PrintError(parentfile, linef, buf.c_str());
 	}
 
 	return false; // error
@@ -54,99 +62,112 @@ bool Interpreter::scan(const char* filename, const char* parentfile, int line)
 
 bool Interpreter::connect(std::fstream &file, CommonScope* &upNode, int &line, int &ore, int &oco)
 {
-	char c;
-	CommonScope* ptr = nullptr;
-	while (c = file.get())
+	while (char sign = file.get())
 	{
+		// Skip whitespaces.
 		while (true)
-		{	// skip whitespaces
-			if (c == '\n')
+		{
+			if (sign == '\n')
 				++line;
-			else if (c != '\f' &&
-				c != '\r' &&
-				c != '\t' &&
-				c != '\v' &&
-				c != ' ')
+			else if (sign != '\f' &&
+				sign != '\r' &&
+				sign != '\t' &&
+				sign != '\v' &&
+				sign != ' ')
 				break;
-			c = file.get();
+			sign = file.get();
 		}
 		
-		if (c == EOF)
-			break;
-		else if (c == '#')
-		{	// skip comment
-			while (c = file.get())
+		// End of file, break.
+		if (sign == EOF)
+			break; 
+		
+		 // Skip comment.
+		else if (sign == '#')
+		{
+			while (sign = file.get())
 			{
-				if (c == '\n')
+				if (sign == '\n')
 				{
 					++line;
 					break;
 				}
-				else if (c == EOF)
+				else if (sign == EOF)
 					break;
 			}
 			continue;
 		}
-		else if (c == '{')
-		{	// new regular scope
+
+		// Open Regular Scope.
+		else if (sign == '{')
+		{
 			++ore;
-			ptr = new RegularScope(upNode);
-			upNode->addScope(ptr, CommonScope::REGULAR, line);
+			CommonScope* ptr = new RegularScope(upNode);
+			upNode->addScope(ptr, CommonScope::REGULAR, m_sFileName.c_str(), line);
 			if (!connect(file, ptr, line, ore, oco))
-			{
+			{	// Destroy if failed.
 				ptr->destroy();
 				return false;
 			}
 		}
-		else if (c == '}')
+
+		// Close Regular Scope
+		else if (sign == '}')
 		{
-			if (ore == 0)
+			if (!ore)
 			{
-				printf("Error: Syntax error too many closing brackets } at %d line\n", line);
+				PrintError(m_sFileName.c_str(), line, "Syntax error, too many closing brackets '}'");
 				return false;
 			}
 
 			--ore;
 			return true;
 		}
-		else if (c == '[')
-		{	// new concurrent scope
+
+		// Open Concurrent Scope
+		else if (sign == '[')
+		{
 			++oco;
-			RegularScope* up = dynamic_cast<RegularScope*>(upNode);
-			ptr = new ConcurrentScope(up);
-			upNode->addScope(ptr, CommonScope::CONCURRENT, line);
+			RegularScope* up = (RegularScope*)(upNode);
+			CommonScope* ptr = new ConcurrentScope(up);
+			upNode->addScope(ptr, CommonScope::CONCURRENT, m_sFileName.c_str(), line);
 			if (!connect(file, ptr, line, ore, oco))
-			{
+			{	// Destroy if failed.
 				ptr->destroy();
 				return false;
 			}
 		}
-		else if (c == ']')
+
+		// Close Concurrent Scope
+		else if (sign == ']')
 		{
 			if (!oco)
 			{
-				printf("Error: Syntax error too many closing brackets ] at %d line\n", line);
+				PrintError(m_sFileName.c_str(), line, "Syntax error, too many closing brackets ']'");
 				return false;
 			}
 
 			--oco;
 			return true;
 		}
+
+		// Add new task.
 		else
-		{	// new task
-			std::string sline = "";
-			sline += c;
-			while (c = file.get())
+		{	// Prepare string.
+			std::string sline("");
+			sline += sign;
+			while (sign = file.get())
 			{
-				if (c == '\n' || c == EOF)
+				if (sign == '\n' || sign == EOF)
 					break;
-				sline += c;
+				sline += sign;
 			}
 
-			{	// remove whitespaces and comment
+			{	// Remove comment.
 				size_t pos = sline.rfind('#');
 				if (pos != std::string::npos)
 					sline = sline.substr(0, pos);
+				// Cut whitespaces.
 				size_t j = sline.size();
 				for (int i = (int)sline.size() - 1; i >= 0; --i)
 				{
@@ -162,46 +183,40 @@ bool Interpreter::connect(std::fstream &file, CommonScope* &upNode, int &line, i
 				sline = sline.substr(0, j);
 			}
 
+			// Send string to Yacc
 			sline += "\n";
 			parse(sline.c_str());
+
+			// Retrieve.
 			if (m_pCmd)
 			{
+				std::string cmd_ident = std::string("Correctly inserted new command ") + std::string(HandlerIdentTable[(int)m_pCmd->handler()]);
+				PrintSuccess(m_sFileName.c_str(), line, cmd_ident.c_str());
 				if (m_pCmd->handler() == Handler::CMD_INCLUDE)
 				{	// Command evaluated during static interpretation!
 					if (m_pCmd->parse() && !m_pCmd->run())
 					{
 						if (m_pCmd->m_global_buffer.empty())
 						{
-							Command* temp = m_pCmd.release();
-							if (!upNode->addTask(temp, m_sPathToFile, line))
+							if (!upNode->addTask(m_pCmd, m_sPathToFile, m_sFileName.c_str(), line))
 								return false;
 						}
 						else
 						{
-							RegularScope* regscope =  new RegularScope(nullptr);
+							RegularScope* regscope = nullptr;
 							Interpreter inter(regscope);
 							m_child = &inter;
 							bool status = inter.scan(m_pCmd->m_global_buffer.c_str(), m_sFileName.c_str(), line);
 							if (!status)
 							{
-								regscope->destroy();
-								delete regscope;
-								regscope = nullptr;
 								m_child = nullptr;
 								return false;
 							}
 
 							if (upNode->m_type == CommonScope::REGULAR)
-								status = ((RegularScope*)upNode)->capture(regscope, line);
+								status = ((RegularScope*)upNode)->capture(inter.m_pTree, m_sFileName.c_str(), line);
 							else
-								status = ((ConcurrentScope*)upNode)->capture(regscope, line);
-
-							if (regscope)
-							{
-								regscope->destroy();
-								delete regscope;
-								regscope = nullptr;
-							}
+								status = ((ConcurrentScope*)upNode)->capture(inter.m_pTree, m_sFileName.c_str(), line);
 							
 							m_child = nullptr;
 							if (!status)
@@ -211,14 +226,13 @@ bool Interpreter::connect(std::fstream &file, CommonScope* &upNode, int &line, i
 				}
 				else
 				{
-					Command* temp = m_pCmd.release();
-					if (!upNode->addTask(temp, m_sPathToFile, line))
+					if (!upNode->addTask(m_pCmd, m_sPathToFile, m_sFileName.c_str(), line))
 						return false;
 				}
 			}
 			else if (m_bError)
 			{
-				printf(" at %d line\n", line);
+				PrintError(m_sFileName.c_str(), line, m_sCatchedMsg.c_str());
 				return false;
 			}
 		}
@@ -226,40 +240,47 @@ bool Interpreter::connect(std::fstream &file, CommonScope* &upNode, int &line, i
 
 	if (ore || oco)
 	{
-		printf("Error: Number of opening brackets and closing brackets is different, %d line\n", line);
+		PrintError(m_sFileName.c_str(), line, "Number of opening brackets and closing brackets is not the same");
 		return false;
 	}
 
-	return true; // ok
+	// Success.
+	return true;
 }
 
 void Interpreter::exit()
 {
-	printf("Terminating...\n");
-	m_bExit = true;
+	PrintWarning(nullptr, -1, "Terminating...");
+	Interpreter* ptr = this;
+	while (ptr->m_child)
+		ptr = ptr->m_child;
+	ptr->m_bError = true;
 }
 
 // Yacc calls this function if pattern is found.
 void Interpreter::analyze(std::string* msg)
 {
-	Interpreter* ptrInterpreter = this;
-	while (ptrInterpreter->m_child)
-		ptrInterpreter = ptrInterpreter->m_child;
+	Interpreter* ptr = this;
+	while (ptr->m_child)
+		ptr = ptr->m_child;
 
-	std::unique_ptr<Command> &command = ptrInterpreter->m_pCmd;
-	command.reset(nullptr);
+	Command* &pCmd = ptr->m_pCmd;
+	bool &bError = ptr->m_bError;
+	std::string &sCatchedStr = ptr->m_sCatchedMsg;
+	pCmd = nullptr;
 
-	if (m_bError)
+	if (bError)
 	{
 		if (msg)
 			delete msg;
-		m_bError = false;
+		bError = false;
 		return;
 	}
 
 	if (!msg)
 	{
-		printf("Error: Yacc message is corrupted");
+		sCatchedStr = "Yacc message is corrupted";
+		bError = true;
 		return;
 	}
 
@@ -267,37 +288,44 @@ void Interpreter::analyze(std::string* msg)
 	ref += " ";
 	if (ref[0] == '!')
 	{
-		if (ref[1] == 'i')
+		if (ref[1] == 'h')
+		{
+			if (ref.substr(2, 4) == "elp ")
+			{	// help
+				pCmd = new Command_Help(extract(ref, 6));
+			}
+		}
+		else if (ref[1] == 'i')
 		{
 			if (ref.substr(2, 7) == "nclude ")
 			{	// include
-				command.reset(new Command_Include(extract(ref, 9)));
+				pCmd = new Command_Include(extract(ref, 9));
 			}
 		}
 		else if (ref[1] == 'l')
 		{
 			if (ref.substr(2, 4) == "ist ")
 			{	// list
-				command.reset(new Command_List(extract(ref, 6)));
+				pCmd = new Command_List(extract(ref, 6));
 			}
 		}
 		else if (ref[1] == 'r')
 		{
 			if (ref.substr(2, 5) == "egex ")
 			{	// regex
-				command.reset(new Command_Regex(extract(ref, 7)));
+				pCmd = new Command_Regex(extract(ref, 7));
 			}
 			else if (ref.substr(2, 6) == "emove ")
 			{	// remove
-				command.reset(new Command_Remove(extract(ref, 8)));
+				pCmd = new Command_Remove(extract(ref, 8));
 			}
 		}
 	}
 
-	if (!command)
+	if (!pCmd)
 	{
-		printf("Error: Command %s not found", msg->c_str());
-		m_bError = true;
+		sCatchedStr = "Command " + *msg + " not found";
+		bError = true;
 	}
 
 	if (msg)
