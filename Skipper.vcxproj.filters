@@ -38,6 +38,12 @@
     <ClCompile Include="Generated\Lexer.cpp">
       <Filter>Generated</Filter>
     </ClCompile>
+    <ClCompile Include="Interpreter\Console.cpp">
+      <Filter>Interpreter</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\handlers.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Commands\cmd.h">
@@ -75,6 +81,9 @@
     </ClInclude>
     <ClInclude Include="Commands\handlers.h">
       <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Interpreter\Console.h">
+      <Filter>Interpreter</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

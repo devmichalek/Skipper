@@ -148,8 +148,10 @@
     <ClCompile Include="Commands\cmd_list.cpp" />
     <ClCompile Include="Commands\cmd_regex.cpp" />
     <ClCompile Include="Commands\cmd_remove.cpp" />
+    <ClCompile Include="Commands\handlers.cpp" />
     <ClCompile Include="Generated\Lexer.cpp" />
     <ClCompile Include="Generated\Parser.cpp" />
+    <ClCompile Include="Interpreter\Console.cpp" />
     <ClCompile Include="Interpreter\Interpreter.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Scope Tree\CommonScope.cpp" />
@@ -165,6 +167,7 @@
     <ClInclude Include="Commands\cmd_remove.h" />
     <ClInclude Include="Commands\handlers.h" />
     <ClInclude Include="Generated\Parser.h" />
+    <ClInclude Include="Interpreter\Console.h" />
     <ClInclude Include="Interpreter\Interpreter.h" />
     <ClInclude Include="Scope Tree\CommonScope.h" />
     <ClInclude Include="Scope Tree\ConcurrentScope.h" />
