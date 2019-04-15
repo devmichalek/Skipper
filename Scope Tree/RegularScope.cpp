@@ -74,6 +74,17 @@ bool RegularScope::addScope(CommonScope* newScope, M_TYPE newType, const char* f
 
 bool RegularScope::execute()
 {
+	if (!m_tasks.empty())
+	{
+		while (!m_tasks.empty())
+		{
+			Command* cmd = m_tasks.front();
+			if (cmd->parse())
+				cmd->run();
+			pop();
+		}
+	}
+
 	if (m_nodes)
 	{
 		if (m_nodes->m_type == REGULAR)
@@ -97,17 +108,6 @@ bool RegularScope::execute()
 
 			// Wait for all threads to finish.
 			std::for_each(threads.begin(), threads.end(), std::mem_fn(&std::thread::join));
-		}
-	}
-	
-	if (!m_tasks.empty())
-	{
-		while (!m_tasks.empty())
-		{
-			Command* cmd = m_tasks.front();
-			if (cmd->parse())
-				cmd->run();
-			pop();
 		}
 	}
 

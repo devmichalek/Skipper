@@ -50,16 +50,6 @@ bool ConcurrentScope::addScope(CommonScope* newScope, M_TYPE newType, const char
 
 bool ConcurrentScope::execute()
 {
-	if (m_nodes)
-	{
-		RegularScope* node = m_nodes;
-		while (node)
-		{
-			node->execute();
-			node = node->m_next;
-		}
-	}
-	
 	if (!m_tasks.empty())
 	{
 		while (!m_tasks.empty())
@@ -68,6 +58,16 @@ bool ConcurrentScope::execute()
 			if (cmd->parse())
 				cmd->run();
 			pop();
+		}
+	}
+
+	if (m_nodes)
+	{
+		RegularScope* node = m_nodes;
+		while (node)
+		{
+			node->execute();
+			node = node->m_next;
 		}
 	}
 
