@@ -143,6 +143,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Commands\cmd.cpp" />
+    <ClCompile Include="Commands\cmd_compare.cpp" />
     <ClCompile Include="Commands\cmd_help.cpp" />
     <ClCompile Include="Commands\cmd_include.cpp" />
     <ClCompile Include="Commands\cmd_list.cpp" />
@@ -160,6 +161,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Commands\cmd.h" />
+    <ClInclude Include="Commands\cmd_compare.h" />
     <ClInclude Include="Commands\cmd_help.h" />
     <ClInclude Include="Commands\cmd_include.h" />
     <ClInclude Include="Commands\cmd_list.h" />

@@ -44,6 +44,9 @@
     <ClCompile Include="Commands\handlers.cpp">
       <Filter>Commands</Filter>
     </ClCompile>
+    <ClCompile Include="Commands\cmd_compare.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Commands\cmd.h">
@@ -84,6 +87,9 @@
     </ClInclude>
     <ClInclude Include="Interpreter\Console.h">
       <Filter>Interpreter</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\cmd_compare.h">
+      <Filter>Commands</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
