@@ -1,6 +1,7 @@
 #include "Interpreter.h"
 #include "Console.h"
 #include "Parser.h"
+#include "cmd_compare.h"
 #include "cmd_help.h"
 #include "cmd_include.h"
 #include "cmd_list.h"
@@ -288,7 +289,14 @@ void Interpreter::analyze(std::string* msg)
 	ref += " ";
 	if (ref[0] == '!')
 	{
-		if (ref[1] == 'h')
+		if (ref[1] == 'c')
+		{
+			if (ref.substr(2, 7) == "ompare ")
+			{	// compare
+				pCmd = new Command_Compare(extract(ref, 9));
+			}
+		}
+		else if (ref[1] == 'h')
 		{
 			if (ref.substr(2, 4) == "elp ")
 			{	// help

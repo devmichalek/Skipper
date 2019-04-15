@@ -2,6 +2,7 @@
 #include "handlers.h"
 
 const char* HandlerIdentTable[] = {
+	"Compare",
 	"Help",
 	"Include",
 	"List",
