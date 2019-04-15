@@ -33,10 +33,12 @@
 %token <csval> OPTSTR
 %token <csval> CMDSTR
 %token <csval> REGSTR
+%token <csval> REDSTR
 %type<ival> int_exp
 %type<fval> float_exp
 %type<sval> cmd_exp
 %type<sval> cmd_exp_r
+%type<sval> cmd_exp_rr
 
 %left '-' '+'
 %left '*' '/'
@@ -51,6 +53,7 @@ input: /*empty*/
 line: '\n'
 	| int_exp '\n'		{std::cout << "=" << $1 << std::endl;}
 	| float_exp '\n'	{std::cout << "=" << $1 << std::endl;}
+	| cmd_exp_rr '\n'	{interpreter.analyze($1);}
 	| cmd_exp_r '\n'	{interpreter.analyze($1);}
 	| cmd_exp '\n'		{interpreter.analyze($1);}
 	;
@@ -71,9 +74,26 @@ float_exp: FLOAT				{$$ = $1;}
 	| '(' float_exp ')'			{$$ = $2;}
 	;
 
+cmd_exp_rr: cmd_exp REDSTR	{
+								std::string* str = $1;
+								(*str) += " " + std::string($2);
+								$$ = str;
+							}
+	| cmd_exp_r REDSTR		{
+								std::string* str = $1;
+								(*str) += " " + std::string($2);
+								$$ = str;
+							}
+	;
+
 cmd_exp_r: cmd_exp REGSTR	{
 								std::string* str = $1;
 								(*str) += " " + std::string($2);
+								$$ = str;
+							}
+	| cmd_exp REGSTR REGSTR {
+								std::string* str = $1;
+								(*str) += " " + std::string($2) + " " + std::string($3);
 								$$ = str;
 							}
 	;

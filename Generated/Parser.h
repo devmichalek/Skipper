@@ -51,7 +51,8 @@ extern int yydebug;
      STRING = 260,
      OPTSTR = 261,
      CMDSTR = 262,
-     REGSTR = 263
+     REGSTR = 263,
+     REDSTR = 264
    };
 #endif
 
@@ -69,7 +70,7 @@ typedef union YYSTYPE
 
 
 /* Line 2058 of yacc.c  */
-#line 73 "Generated/Parser.h"
+#line 74 "Generated/Parser.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

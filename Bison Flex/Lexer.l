@@ -12,10 +12,10 @@
 INTEGERS [0-9]+
 FLOATS [0-9]*\.[0-9]+
 OPTION (\"[a-zA-Z ]+\")|([a-zA-Z]+)|(\-[a-zA-Z]+)|(\-\-[a-zA-Z]+)
-REGEX [a-zA-Z0-9\!\@\#\$\%\^\&\*\.\,\(\)\<\>\?\/\\\;\:\'\"\{\}\[\]\+\=\~\-\_]+
+REGEX [a-zA-Z0-9\!\@\#\$\%\^\&\*\.\,\(\)\?\/\\\;\:\'\"\{\}\[\]\+\=\~\-\_]+
 WHITESPACE [\n\r \t]
 COMMENT \#.*\n
-REDIRECTION [\>]|[\>\>]
+REDIR [\>\<]+
 
 %%	/*----- Definition section -----*/
 {INTEGERS}	{yylval.ival = atoi(yytext);	return INT;}
@@ -29,7 +29,8 @@ REDIRECTION [\>]|[\>\>]
 
 {OPTION}	{yylval.csval = _strdup(yytext); return OPTSTR;}
 \![a-zA-Z]+	{yylval.csval = _strdup(yytext); return CMDSTR;}
-{REGEX}|({REGEX}{REDIRECTION}{REGEX})	{yylval.csval = _strdup(yytext); return REGSTR;}
+{REGEX}		{yylval.csval = _strdup(yytext); return REGSTR;}
+{REDIR}		{yylval.csval = _strdup(yytext); return REDSTR;}
 "!exit"{WHITESPACE}	{interpreter.exit(); yyterminate();}
 
 %%	/*----- User code section -----*/
