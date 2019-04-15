@@ -1,4 +1,5 @@
 #include "cmd_help.h"
+#include "cmd_compare.h"
 #include "cmd_include.h"
 #include "cmd_list.h"
 #include "cmd_regex.h"
@@ -53,9 +54,10 @@ int Command_Help::run()
 		output("  <> - expression\n");
 		output("\nExamples:\n");
 		output("  list --recursive --directory \"a\\b\\c\" [a-z]+\\.txt\n");
-		output("  list -r *.php\n");
+		output("  compare -r [0-9]+\\.txt [0-9]+\\.pat\n");
 		output("  list -rd \"foo\" [abc+]\\.js\n");
 		output("\nCommands (in alphabetical order):\n");
+		output(Command_Compare::assist());
 		output(Command_Help::assist());
 		output(Command_Include::assist());
 		output(Command_List::assist());

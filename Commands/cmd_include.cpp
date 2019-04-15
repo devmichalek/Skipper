@@ -59,7 +59,7 @@ int Command_Include::run()
 	m_global_buffer = "";
 	if (m_bEmpty)
 	{
-		output("Error: include command must at least contain one argument\n");
+		output("Error: 'include' command must at least contain one argument\n");
 		return 1;
 	}
 	else if (m_bHelp)

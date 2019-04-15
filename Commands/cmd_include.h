@@ -19,7 +19,7 @@ public:
 	static std::string help()
 	{
 		std::string a = "\nDefinition:\n";
-		std::string b = "\tinclude - incudes file, replaces its occurence with requested file body\n";
+		std::string b = "\tinclude - includes file, replaces its occurence with requested file body during interpretation\n";
 		std::string c = "\nSyntax:\n";
 		std::string d = "\t[-h --help] - prints help\n";
 		std::string e = "\t[-d --directory <directory name>] - searches in requested directory, if not specified searches in current directory\n";

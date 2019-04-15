@@ -65,7 +65,7 @@ int Command_Regex::run()
 {
 	if (m_bEmpty)
 	{
-		output("Error: regex command must at least contain one argument\n");
+		output("Error: 'regex' command must at least contain one argument\n");
 		return 1;
 	}
 	else if (m_bHelp)
