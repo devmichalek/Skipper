@@ -1,11 +1,11 @@
 ## Welcome To Skipper
-Skipper is a self acting interpreter for file managing. Compare, move, rename (and more) multiple files by regular expression rules. Program has simple syntax which you have to follow to execute commands correctly.
+Skipper is a self acting interpreter mainly for file management. Compare, move, rename (and more) multiple files by regular expression rules. Program has simple syntax which you have to follow to execute commands correctly.
 #### Key features:
 - [x] Built-in basic commands
 - [x] Compatible with external commands (running batch, exe etc.)
 - [x] Input and output redirection
 - [x] Concurrent or singe-threaded execution structure
-- [ ] Control of optimisation level (nodes and its "order")
+- [ ] Control of optimisation level (nodes and its "order", currently without user decision)
 
 ## Simple Syntax - {}, [], # and !
 **Regular scope** followed by ```{}``` - everything inside this scope will be executed line by line. The restriction is that regular scope cannot be next to the concurrent scope. Parent can be either a regular scope or the concurrent scope (no limit here). Every execution starts with global scope as a regular scope itself.<br><br>
