@@ -65,12 +65,12 @@ Skipper is a self acting interpreter for file managing. Compare, move, rename (a
 ```
 
 ## Commands (in alphabetical order)
-- compare [-h --help] [-d --directory <directory name>] [-f --file <first file name> <second file name>] [-r --regex <first regex exp> <second regex exp>]
+- compare [-h --help] [-d --directory \<directory name\>] [-f --file \<first file name\> \<second file name\>] [-r --regex \<first regex exp\> \<second regex exp\>]
 - help [-h --help]<br>
-- include [-h --help] [-d --directory <directory name>] [-f --file <file name>]<br>
-- list [-h --help] [-d --directory <directory name>] [-r --recursive] [<regular expression>]<br>
-- regex [-h --help] [-m --mode] [-l --list] [-s --set <new mode>]<br>
-- remove [-h --help] [-d --directory <directory name>] [-v --verbose] [-r --recursive] <regular expression><br>
+- include [-h --help] [-d --directory \<directory name\>] [-f --file \<file name\>]<br>
+- list [-h --help] [-d --directory \<directory name\>] [-r --recursive] [\<regular expression\>]<br>
+- regex [-h --help] [-m --mode] [-l --list] [-s --set \<new mode\>]<br>
+- remove [-h --help] [-d --directory \<directory name\>] [-v --verbose] [-r --recursive] \<regular expression\><br>
   
 ## Project Structure
 Project is make with Visual Studio 2017. Interpreter is partly managed by Bison & Flex. Code uses the newest C++17 standard (filesystem) as well as C++14 and C++11 (regex and its many other features). FTP file managing system is upon the Boost.Asio library.
