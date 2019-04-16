@@ -15,7 +15,6 @@ class Interpreter final
 	Interpreter* m_child;
 	std::string m_sPathToFile;
 public:
-	bool m_bExit;
 	bool m_bError;
 	std::string m_sCatchedMsg;
 	std::string m_sFileName;
@@ -23,9 +22,6 @@ public:
 public:
 	explicit Interpreter(RegularScope*&);
 	~Interpreter();
-
-	/*---- Unique ----*/
-	void exit();
 
 	/*---- Scans file, sends data to parse function ----*/
 	bool scan(const char*, const char*, int);

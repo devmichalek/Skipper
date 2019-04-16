@@ -7,17 +7,16 @@
 #include "cmd_list.h"
 #include "cmd_regex.h"
 #include "cmd_remove.h"
+#include "cmd_wait.h"
 
 Interpreter::Interpreter(RegularScope* &parent)
 {
-	m_bExit = false;
 	m_bError = false;
 	m_pCmd = nullptr;
 	m_child = nullptr;
 
 	m_pTree = new RegularScope(parent);
-	if (parent)
-	{
+	if (parent) {
 		int line = -1;
 		parent->addScope((CommonScope*)m_pTree, CommonScope::REGULAR, "", line);
 	}
@@ -249,15 +248,6 @@ bool Interpreter::connect(std::fstream &file, CommonScope* &upNode, int &line, i
 	return true;
 }
 
-void Interpreter::exit()
-{
-	PrintWarning(nullptr, -1, "Terminating...");
-	Interpreter* ptr = this;
-	while (ptr->m_child)
-		ptr = ptr->m_child;
-	ptr->m_bError = true;
-}
-
 // Yacc calls this function if pattern is found.
 void Interpreter::analyze(std::string* msg)
 {
@@ -326,6 +316,13 @@ void Interpreter::analyze(std::string* msg)
 			else if (ref.substr(2, 6) == "emove ")
 			{	// remove
 				pCmd = new Command_Remove(extract(ref, 8));
+			}
+		}
+		else if (ref[1] == 'w')
+		{
+			if (ref.substr(2, 4) == "ait ")
+			{	// wait
+				pCmd = new Command_Wait(extract(ref, 6));
 			}
 		}
 	}

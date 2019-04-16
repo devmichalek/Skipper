@@ -31,7 +31,6 @@ REDIR [\>\<]+
 \![a-zA-Z]+	{yylval.csval = _strdup(yytext); return CMDSTR;}
 {REGEX}		{yylval.csval = _strdup(yytext); return REGSTR;}
 {REDIR}		{yylval.csval = _strdup(yytext); return REDSTR;}
-"!exit"{WHITESPACE}	{interpreter.exit(); yyterminate();}
 
 %%	/*----- User code section -----*/
 
