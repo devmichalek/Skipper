@@ -69,6 +69,7 @@ bool RegularScope::addScope(CommonScope* newScope, M_TYPE newType, const char* f
 			((ConcurrentScope*)m_nodes)->m_next = nullptr;
 	}
 
+	++m_children;
 	return true; // success;
 }
 
@@ -164,9 +165,9 @@ bool RegularScope::capture(RegularScope* &branch, const char* filename, int &lin
 		}
 
 		std::string nofile = "";
-		while (!m_tasks.empty())
+		while (!branch->m_tasks.empty())
 		{
-			push(m_tasks.front(), nofile, filename, line); // this is now new owner of branch's tasks
+			push(branch->m_tasks.front(), nofile, filename, line); // this is now new owner of branch's tasks
 			branch->m_tasks.pop(); // Popping without deleting pointer.
 		}
 	}
@@ -209,4 +210,67 @@ bool RegularScope::capture(RegularScope* &branch, const char* filename, int &lin
 RegularScope* RegularScope::getNextNode()
 {
 	return m_next;
+}
+
+void RegularScope::consolidate()
+{
+	// If there is one child merge.
+	// { {} } -> {}
+	// { [] } -> {}
+
+	// Go to the bottom
+	if (m_children)
+	{
+		CommonScope* ptr = m_nodes;
+		while (ptr)
+		{
+			ptr->consolidate();
+			ptr = ptr->getNextNode();
+		}
+	}
+
+	if (m_children == 1 && m_nodes->m_type == REGULAR)
+	{	// Child nodes and tasks are now parent's nodes and tasks.
+		if (m_nodes->m_type == CONCURRENT)
+		{
+			ConcurrentScope* ptr = (ConcurrentScope*)m_nodes;
+			if (!ptr->m_tasks.empty())
+			{
+				int line = -1;
+				std::string nofile = "";
+				while (!ptr->m_tasks.empty())
+				{
+					push(ptr->m_tasks.front(), nofile, nullptr, line);
+					ptr->m_tasks.pop();
+				}
+			}
+
+			if (ptr->m_nodes)
+				m_nodes = ptr->m_nodes;
+		}
+		else
+		{
+			if (m_tasks.empty())
+			{	// No risk.
+				RegularScope* ptr = (RegularScope*)m_nodes;
+				if (!ptr->m_tasks.empty())
+				{
+					int line = -1;
+					std::string nofile = "";
+					while (!ptr->m_tasks.empty())
+					{
+						push(ptr->m_tasks.front(), nofile, nullptr, line);
+						ptr->m_tasks.pop();
+					}
+				}
+
+				if (ptr->m_nodes)
+					m_nodes = ptr->m_nodes;
+			}
+			else
+			{
+
+			}
+		}
+	}
 }

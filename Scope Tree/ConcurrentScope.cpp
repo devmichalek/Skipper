@@ -45,6 +45,7 @@ bool ConcurrentScope::addScope(CommonScope* newScope, M_TYPE newType, const char
 		((RegularScope*)m_nodes)->m_next = nullptr;
 	}
 
+	++m_children;
 	return true; // success;
 }
 
@@ -103,9 +104,9 @@ bool ConcurrentScope::capture(RegularScope* &branch, const char* filename, int &
 	if (!branch->m_tasks.empty())
 	{	// Branch contains tasks.
 		std::string nofile = "";
-		while (!m_tasks.empty())
+		while (!branch->m_tasks.empty())
 		{
-			push(m_tasks.front(), nofile, filename, line); // this scope is now owner of new tasks
+			push(branch->m_tasks.front(), nofile, filename, line); // this scope is now owner of new tasks
 			branch->m_tasks.pop(); // popping without deleting pointer
 		}
 	}
@@ -140,4 +141,9 @@ bool ConcurrentScope::capture(RegularScope* &branch, const char* filename, int &
 ConcurrentScope* ConcurrentScope::getNextNode()
 {
 	return m_next;
+}
+
+void ConcurrentScope::consolidate()
+{
+
 }

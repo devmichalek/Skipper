@@ -1,6 +1,12 @@
 #include "CommonScope.h"
 #include "Console.h"
 
+CommonScope::CommonScope(const M_TYPE &newType)
+{
+	m_children = 0;
+	m_type = newType;
+}
+
 CommonScope* CommonScope::getNextNode()
 {
 	return nullptr;

@@ -27,14 +27,16 @@ public:
 		CONCURRENT
 	};
 	M_TYPE m_type;
+	size_t m_children;
 
-	explicit CommonScope(const M_TYPE &newType) { m_type = newType; }
+	explicit CommonScope(const M_TYPE &newType);
 	~CommonScope() {}
 
 	virtual bool addTask(Command*&, std::string&, const char*, int&) = 0;
 	virtual bool addScope(CommonScope*, M_TYPE, const char*, int&) = 0;
 	virtual bool execute() = 0;
 	virtual void destroy() = 0;
+	virtual void consolidate() = 0;
 	virtual CommonScope* getNextNode();
 
 	static std::vector<m_rofile_type>& rofiles() {
