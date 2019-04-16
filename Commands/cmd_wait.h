@@ -23,12 +23,13 @@ public:
 		std::string c = "\nSyntax:\n";
 		std::string d = "\t[-h --help] - prints help\n";
 		std::string e = "\t[-d --duration] - prints available duration times\n";
-		std::string f = "\n";
-		return a + b + c + d + e + f;
+		std::string f = "\t<time duration + type duration> - the time to delay the current thread\n";
+		std::string g = "\n";
+		return a + b + c + d + e + f + g;
 	}
 
 	static std::string assist()
 	{
-		return "  wait\n\t[-h --help]\n\t[-d --duration]\n";
+		return "  wait\n\t[-h --help]\n\t[-d --duration]\n\t<time duration + type duration>\n";
 	}
 };
