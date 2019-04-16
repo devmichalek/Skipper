@@ -1,0 +1,11 @@
+
+{
+	!wait --help
+	!wait -d
+	!wait 3000ms
+	!list
+	!wait 3000000us
+	!list
+	!wait 3000000000ns
+	!list
+}

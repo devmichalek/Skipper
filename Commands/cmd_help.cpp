@@ -4,6 +4,7 @@
 #include "cmd_list.h"
 #include "cmd_regex.h"
 #include "cmd_remove.h"
+#include "cmd_wait.h"
 
 Command_Help::Command_Help(std::vector<std::string> options) : Command(options, Handler::CMD_HELP)
 {
@@ -63,6 +64,7 @@ int Command_Help::run()
 		output(Command_List::assist());
 		output(Command_Regex::assist());
 		output(Command_Remove::assist());
+		output(Command_Wait::assist());
 		output("\n");
 	}
 	else if (m_bHelp)

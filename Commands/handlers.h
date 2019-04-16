@@ -1,5 +1,4 @@
 #pragma once
-#include <string>
 
 typedef int THandler;
 enum class Handler : THandler
@@ -10,7 +9,7 @@ enum class Handler : THandler
 	CMD_LIST,
 	CMD_REGEX,
 	CMD_REMOVE,
-	CMD_END
+	CMD_WAIT
 };
 
 extern const char* HandlerIdentTable[];

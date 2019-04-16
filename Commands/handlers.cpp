@@ -7,5 +7,6 @@ const char* HandlerIdentTable[] = {
 	"Include",
 	"List",
 	"Regex",
-	"Remove"
+	"Remove",
+	"Wait"
 };

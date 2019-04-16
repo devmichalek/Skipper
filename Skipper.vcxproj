@@ -149,6 +149,7 @@
     <ClCompile Include="Commands\cmd_list.cpp" />
     <ClCompile Include="Commands\cmd_regex.cpp" />
     <ClCompile Include="Commands\cmd_remove.cpp" />
+    <ClCompile Include="Commands\cmd_wait.cpp" />
     <ClCompile Include="Commands\handlers.cpp" />
     <ClCompile Include="Generated\Lexer.cpp" />
     <ClCompile Include="Generated\Parser.cpp" />
@@ -167,6 +168,7 @@
     <ClInclude Include="Commands\cmd_list.h" />
     <ClInclude Include="Commands\cmd_regex.h" />
     <ClInclude Include="Commands\cmd_remove.h" />
+    <ClInclude Include="Commands\cmd_wait.h" />
     <ClInclude Include="Commands\handlers.h" />
     <ClInclude Include="Generated\Parser.h" />
     <ClInclude Include="Interpreter\Console.h" />
