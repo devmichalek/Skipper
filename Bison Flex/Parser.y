@@ -74,14 +74,16 @@ float_exp: FLOAT				{$$ = $1;}
 	| '(' float_exp ')'			{$$ = $2;}
 	;
 
-cmd_exp_rr: cmd_exp REDSTR	{
+cmd_exp_rr: cmd_exp REDSTR REGSTR {
 								std::string* str = $1;
 								(*str) += " " + std::string($2);
+								(*str) += " " + std::string($3);
 								$$ = str;
 							}
-	| cmd_exp_r REDSTR		{
+	| cmd_exp_r REDSTR REGSTR {
 								std::string* str = $1;
 								(*str) += " " + std::string($2);
+								(*str) += " " + std::string($3);
 								$$ = str;
 							}
 	;

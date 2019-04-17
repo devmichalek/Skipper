@@ -232,6 +232,11 @@ bool Interpreter::connect(std::fstream &file, CommonScope* &upNode, int &line, i
 			}
 			else if (m_bError)
 			{
+				if (m_sCatchedMsg.empty()) {
+					printf(" (Flex)\n");
+					m_sCatchedMsg = "catched msg is empty";
+				}
+
 				PrintError(m_sFileName.c_str(), line, m_sCatchedMsg.c_str());
 				return false;
 			}
@@ -276,7 +281,18 @@ void Interpreter::analyze(std::string* msg)
 	}
 
 	std::string ref = *msg;
-	ref += " ";
+	{	// Extract file name (if exists)
+		size_t pos = ref.rfind('>'); // rfind
+		if (pos != std::string::npos)
+		{
+			m_sPathToFile = ref.substr(++pos, ref.size() - pos);
+			pos = ref.find('>'); // find
+			ref.erase(pos, ref.size() - pos);
+		}
+	}
+
+	if (ref.front() != ' ')
+		ref += " ";
 	if (ref[0] == '!')
 	{
 		if (ref[1] == 'c')

@@ -1,6 +1,6 @@
 
 {
-	!compare -h
+	!compare -h >> out.txt
 	!compare -d "foo" --file 00.txt 00.pat
 	!compare --directory "foo" -r [0-9]+\.txt [0-9]+\.pat
 }

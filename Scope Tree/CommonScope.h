@@ -1,6 +1,7 @@
 #pragma once
 #include "cmd.h"
 #include <queue>
+#include <deque>
 #include <mutex>
 #include <thread>
 #include <fstream>
@@ -18,7 +19,7 @@ protected:
 
 	// Redirected output manipulation.
 	inline static std::vector<m_rofile_type> m_rofiles;
-	inline static std::vector<std::mutex> m_romutexes;
+	inline static std::deque<std::unique_ptr<std::mutex>> m_romutexes;
 
 public:
 	enum M_TYPE
