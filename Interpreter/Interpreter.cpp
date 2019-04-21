@@ -2,12 +2,16 @@
 #include "Console.h"
 #include "Parser.h"
 #include "cmd_compare.h"
+#include "cmd_copy.h"
 #include "cmd_help.h"
 #include "cmd_include.h"
 #include "cmd_list.h"
+#include "cmd_move.h"
 #include "cmd_regex.h"
 #include "cmd_remove.h"
+#include "cmd_rename.h"
 #include "cmd_wait.h"
+#include "cmd_wipe.h"
 
 Interpreter::Interpreter(RegularScope* &parent)
 {
@@ -301,6 +305,10 @@ void Interpreter::analyze(std::string* msg)
 			{	// compare
 				pCmd = new Command_Compare(extract(ref, 9));
 			}
+			else if (ref.substr(2, 4) == "opy ")
+			{	// copy
+				pCmd = new Command_Copy(extract(ref, 6));
+			}
 		}
 		else if (ref[1] == 'h')
 		{
@@ -323,6 +331,13 @@ void Interpreter::analyze(std::string* msg)
 				pCmd = new Command_List(extract(ref, 6));
 			}
 		}
+		else if (ref[1] == 'm')
+		{
+			if (ref.substr(2, 4) == "ove ")
+			{	// move
+				pCmd = new Command_Move(extract(ref, 6));
+			}
+		}
 		else if (ref[1] == 'r')
 		{
 			if (ref.substr(2, 5) == "egex ")
@@ -339,6 +354,14 @@ void Interpreter::analyze(std::string* msg)
 			if (ref.substr(2, 4) == "ait ")
 			{	// wait
 				pCmd = new Command_Wait(extract(ref, 6));
+			}
+			else if (ref.substr(2, 4) == "ipe ")
+			{	// wipe
+				pCmd = new Command_Wait(extract(ref, 6));
+			}
+			else if (ref.substr(2, 6) == "ename ")
+			{	// rename
+				pCmd = new Command_Rename(extract(ref, 8));
 			}
 		}
 	}

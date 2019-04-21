@@ -3,10 +3,14 @@
 
 const char* HandlerIdentTable[] = {
 	"Compare",
+	"Copy",
 	"Help",
 	"Include",
 	"List",
+	"Move",
 	"Regex",
 	"Remove",
-	"Wait"
+	"Rename",
+	"Wait",
+	"Wipe"
 };
