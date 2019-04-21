@@ -1,10 +1,14 @@
 #include "cmd_help.h"
 #include "cmd_compare.h"
+#include "cmd_copy.h"
 #include "cmd_include.h"
+#include "cmd_move.h"
 #include "cmd_list.h"
 #include "cmd_regex.h"
 #include "cmd_remove.h"
+#include "cmd_rename.h"
 #include "cmd_wait.h"
+#include "cmd_wipe.h"
 
 Command_Help::Command_Help(std::vector<std::string> options) : Command(options, Handler::CMD_HELP)
 {
@@ -59,12 +63,16 @@ int Command_Help::run()
 		output("  list -rd \"foo\" [abc+]\\.js\n");
 		output("\nCommands (in alphabetical order):\n");
 		output(Command_Compare::assist());
+		output(Command_Copy::assist());
 		output(Command_Help::assist());
 		output(Command_Include::assist());
+		output(Command_Move::assist());
 		output(Command_List::assist());
 		output(Command_Regex::assist());
 		output(Command_Remove::assist());
+		output(Command_Rename::assist());
 		output(Command_Wait::assist());
+		output(Command_Wipe::assist());
 		output("\n");
 	}
 	else if (m_bHelp)
