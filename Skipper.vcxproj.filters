@@ -50,6 +50,18 @@
     <ClCompile Include="Commands\cmd_wait.cpp">
       <Filter>Commands</Filter>
     </ClCompile>
+    <ClCompile Include="Commands\cmd_wipe.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\cmd_copy.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\cmd_move.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands\cmd_rename.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Commands\cmd.h">
@@ -95,6 +107,18 @@
       <Filter>Commands</Filter>
     </ClInclude>
     <ClInclude Include="Commands\cmd_wait.h">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\cmd_wipe.h">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\cmd_copy.h">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\cmd_move.h">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\cmd_rename.h">
       <Filter>Commands</Filter>
     </ClInclude>
   </ItemGroup>

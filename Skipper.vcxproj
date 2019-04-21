@@ -144,12 +144,16 @@
   <ItemGroup>
     <ClCompile Include="Commands\cmd.cpp" />
     <ClCompile Include="Commands\cmd_compare.cpp" />
+    <ClCompile Include="Commands\cmd_copy.cpp" />
     <ClCompile Include="Commands\cmd_help.cpp" />
     <ClCompile Include="Commands\cmd_include.cpp" />
     <ClCompile Include="Commands\cmd_list.cpp" />
+    <ClCompile Include="Commands\cmd_move.cpp" />
     <ClCompile Include="Commands\cmd_regex.cpp" />
     <ClCompile Include="Commands\cmd_remove.cpp" />
+    <ClCompile Include="Commands\cmd_rename.cpp" />
     <ClCompile Include="Commands\cmd_wait.cpp" />
+    <ClCompile Include="Commands\cmd_wipe.cpp" />
     <ClCompile Include="Commands\handlers.cpp" />
     <ClCompile Include="Generated\Lexer.cpp" />
     <ClCompile Include="Generated\Parser.cpp" />
@@ -163,12 +167,16 @@
   <ItemGroup>
     <ClInclude Include="Commands\cmd.h" />
     <ClInclude Include="Commands\cmd_compare.h" />
+    <ClInclude Include="Commands\cmd_copy.h" />
     <ClInclude Include="Commands\cmd_help.h" />
     <ClInclude Include="Commands\cmd_include.h" />
     <ClInclude Include="Commands\cmd_list.h" />
+    <ClInclude Include="Commands\cmd_move.h" />
     <ClInclude Include="Commands\cmd_regex.h" />
     <ClInclude Include="Commands\cmd_remove.h" />
+    <ClInclude Include="Commands\cmd_rename.h" />
     <ClInclude Include="Commands\cmd_wait.h" />
+    <ClInclude Include="Commands\cmd_wipe.h" />
     <ClInclude Include="Commands\handlers.h" />
     <ClInclude Include="Generated\Parser.h" />
     <ClInclude Include="Interpreter\Console.h" />
