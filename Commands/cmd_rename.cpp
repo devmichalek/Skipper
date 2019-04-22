@@ -1,20 +1,20 @@
 #include "cmd_rename.h"
 #include "cmd_regex.h"
+#include "Console.h"
 #include <filesystem>
 
-Command_Rename::Command_Rename(std::vector<std::string> options) : Command(options, Handler::CMD_REMOVE)
+Command_Rename::Command_Rename(std::vector<std::string> options) : Command(options, Handler::CMD_RENAME)
 {
 	m_bEmpty = false;
 	m_bHelp = false;
 	m_bDirectory = false;
-	m_bVerbose = false;
 	m_bRecursive = false;
-	m_bRegex = false;
 	m_sDirectory = "";
 	m_sRegex = "";
+	m_sNewName = "";
 }
 
-bool Command_Rename::parse()
+bool Command_Rename::parse(const char* filename, int &line)
 {
 	if (m_options.empty())
 		m_bEmpty = true;
@@ -25,38 +25,53 @@ bool Command_Rename::parse()
 		{
 			if (it[1] == '-')
 			{
-				if (it == "--help")				{ m_bHelp = true; break; }
-				else if (it == "--directory")	{ m_bDirectory = true; }
-				else if (it == "--verbose")		{ m_bVerbose = true; }
-				else if (it == "--recursive")	{ m_bRecursive = true; }
+				if (it == "--help") { m_bHelp = true; break; }
+				else if (it == "--directory") { m_bDirectory = true; }
+				else if (it == "--recursive") { m_bRecursive = true; }
 			}
 			else
 			{
-				if (!validate(it, "hdfr"))
+				if (!validate(it, "hdr"))
 				{
-					output("Error: cannot resolve " + it + " switch\n");
+					std::string res = "Cannot resolve " + it + " switch for the 'rename' command";
+					PrintError(filename, line, res.c_str());
 					return false;
 				}
 
 				if (it.find('h') != std::string::npos) { m_bHelp = true; break; }
 				if (it.find('d') != std::string::npos) { m_bDirectory = true; }
-				if (it.find('v') != std::string::npos) { m_bVerbose = true; }
 				if (it.find('r') != std::string::npos) { m_bRecursive = true; }
 			}
 		}
 		else
 		{
 			if (m_bDirectory && m_sDirectory.empty()) { m_sDirectory = it; }
-			else if (m_sRegex.empty()) { m_bRegex = true; m_sRegex = it; }
+			else if (m_sRegex.empty()) { m_sRegex = it; }
+			else if (m_sNewName.empty()) { m_sNewName = it; }
 			else
 			{
-				output("Error: too many arguments for 'remove' command\n");
+				PrintError(filename, line, "Too many arguments for the 'rename' command");
 				return false;
 			}
 		}
 	}
 
-	return true; // no error
+	if (m_bEmpty) {
+		PrintError(filename, line, "Too little arguments for the 'rename' command");
+		return false;
+	}
+
+	if (m_sRegex.empty()) {
+		PrintError(filename, line, "Regular expression is not specified for the 'rename' command");
+		return false;
+	}
+
+	if (m_sNewName.empty()) {
+		PrintError(filename, line, "New name is not specified for the 'rename' command");
+		return false;
+	}
+
+	return true;
 }
 
 int Command_Rename::run()
@@ -66,12 +81,7 @@ int Command_Rename::run()
 	else
 	{
 		std::filesystem::path path;
-		if (m_bEmpty)
-		{
-			output("Error: too little arguments for 'remove' command\n");
-			return 1;
-		}
-		else if (m_bDirectory)
+		if (m_bDirectory)
 			path = m_sDirectory;
 		else
 			path = std::filesystem::current_path();
@@ -89,9 +99,9 @@ int Command_Rename::run()
 		}
 
 		if (result.empty())
-			output("Warning: couldn't find any files\n");
-		else if (m_bRegex)
-		{	// regex search
+			output("Warning: could not find any files for the 'rename' command\n");
+		else
+		{	// Regular expression search.
 			std::regex regex;
 			try
 			{
@@ -99,15 +109,18 @@ int Command_Rename::run()
 			}
 			catch (const std::regex_error &e)
 			{
-				output("Error: regex_error caught: " + std::string(e.what()) + "\n");
-				return 1; // error
+				output("Error: regex_error caught: " + std::string(e.what()) + ", 'rename' command\n");
+				return 1;
 			}
 
 			std::vector<int> cells;
 			size_t ibuffer = 0;
 			for (int i = 0; i < result.size(); ++i)
 			{
+				std::string &it = result[i];
 				ibuffer = result[i].rfind('\\');
+				if (ibuffer == std::string::npos)
+					ibuffer = result[i].rfind('/');
 				if (ibuffer != std::string::npos)
 				{
 					if (std::regex_match(result[i].substr(++ibuffer), regex))
@@ -118,26 +131,46 @@ int Command_Rename::run()
 			}
 
 			if (cells.empty())
-				output("Warning: couldn't find any files by regex expression\n");
+				output("Warning: could not find any files by regular expression for the 'rename' command\n");
 			else
 			{
-				int count = 0;
-				int iRes = 0;
+				size_t ibuffer;
+				std::vector<std::string> dirs;
+				std::vector<int> counters;
+				std::string newDirectory;
+				std::string newName;
 				for (auto &i : cells)
-				{
+				{	// Make path relative if possible.
 					std::string &it = result[i];
-					iRes = std::filesystem::remove(it);
-					if (m_bVerbose && iRes > 0)
-						output("Deleted " + it + "\n");
+					ibuffer = result[i].rfind('\\');
+					if (ibuffer == std::string::npos)
+						ibuffer = result[i].rfind('/');
+					if (ibuffer != std::string::npos)
+					{
+						std::string newDirectory = it.substr(0, ibuffer);
+						auto jt = std::find(dirs.begin(), dirs.end(), newDirectory);
+						if (jt == dirs.end())
+						{
+							counters.push_back(0);
+							dirs.push_back(newDirectory);
+						}
+						else
+							++counters[std::distance(dirs.begin(), jt)];
+						newName = m_sNewName;
+						ibuffer = newName.rfind('.');
+						if (ibuffer != std::string::npos)
+							newName = newName.substr(0, ibuffer) + std::to_string(counters[std::distance(dirs.begin(), jt)]) + newName.substr(++ibuffer);
+						else
+							newName += std::to_string(counters[std::distance(dirs.begin(), jt)]);
+					}
+
+					// Rename.
+					std::filesystem::rename(it, newName);
 				}
 			}
 		}
-		else
-		{
-			output("Error: regular expression is not specified\n");
-			return 1;
-		}
 	}
 
-	return 0; // no error
+	// Success.
+	return 0;
 }
