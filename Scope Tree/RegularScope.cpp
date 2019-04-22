@@ -80,8 +80,7 @@ bool RegularScope::execute()
 		while (!m_tasks.empty())
 		{
 			Command* cmd = m_tasks.front();
-			if (cmd->parse())
-				cmd->run();
+			cmd->run();
 			pop();
 		}
 	}

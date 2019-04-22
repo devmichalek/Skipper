@@ -46,7 +46,7 @@ bool ConcurrentScope::addScope(CommonScope* newScope, M_TYPE newType, const char
 	}
 
 	++m_children;
-	return true; // success;
+	return true;
 }
 
 bool ConcurrentScope::execute()
@@ -56,8 +56,7 @@ bool ConcurrentScope::execute()
 		while (!m_tasks.empty())
 		{
 			Command* cmd = m_tasks.front();
-			if (cmd->parse())
-				cmd->run();
+			cmd->run();
 			pop();
 		}
 	}
