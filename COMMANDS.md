@@ -1,0 +1,55 @@
+## Commands (in alphabetical order)
+- **compare**
+  - [-h --help]
+  - [-d --directory \<directory name\>]
+  - [-f --file \<test file name\> \<pattern file name\>]
+  - [-r --regex \<test regular expression\> \<pattern regular expression\>]<br>
+- **copy**
+	- [-h --help]
+	- [-d --directory \<directory name\>]
+	- [-r --recursive]
+	- [\<regular expression\> \<destination directory name\>]<br>
+- **help**
+	- [-h --help]<br>
+- **include**
+	- [-h --help]
+	- [-d --directory \<directory name\>]
+	- [-f --file \<file name\>]<br>
+- **list**
+	- [-h --help]
+	- [-d --directory \<directory name\>]
+	- [-r --recursive]
+	- [\<regular expression\>]<br>
+- **move**
+	- [-h --help]
+	- [-d --directory \<directory name\>]
+	- [-r --recursive]
+	- [\<regular expression\> \<destination directory name\>]<br>
+- **regex**
+	-[-h --help]
+	- [-m --mode]
+	- [-l --list]
+	- [-s --set \<new mode\>]<br>
+- **remove**
+	- [-h --help]
+	- [-d --directory \<directory name\>]
+	- [-v --verbose]
+	- [-r --recursive]
+	- [\<regular expression\>]<br>
+- **rename**
+	- [-h --help]
+	- [-d --directory \<directory name\>]
+	- [-r --recursive]
+	- [\<regular expression\> \<new name\>]<br>
+- **wait**
+	- [-h --help]
+	- [-d --duration]
+	- [\<time duration\> \<type of duration\>]<br>
+- **wipe**
+	- [-h --help]
+	- [-d --directory \<directory name\>]
+	- [-m --mode] [-s --set \<new mode\>]
+	- [-r --range \<first line\> \<last line\>]
+	- [-l --line \<line\>]
+	- [-k --keyword \<keyword\>]
+	- [\<regular expression\>]
