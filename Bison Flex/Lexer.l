@@ -11,8 +11,8 @@
 
 INTEGERS [0-9]+
 FLOATS [0-9]*\.[0-9]+
-OPTION (\"[a-zA-Z ]+\")|([a-zA-Z]+)|(\-[a-zA-Z]+)|(\-\-[a-zA-Z]+)
-REGEX [a-zA-Z0-9\!\@\#\$\%\^\&\*\.\,\(\)\?\/\\\;\:\'\"\{\}\[\]\+\=\~\-\_]+
+OPTION (\-[a-zA-Z]+)|(\-\-[a-zA-Z]+)
+REGEX [a-zA-Z0-9\@\#\$\%\^\&\*\.\,\(\)\?\/\\\;\:\'\"\{\}\[\]\+\=\~\-\_]+
 WHITESPACE [\n\r \t]
 COMMENT \#.*\n
 REDIR [\>\<]+
@@ -25,7 +25,6 @@ REDIR [\>\<]+
 [\n]		{return '\n';}
 [ \t]		{/*empty*/}
 {COMMENT}	{/*empty*/}
-.			{/*empty*/}
 
 {OPTION}	{yylval.csval = _strdup(yytext); return OPTSTR;}
 \![a-zA-Z]+	{yylval.csval = _strdup(yytext); return CMDSTR;}

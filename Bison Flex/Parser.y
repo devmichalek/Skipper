@@ -95,7 +95,23 @@ cmd_exp_r: cmd_exp REGSTR	{
 							}
 	| cmd_exp REGSTR REGSTR {
 								std::string* str = $1;
-								(*str) += " " + std::string($2) + " " + std::string($3);
+								(*str) += " " + std::string($2);
+								(*str) += " " + std::string($3);
+								$$ = str;
+							}
+	| cmd_exp REGSTR REGSTR REGSTR {
+								std::string* str = $1;
+								(*str) += " " + std::string($2);
+								(*str) += " " + std::string($3);
+								(*str) += " " + std::string($4);
+								$$ = str;
+							}
+	| cmd_exp REGSTR REGSTR REGSTR REGSTR{
+								std::string* str = $1;
+								(*str) += " " + std::string($2);
+								(*str) += " " + std::string($3);
+								(*str) += " " + std::string($4);
+								(*str) += " " + std::string($5);
 								$$ = str;
 							}
 	;
