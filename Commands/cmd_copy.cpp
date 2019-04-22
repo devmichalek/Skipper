@@ -1,20 +1,20 @@
 #include "cmd_copy.h"
 #include "cmd_regex.h"
+#include "Console.h"
 #include <filesystem>
 
-Command_Copy::Command_Copy(std::vector<std::string> options) : Command(options, Handler::CMD_REMOVE)
+Command_Copy::Command_Copy(std::vector<std::string> options) : Command(options, Handler::CMD_COPY)
 {
 	m_bEmpty = false;
 	m_bHelp = false;
 	m_bDirectory = false;
-	m_bVerbose = false;
 	m_bRecursive = false;
-	m_bRegex = false;
 	m_sDirectory = "";
 	m_sRegex = "";
+	m_sDestination = "";
 }
 
-bool Command_Copy::parse()
+bool Command_Copy::parse(const char* filename, int &line)
 {
 	if (m_options.empty())
 		m_bEmpty = true;
@@ -27,36 +27,53 @@ bool Command_Copy::parse()
 			{
 				if (it == "--help")				{ m_bHelp = true; break; }
 				else if (it == "--directory")	{ m_bDirectory = true; }
-				else if (it == "--verbose")		{ m_bVerbose = true; }
 				else if (it == "--recursive")	{ m_bRecursive = true; }
 			}
 			else
 			{
-				if (!validate(it, "hdfr"))
+				if (!validate(it, "hdr"))
 				{
-					output("Error: cannot resolve " + it + " switch\n");
+					std::string res = "Cannot resolve " + it + " switch for the 'copy' command";
+					PrintError(filename, line, res.c_str());
 					return false;
 				}
 
 				if (it.find('h') != std::string::npos) { m_bHelp = true; break; }
 				if (it.find('d') != std::string::npos) { m_bDirectory = true; }
-				if (it.find('v') != std::string::npos) { m_bVerbose = true; }
 				if (it.find('r') != std::string::npos) { m_bRecursive = true; }
 			}
 		}
 		else
 		{
 			if (m_bDirectory && m_sDirectory.empty()) { m_sDirectory = it; }
-			else if (m_sRegex.empty()) { m_bRegex = true; m_sRegex = it; }
+			else if (m_sRegex.empty()) { m_sRegex = it; }
+			else if (m_sDestination.empty()) { m_sDestination = it; }
 			else
 			{
-				output("Error: too many arguments for 'remove' command\n");
+				PrintError(filename, line, "Too many arguments for the 'copy' command");
 				return false;
 			}
 		}
 	}
 
-	return true; // no error
+	if (m_bEmpty) {
+		PrintError(filename, line, "Too little arguments for the 'copy' command");
+		return false;
+	}
+
+	if (m_sRegex.empty())
+	{
+		PrintError(filename, line, "Regular expression is not specified for the 'copy' command");
+		return false;
+	}
+
+	if (m_sDestination.empty())
+	{
+		PrintError(filename, line, "Destination directory is not specified for the 'copy' command");
+		return false;
+	}
+
+	return true;
 }
 
 int Command_Copy::run()
@@ -66,12 +83,7 @@ int Command_Copy::run()
 	else
 	{
 		std::filesystem::path path;
-		if (m_bEmpty)
-		{
-			output("Error: too little arguments for 'remove' command\n");
-			return 1;
-		}
-		else if (m_bDirectory)
+		if (m_bDirectory)
 			path = m_sDirectory;
 		else
 			path = std::filesystem::current_path();
@@ -89,9 +101,9 @@ int Command_Copy::run()
 		}
 
 		if (result.empty())
-			output("Warning: couldn't find any files\n");
-		else if (m_bRegex)
-		{	// regex search
+			output("Warning: could not find any files for the 'copy' command\n");
+		else
+		{	// Regular expression search.
 			std::regex regex;
 			try
 			{
@@ -99,15 +111,18 @@ int Command_Copy::run()
 			}
 			catch (const std::regex_error &e)
 			{
-				output("Error: regex_error caught: " + std::string(e.what()) + "\n");
-				return 1; // error
+				output("Error: regex_error caught: " + std::string(e.what()) + ", 'copy' command\n");
+				return 1;
 			}
 
 			std::vector<int> cells;
 			size_t ibuffer = 0;
 			for (int i = 0; i < result.size(); ++i)
 			{
+				std::string &it = result[i];
 				ibuffer = result[i].rfind('\\');
+				if (ibuffer == std::string::npos)
+					ibuffer = result[i].rfind('/');
 				if (ibuffer != std::string::npos)
 				{
 					if (std::regex_match(result[i].substr(++ibuffer), regex))
@@ -118,26 +133,29 @@ int Command_Copy::run()
 			}
 
 			if (cells.empty())
-				output("Warning: couldn't find any files by regex expression\n");
+				output("Warning: could not find any files by regular expression for the 'copy' command\n");
 			else
 			{
-				int count = 0;
-				int iRes = 0;
+				std::filesystem::copy_options option = m_bRecursive ? std::filesystem::copy_options::recursive : std::filesystem::copy_options::none;
+				if (m_sDestination.back() != '/' && m_sDestination.back() != '\\')
+					m_sDestination += '/';
+
+				size_t ibuffer;
 				for (auto &i : cells)
-				{
+				{	// Make path relative if possible.
 					std::string &it = result[i];
-					iRes = std::filesystem::remove(it);
-					if (m_bVerbose && iRes > 0)
-						output("Deleted " + it + "\n");
+					ibuffer = result[i].rfind('\\');
+					if (ibuffer == std::string::npos)
+						ibuffer = result[i].rfind('/');
+					if (ibuffer != std::string::npos)
+						it = it.substr(++ibuffer);
+					// Copy.
+					std::filesystem::copy(it, m_sDestination + it, option);
 				}
 			}
 		}
-		else
-		{
-			output("Error: regular expression is not specified\n");
-			return 1;
-		}
 	}
 
-	return 0; // no error
+	// Success.
+	return 0;
 }
