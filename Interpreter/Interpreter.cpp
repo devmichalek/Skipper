@@ -196,36 +196,38 @@ bool Interpreter::connect(std::fstream &file, CommonScope* &upNode, int &line, i
 			{
 				std::string cmd_ident = std::string("Correctly inserted new command ") + std::string(HandlerIdentTable[(int)m_pCmd->handler()]);
 				PrintSuccess(m_sFileName.c_str(), line, cmd_ident.c_str());
+				if (!m_pCmd->parse(m_sFileName.c_str(), line))
+				{	// Error Parse Command.
+					PrintError(m_sFileName.c_str(), line, "Caught error while parsing command");
+				}
+
 				if (m_pCmd->handler() == Handler::CMD_INCLUDE)
 				{	// Command evaluated during static interpretation!
-					if (m_pCmd->parse() && !m_pCmd->run())
+					if (m_pCmd->m_global_buffer.empty())
 					{
-						if (m_pCmd->m_global_buffer.empty())
+						if (!upNode->addTask(m_pCmd, m_sPathToFile, m_sFileName.c_str(), line))
+							return false;
+					}
+					else
+					{
+						RegularScope* regscope = nullptr;
+						Interpreter inter(regscope);
+						m_child = &inter;
+						bool status = inter.scan(m_pCmd->m_global_buffer.c_str(), m_sFileName.c_str(), line);
+						if (!status)
 						{
-							if (!upNode->addTask(m_pCmd, m_sPathToFile, m_sFileName.c_str(), line))
-								return false;
-						}
-						else
-						{
-							RegularScope* regscope = nullptr;
-							Interpreter inter(regscope);
-							m_child = &inter;
-							bool status = inter.scan(m_pCmd->m_global_buffer.c_str(), m_sFileName.c_str(), line);
-							if (!status)
-							{
-								m_child = nullptr;
-								return false;
-							}
-
-							if (upNode->m_type == CommonScope::REGULAR)
-								status = ((RegularScope*)upNode)->capture(inter.m_pTree, m_sFileName.c_str(), line);
-							else
-								status = ((ConcurrentScope*)upNode)->capture(inter.m_pTree, m_sFileName.c_str(), line);
-							
 							m_child = nullptr;
-							if (!status)
-								return false;
+							return false;
 						}
+
+						if (upNode->m_type == CommonScope::REGULAR)
+							status = ((RegularScope*)upNode)->capture(inter.m_pTree, m_sFileName.c_str(), line);
+						else
+							status = ((ConcurrentScope*)upNode)->capture(inter.m_pTree, m_sFileName.c_str(), line);
+							
+						m_child = nullptr;
+						if (!status)
+							return false;
 					}
 				}
 				else
@@ -233,15 +235,17 @@ bool Interpreter::connect(std::fstream &file, CommonScope* &upNode, int &line, i
 					if (!upNode->addTask(m_pCmd, m_sPathToFile, m_sFileName.c_str(), line))
 						return false;
 				}
+
+				m_pCmd = nullptr;
 			}
 			else if (m_bError)
 			{
 				if (m_sCatchedMsg.empty()) {
-					printf(" (Flex)\n");
-					m_sCatchedMsg = "catched msg is empty";
+					printf(" (flex)\n");
+					m_sCatchedMsg = "catched message is empty";
 				}
 
-				PrintError(m_sFileName.c_str(), line, m_sCatchedMsg.c_str());
+				PrintError(m_sFileName.c_str(), line + 1, m_sCatchedMsg.c_str());
 				return false;
 			}
 		}
