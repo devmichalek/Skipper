@@ -6,33 +6,32 @@ class Command_Move final : public Command
 	bool m_bEmpty;
 	bool m_bHelp;
 	bool m_bDirectory;
-	bool m_bVerbose;
 	bool m_bRecursive;
-	bool m_bRegex;
 	std::string m_sDirectory;
 	std::string m_sRegex;
+	std::string m_sDestination;
 
 public:
 	explicit Command_Move(std::vector<std::string> options);
-	~Command_Move() {} // not needed, no objects on heap
-	bool parse();
+	~Command_Move() {}
+	bool parse(const char* filename, int &line);
 	int run();
 
 	static std::string help()
 	{
 		std::string a = "\nDefinition:\n";
-		std::string b = "\tmove - move selected files into desired directory\n";
+		std::string b = "\tmove - moves selected or matched files into requested directory\n";
 		std::string c = "\nSyntax:\n";
 		std::string d = "\t[-h --help] - prints help\n";
 		std::string e = "\t[-f --directory <directory name>] - searches in requested directory, if not specified searches in current directory\n";
 		std::string f = "\t[-r --recursive] - searches recursively\n";
-		std::string g = "\t[<regular expression> <regular expression>] - searches directory with specified regular expression keys\n";
+		std::string g = "\t[<regular expression> <destination directory name>] - specifies regular expression key and destination directory for matched objects\n";
 		std::string h = "\n";
 		return a + b + c + d + e + f + g + h;
 	}
 
 	static std::string assist()
 	{
-		return "  remove\n\t[-h --help]\n\t[-d --directory <directory name>]\n\t[-r --recursive]\n\t[<regular expression> <regular expression>]\n";
+		return "  move\n\t[-h --help]\n\t[-d --directory <directory name>]\n\t[-r --recursive]\n\t[<regular expression> <destination directory name>]\n";
 	}
 };
