@@ -15,15 +15,15 @@ class Command_Wipe final : public Command
 	std::string m_sDirectory;
 	std::string m_sKeyword;
 	std::string m_sRegex;
-	static bool m_bChosenMode; // Top = true, Bot = false;
-	int m_iRangeStart;
-	int m_iRangeEnd;
+	static bool m_bChosenMode; // Top/Descending = true, Bot/Ascending = false;
+	int m_iRangeFirst;
+	int m_iRangeLast;
 	int m_iLine;
 
 public:
 	explicit Command_Wipe(std::vector<std::string> options);
 	~Command_Wipe() {}
-	bool parse();
+	bool parse(const char* filename, int &line);
 	int run();
 
 	static std::string help()
@@ -34,10 +34,10 @@ public:
 		std::string d = "\t[-h --help] - prints help\n";
 		std::string e = "\t[-d --directory <directory name>] - searches in requested directory, if not specified searches in current directory\n";
 		std::string f = "\t[-m --mode] - prints possible modes\n";
-		std::string g = "\t[-s --set] - sets new mode\n";
-		std::string h = "\t[-r --range <start line> <end line>] - will wipe specified file in requested range\n";
-		std::string i = "\t[-l --line <start line>] - will wipe specified file starting from requested line till the end of file\n";
-		std::string j = "\t[-k --keyword <keyword>] - will wipe specified file starting from first occurence of keyword till the end of file\n";
+		std::string g = "\t[-s --set <new mode>] - sets new mode\n";
+		std::string h = "\t[-r --range <first line> <last line>] - will wipe specified file in requested range starting from first line till the end line\n";
+		std::string i = "\t[-l --line <line>] - will wipe specified file starting from requested line till the end/beginning of the file\n";
+		std::string j = "\t[-k --keyword <keyword>] - will wipe specified file starting from first occurence of keyword till the end/beginning of the file\n";
 		std::string k = "\t[<regular expression>] - searches directory with specified regular expression key\n";
 		std::string l = "\n";
 		return a + b + c + d + e + f + g + h + i + j + k + l;
@@ -45,9 +45,9 @@ public:
 
 	static std::string assist()
 	{
-		return "  wipe\n\t[-h --help]\n\t[-d --directory <directory name>]\n\t[-m --mode]\n\t[-s --set]\n\t[-r --range <start line> <end line>]\n\t[-l --line <start line>]\n\t[-k --keyword <keyword>]\n\t[<regular expression>]\n";
+		return "  wipe\n\t[-h --help]\n\t[-d --directory <directory name>]\n\t[-m --mode]\n\t[-s --set <new mode>]\n\t[-r --range <first line> <last line>]\n\t[-l --line <line>]\n\t[-k --keyword <keyword>]\n\t[<regular expression>]\n";
 	}
 
 private:
-	void openToWipe(std::string &filename);
+	void wipe(std::string &filename);
 };
