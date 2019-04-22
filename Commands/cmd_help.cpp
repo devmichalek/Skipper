@@ -9,6 +9,7 @@
 #include "cmd_rename.h"
 #include "cmd_wait.h"
 #include "cmd_wipe.h"
+#include "Console.h"
 
 Command_Help::Command_Help(std::vector<std::string> options) : Command(options, Handler::CMD_HELP)
 {
@@ -16,7 +17,7 @@ Command_Help::Command_Help(std::vector<std::string> options) : Command(options, 
 	m_bHelp = false;
 }
 
-bool Command_Help::parse()
+bool Command_Help::parse(const char* filename, int &line)
 {
 	if (m_options.empty())
 		m_bEmpty = true;
@@ -33,7 +34,8 @@ bool Command_Help::parse()
 			{
 				if (!validate(it, "h"))
 				{
-					output("Error: cannot resolve " + it + " switch\n");
+					std::string res = "Cannot resolve " + it + " switch for the 'help' command";
+					PrintError(filename, line, res.c_str());
 					return false;
 				}
 
@@ -42,12 +44,12 @@ bool Command_Help::parse()
 		}
 		else
 		{
-			output("Error: too many arguments for 'help' command\n");
+			PrintError(filename, line, "Too many arguments for the 'help' command\n");
 			return false;
 		}
 	}
 
-	return true; // no error
+	return true;
 }
 
 int Command_Help::run()
@@ -78,5 +80,5 @@ int Command_Help::run()
 	else if (m_bHelp)
 		output(help());
 
-	return 0; // no error
+	return 0;
 }

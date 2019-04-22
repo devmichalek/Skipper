@@ -11,7 +11,7 @@ Command_Include::Command_Include(std::vector<std::string> options) : Command(opt
 	m_sDirectory = "";
 }
 
-bool Command_Include::parse()
+bool Command_Include::parse(const char* filename, int &line)
 {
 	if (m_options.empty())
 		m_bEmpty = true;
@@ -30,7 +30,8 @@ bool Command_Include::parse()
 			{
 				if (!validate(it, "hdf"))
 				{
-					output("Error: cannot resolve " + it + " switch\n");
+					std::string res = "Cannot resolve " + it + " switch for the 'include' command";
+					PrintError(filename, line, res.c_str());
 					return false;
 				}
 
@@ -45,54 +46,56 @@ bool Command_Include::parse()
 			else if (m_bDirectory && m_sDirectory.empty()) { m_sDirectory = it; }
 			else
 			{
-				output("Error: too many arguments for 'include' command\n");
+				PrintError(filename, line, "Too many arguments for the 'include' command");
 				return false;
 			}
 		}
 	}
 
-	return true; // no error
-}
-
-int Command_Include::run()
-{
-	m_global_buffer = "";
-	if (m_bEmpty)
-	{
-		output("Error: 'include' command must at least contain one argument\n");
-		return 1;
+	if (m_bEmpty) {
+		PrintError(filename, line, "'include' command must at least contain one argument");
+		return false;
 	}
-	else if (m_bHelp)
-		output(help());
-	else
+
+	if (m_bDirectory && m_sDirectory.empty())
 	{
-		if (m_bDirectory && m_sDirectory.empty())
-		{
-			output("Error: missing <directory name> for --directory option for 'include' command\n");
-			return 1;
-		}
+		PrintError(filename, line, "Missing <directory name> for --directory option for the 'include' command");
+		return false;
+	}
 
-		if (m_bFile && m_sFile.empty())
-		{
-			output("Error: missing <file name> for --file option for 'include' command\n");
-			return 1;
-		}
-		else if (!m_bFile)
-		{
-			output("Error: missing --file switch for 'include' command\n");
-			return 1;
-		}
+	if (m_bFile && m_sFile.empty())
+	{
+		PrintError(filename, line, "Missing <file name> for --file option for the 'include' command");
+		return false;
+	}
+	else if (!m_bFile)
+	{
+		PrintError(filename, line, "Missing --file switch for the 'include' command");
+		return false;
+	}
 
+	m_global_buffer = "";
+	if (!m_bHelp)
+	{
 		if (m_bDirectory)
 		{
 			m_global_buffer += m_sDirectory;
 			if (m_global_buffer.back() != '/' && m_global_buffer.back() != '\\')
 				m_global_buffer += '/';
 		}
-			
+
 		if (m_bFile)
 			m_global_buffer += m_sFile;
 	}
 
-	return 0; // no error
+	return true;
+}
+
+int Command_Include::run()
+{
+	if (m_bHelp)
+		output(help());
+
+	// Success.
+	return 0;
 }

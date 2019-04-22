@@ -1,5 +1,6 @@
 #include "cmd_remove.h"
 #include "cmd_regex.h"
+#include "Console.h"
 #include <filesystem>
 
 Command_Remove::Command_Remove(std::vector<std::string> options) : Command(options, Handler::CMD_REMOVE)
@@ -14,7 +15,7 @@ Command_Remove::Command_Remove(std::vector<std::string> options) : Command(optio
 	m_sRegex = "";
 }
 
-bool Command_Remove::parse()
+bool Command_Remove::parse(const char* filename, int &line)
 {
 	if (m_options.empty())
 		m_bEmpty = true;
@@ -32,9 +33,10 @@ bool Command_Remove::parse()
 			}
 			else
 			{
-				if (!validate(it, "hdfr"))
+				if (!validate(it, "hdvr"))
 				{
-					output("Error: cannot resolve " + it + " switch\n");
+					std::string res = "Cannot resolve " + it + " switch for the 'remove' command";
+					PrintError(filename, line, res.c_str());
 					return false;
 				}
 
@@ -50,13 +52,23 @@ bool Command_Remove::parse()
 			else if (m_sRegex.empty()) { m_bRegex = true; m_sRegex = it; }
 			else
 			{
-				output("Error: too many arguments for 'remove' command\n");
+				PrintError(filename, line, "Too many arguments for the 'remove' command\n");
 				return false;
 			}
 		}
 	}
 
-	return true; // no error
+	if (m_bEmpty) {
+		PrintError(filename, line, "Too little arguments for the 'remove' command");
+		return 1;
+	}
+
+	if (m_bDirectory && m_sDirectory.empty()) {
+		PrintError(filename, line, "Missing <directory name> for --directory switch for the 'remove' command");
+		return false;
+	}
+
+	return true;
 }
 
 int Command_Remove::run()
@@ -66,12 +78,7 @@ int Command_Remove::run()
 	else
 	{
 		std::filesystem::path path;
-		if (m_bEmpty)
-		{
-			output("Error: too little arguments for 'remove' command\n");
-			return 1;
-		}
-		else if (m_bDirectory)
+		if (m_bDirectory)
 			path = m_sDirectory;
 		else
 			path = std::filesystem::current_path();
@@ -89,9 +96,9 @@ int Command_Remove::run()
 		}
 
 		if (result.empty())
-			output("Warning: couldn't find any files\n");
+			output("Warning: could not find any files for the 'remove' command\n");
 		else if (m_bRegex)
-		{	// regex search
+		{	// Regular expression search.
 			std::regex regex;
 			try
 			{
@@ -99,7 +106,7 @@ int Command_Remove::run()
 			}
 			catch (const std::regex_error &e)
 			{
-				output("Error: regex_error caught: " + std::string(e.what()) + "\n");
+				output("Error: regex_error caught: " + std::string(e.what()) + ", 'remove' command\n");
 				return 1; // error
 			}
 
@@ -107,7 +114,10 @@ int Command_Remove::run()
 			size_t ibuffer = 0;
 			for (int i = 0; i < result.size(); ++i)
 			{
+				std::string &it = result[i];
 				ibuffer = result[i].rfind('\\');
+				if (ibuffer == std::string::npos)
+					ibuffer = result[i].rfind('/');
 				if (ibuffer != std::string::npos)
 				{
 					if (std::regex_match(result[i].substr(++ibuffer), regex))
@@ -118,7 +128,7 @@ int Command_Remove::run()
 			}
 
 			if (cells.empty())
-				output("Warning: couldn't find any files by regex expression\n");
+				output("Warning: could not find any files by regular expression key for the 'remove' command\n");
 			else
 			{
 				int count = 0;
@@ -132,12 +142,8 @@ int Command_Remove::run()
 				}
 			}
 		}
-		else
-		{
-			output("Error: regular expression is not specified\n");
-			return 1;
-		}
 	}
 
-	return 0; // no error
+	// Success.
+	return 0;
 }

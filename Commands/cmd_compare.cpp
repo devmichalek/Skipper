@@ -1,5 +1,6 @@
 #include "cmd_compare.h"
 #include "cmd_regex.h"
+#include "Console.h"
 #include <filesystem>
 #include <fstream>
 
@@ -10,12 +11,12 @@ Command_Compare::Command_Compare(std::vector<std::string> options) : Command(opt
 	m_bFile= false;
 	m_bDirectory = false;
 	m_bRegex = false;
-	m_sFirstInstance = "";
-	m_sSecondInstance = "";
 	m_sDirectory = "";
+	m_sTest = "";
+	m_sPattern = "";
 }
 
-bool Command_Compare::parse()
+bool Command_Compare::parse(const char* filename, int &line)
 {
 	if (m_options.empty())
 		m_bEmpty = true;
@@ -35,7 +36,8 @@ bool Command_Compare::parse()
 			{
 				if (!validate(it, "hdfr"))
 				{
-					output("Error: cannot resolve " + it + " switch\n");
+					std::string res = "Cannot resolve " + it + " switch for the 'compare' command";
+					PrintError(filename, line, res.c_str());
 					return false;
 				}
 
@@ -47,70 +49,92 @@ bool Command_Compare::parse()
 		}
 		else
 		{
-			if (m_bDirectory && m_sDirectory.empty()) { m_sDirectory = it; }
-			else if (m_bFile && m_sFirstInstance.empty()) { m_sFirstInstance = it; }
-			else if (m_bFile && m_sSecondInstance.empty()) { m_sSecondInstance = it; }
-			else if (m_bRegex && m_sFirstInstance.empty()) { m_sFirstInstance = it; }
-			else if (m_bRegex && m_sSecondInstance.empty()) { m_sSecondInstance = it; }
+			if (m_bDirectory && m_sDirectory.empty())
+				m_sDirectory = it;
 			else
 			{
-				output("Error: too many arguments for 'compare' command\n");
-				return false;
+				if (m_bFile && m_bRegex)
+				{
+					PrintError(filename, line, "Switch --file and --regex cannot be specified together for the 'compare' command");
+					return false;
+				}
+				else if (m_bFile || m_bRegex)
+				{
+					if (m_sTest.empty())
+						m_sTest = it;
+					else if (m_sPattern.empty())
+						m_sPattern = it;
+					else {
+						PrintError(filename, line, "Too many arguments for the 'compare' command");
+						return false;
+					}
+				}
+				else {
+					PrintError(filename, line, "Either switch --file or --regex is not specified for the 'compare' command");
+					return false;
+				}
 			}
 		}
 	}
 
-	return true; // no error
+	if (m_bEmpty) {
+		PrintError(filename, line, "'compare' command must at least contain one argument");
+		return false;
+	}
+	
+	if (m_bDirectory && m_sDirectory.empty()) {
+		PrintError(filename, line, "Missing <directory name> for --directory switch for the 'compare' command");
+		return false;
+	}
+
+	if (!m_bFile && !m_bRegex) {
+		PrintError(filename, line, "Missing either --file or --regex switch for the 'compare' command");
+		
+	}
+
+	if (m_bFile) {
+		if (m_sTest.empty()) {
+			PrintError(filename, line, "Missing <test file name> for --file switch for the 'compare' command");
+			return false;
+		}
+		else if (m_sPattern.empty()) {
+			PrintError(filename, line, "Missing <pattern file name> for --file switch for the 'compare' command");
+			return false;
+		}
+	}
+	else if (m_bRegex)
+	{
+		if (m_sTest.empty()) {
+			PrintError(filename, line, "Missing <test regular expression> for --file switch for the 'compare' command");
+			return false;
+		}
+		else if (m_sPattern.empty()) {
+			PrintError(filename, line, "Missing <pattern regular expression> for --file switch for the 'compare' command");
+			return false;
+		}
+	}
+
+	return true;
 }
 
 int Command_Compare::run()
 {
-	if (m_bEmpty)
-	{
-		output("Error: 'compare' command must at least contain one argument\n");
-		return 1;
-	}
-	else if (m_bHelp)
+	if (m_bHelp)
 		output(help());
 	else
 	{
-		if (m_bDirectory && m_sDirectory.empty())
-		{
-			output("Error: missing <directory name> for --directory switch for 'compare' command\n");
-			return 1;
-		}
-
-		if (!m_bFile && !m_bRegex)
-		{
-			output("Error: missing --file switch for 'compare' command\n");
-			return 1;
-		}
-
-		if (m_bFile && (m_sFirstInstance.empty() || m_sSecondInstance.empty()))
-		{
-			output("Error: missing <first file name> or <second file name> for --file option for 'compare' command\n");
-			return 1;
-		}
-		else if (m_bRegex && (m_sFirstInstance.empty() || m_sSecondInstance.empty()))
-		{
-			output("Error: missing <first regex exp> or <second regex exp> for --regex option for 'compare' command\n");
-			return 1;
-		}
-
-		if (m_bDirectory)
-		{
-			std::string path = m_sDirectory;
-			if (path.back() != '/' && path.back() != '\\')
-				path += '/';
-
-			if (m_bFile) {
-				m_sFirstInstance = path + m_sFirstInstance;
-				m_sSecondInstance = path + m_sSecondInstance;
-			}
-		}
-			
 		if (m_bFile)
-			compare(m_sFirstInstance, m_sSecondInstance);
+		{
+			if (m_bDirectory)
+			{
+				if (m_sDirectory.back() != '/' && m_sDirectory.back() != '\\')
+					m_sDirectory += '/';
+				m_sTest = m_sDirectory + m_sTest;
+				m_sPattern = m_sDirectory + m_sPattern;
+			}
+
+			compare(m_sTest, m_sPattern);
+		}
 		else
 		{
 			std::vector<std::string> result;
@@ -118,26 +142,24 @@ int Command_Compare::run()
 				result.push_back(entry.path().string());
 
 			if (result.empty())
-				output("Warning: couldn't find any files\n");
+				output("Warning: could not find any files by regular expression for the 'compare' command\n");
 			else if (m_bRegex)
-			{	// regex search
+			{	// Regular expression search.
 				std::regex regex_a;
 				try {
-					regex_a.assign(m_sFirstInstance, Command_Regex::m_iMode);
+					regex_a.assign(m_sTest, Command_Regex::m_iMode);
 				}
-				catch (const std::regex_error &e)
-				{
-					output("Error: regex_error caught: " + std::string(e.what()) + "\n");
+				catch (const std::regex_error &e) {
+					output("Error: regex_error caught: " + std::string(e.what()) + ", 'compare' command\n");
 					return 1; // error
 				}
 
 				std::regex regex_b;
 				try {
-					regex_b.assign(m_sSecondInstance, Command_Regex::m_iMode);
+					regex_b.assign(m_sPattern, Command_Regex::m_iMode);
 				}
-				catch (const std::regex_error &e)
-				{
-					output("Error: regex_error caught: " + std::string(e.what()) + "\n");
+				catch (const std::regex_error &e) {
+					output("Error: regex_error caught: " + std::string(e.what()) + ", 'compare' command\n");
 					return 1; // error
 				}
 
@@ -147,11 +169,13 @@ int Command_Compare::run()
 				for (int i = 0; i < result.size(); ++i)
 				{
 					ibuffer = result[i].rfind('\\');
+					if (ibuffer == std::string::npos)
+						ibuffer = result[i].rfind('/');
 					if (ibuffer != std::string::npos)
 					{
 						if (std::regex_match(result[i].substr(++ibuffer), regex_a))
 							cells_a.push_back(i);
-						if (std::regex_match(result[i].substr(++ibuffer), regex_b))
+						if (std::regex_match(result[i].substr(ibuffer), regex_b))
 							cells_b.push_back(i);
 					}
 					else
@@ -164,11 +188,11 @@ int Command_Compare::run()
 				}
 
 				if (cells_a.empty() || cells_b.empty())
-					output("Warning: couldn't find any files by regex expression\n");
+					output("Warning: could not find any files by regular expression for the 'compare' command\n");
 				else
 				{
 					if (cells_a.size() != cells_b.size())
-						output("Warning: different vectors, one regex expression matched more files, this can lead to wrong results...\n");
+						output("Warning: different vectors, one regular expression matched more files, this can lead to wrong results for the 'compare' command\n");
 
 					int count = 0;
 					size_t length = cells_a.size() < cells_b.size() ? cells_a.size() : cells_b.size();
@@ -179,7 +203,7 @@ int Command_Compare::run()
 		}
 	}
 
-	return 0; // no error
+	return 0; // success
 }
 
 void Command_Compare::compare(std::string &a, std::string &b)
@@ -188,7 +212,7 @@ void Command_Compare::compare(std::string &a, std::string &b)
 	fa.open(a);
 	if (!fa.is_open())
 	{
-		output("Warning: Cannot open " + a + " file\n");
+		output("Warning: Cannot open " + a + " file for the 'compare' comamand\n");
 		return;
 	}
 
@@ -196,7 +220,7 @@ void Command_Compare::compare(std::string &a, std::string &b)
 	fb.open(b);
 	if (!fb.is_open())
 	{
-		output("Warning: Cannot open " + b + " file\n");
+		output("Warning: Cannot open " + b + " file for the 'compare' comamand\n");
 		return;
 	}
 
@@ -229,7 +253,7 @@ void Command_Compare::compare(std::string &a, std::string &b)
 	}
 
 	if (!difference)
-	{
+	{	// Check sizes.
 		fa.close();
 		fb.close();
 		std::ifstream faa(a, std::ifstream::ate | std::ifstream::binary);

@@ -15,7 +15,7 @@ class Command_Remove final : public Command
 public:
 	explicit Command_Remove(std::vector<std::string> options);
 	~Command_Remove() {} // not needed, no objects on heap
-	bool parse();
+	bool parse(const char* filename, int &line);
 	int run();
 
 	static std::string help()
@@ -24,10 +24,10 @@ public:
 		std::string b = "\tremove - removes files and directories\n";
 		std::string c = "\nSyntax:\n";
 		std::string d = "\t[-h --help] - prints help\n";
-		std::string e = "\t[-f --directory <directory name>] - searches in requested directory, if not specified searches in current directory\n";
+		std::string e = "\t[-d --directory <directory name>] - searches in requested directory, if not specified searches in current directory\n";
 		std::string f = "\t[-v --verbose] - explain at all times what is being done\n";
 		std::string g = "\t[-r --recursive] - searches recursively\n";
-		std::string h = "\t[<regular expression>] - searches directory with specified regular expression key\n";
+		std::string h = "\t[<regular expression>] - specifies regular expression pattern\n";
 		std::string i = "\n";
 		return a + b + c + d + e + f + g + h + i;
 	}

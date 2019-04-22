@@ -2,7 +2,7 @@
 #include "cmd.h"
 
 class Command_Include final : public Command
-{	// This command is evaluated during static interpretation!
+{	// This command is evaluated during interpretation!
 	bool m_bEmpty;
 	bool m_bHelp;
 	bool m_bFile;
@@ -13,7 +13,7 @@ class Command_Include final : public Command
 public:
 	explicit Command_Include(std::vector<std::string> options);
 	~Command_Include() {}
-	bool parse();
+	bool parse(const char* filename, int &line);
 	int run();
 
 	static std::string help()

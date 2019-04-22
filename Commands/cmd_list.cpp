@@ -1,5 +1,6 @@
 #include "cmd_list.h"
 #include "cmd_regex.h"
+#include "Console.h"
 #include <filesystem>
 
 Command_List::Command_List(std::vector<std::string> options) : Command(options, Handler::CMD_LIST)
@@ -13,7 +14,7 @@ Command_List::Command_List(std::vector<std::string> options) : Command(options, 
 	m_sRegex = "";
 }
 
-bool Command_List::parse()
+bool Command_List::parse(const char* filename, int &line)
 {
 	if (m_options.empty())
 		m_bEmpty = true;
@@ -32,7 +33,8 @@ bool Command_List::parse()
 			{
 				if (!validate(it, "hdr"))
 				{
-					output("Error: cannot resolve " + it  + " switch\n");
+					std::string res = "Cannot resolve " + it  + " switch for the 'list' command";
+					PrintError(filename, line, res.c_str());
 					return false;
 				}
 
@@ -47,13 +49,14 @@ bool Command_List::parse()
 			else if (m_sRegex.empty()) { m_bRegex = true; m_sRegex = it; }
 			else
 			{
-				output("Error: too many arguments for 'list' command\n");
+				PrintError(filename, line, "Too many arguments for the 'list' command\n");
 				return false;
 			}
 		}
 	}
 
-	return true; // no error
+	// Success.
+	return true;
 }
 
 int Command_List::run()
@@ -81,7 +84,7 @@ int Command_List::run()
 		}
 
 		if (result.empty())
-			output("Warning: couldn't find any files\n");
+			output("Warning: could not find any files for the 'list' command\n");
 		else if (m_bRegex)
 		{	// regex search
 			std::regex regex;
@@ -91,7 +94,7 @@ int Command_List::run()
 			}
 			catch (const std::regex_error &e)
 			{
-				output("Error: regex_error caught: " + std::string(e.what()) + "\n");
+				output("Error: regex_error caught: " + std::string(e.what()) + ", 'list' command\n");
 				return 1; // error
 			}
 
@@ -100,6 +103,8 @@ int Command_List::run()
 			for (int i = 0; i < result.size(); ++i)
 			{
 				ibuffer = result[i].rfind('\\');
+				if (ibuffer == std::string::npos)
+					ibuffer = result[i].rfind('/');
 				if (ibuffer != std::string::npos)
 				{
 					if (std::regex_match(result[i].substr(++ibuffer), regex))
@@ -110,14 +115,14 @@ int Command_List::run()
 			}
 				
 			if (cells.empty())
-				output("Warning: couldn't find any files by regex expression\n");
+				output("Warning: could not find any files by regular expression for the 'list' command\n");
 			else
 			{
 				int count = 0;
 				for (auto &i : cells)
 				{
 					std::string &it = result[i];
-					count = (int)std::count_if(it.begin(), it.end(), [](char &i) { return i == '\\'; });
+					count = (int)std::count_if(it.begin(), it.end(), [](char &i) { return i == '\\' || i == '/'; });
 					std::string buffer(count, ' ');
 					output(buffer + it + "\n");
 				}	
@@ -128,12 +133,13 @@ int Command_List::run()
 			int count = 0;
 			for (auto &it : result)
 			{
-				count = (int)std::count_if(it.begin(), it.end(), [](char &i) { return i == '\\'; });
+				count = (int)std::count_if(it.begin(), it.end(), [](char &i) { return i == '\\' || i == '/'; });
 				std::string buffer(count, ' ');
 				output(buffer + it + "\n");
 			}
 		}
 	}
 
-	return 0; // no error
+	// Success.
+	return 0;
 }

@@ -1,4 +1,5 @@
 #include "cmd_regex.h"
+#include "Console.h"
 
 std::regex::flag_type Command_Regex::m_iMode = std::regex::flag_type::ECMAScript;
 
@@ -12,7 +13,7 @@ Command_Regex::Command_Regex(std::vector<std::string> options) : Command(options
 	m_sSetMode = "";
 }
 
-bool Command_Regex::parse()
+bool Command_Regex::parse(const char* filename, int &line)
 {
 	if (m_options.empty())
 		m_bEmpty = true;
@@ -36,7 +37,8 @@ bool Command_Regex::parse()
 				else if (it == "-s" && !m_bSetMode)	{ m_bSetMode = true; }
 				else
 				{
-					output("Error: switch " + it + " is already specified\n");
+					std::string res = "Switch " + it + " is either already specified or not valid for the 'regex' command";
+					PrintError(filename, line, res.c_str());
 					return false;
 				}
 			}
@@ -45,12 +47,12 @@ bool Command_Regex::parse()
 		{
 			if (!m_bSetMode)
 			{
-				output("Error: too little arguments for 'regex' command\n");
+				PrintError(filename, line, "Missing --set switch for the 'regex' command");
 				return false;
 			}
 			else if (m_bSetMode && !m_sSetMode.empty())
 			{
-				output("Error: too many arguments for 'regex' command\n");
+				PrintError(filename, line, "Too many arguments for the 'regex' command");
 				return false;
 			}
 			else
@@ -58,56 +60,55 @@ bool Command_Regex::parse()
 		}
 	}
 
-	return true; // no error
+	if (m_bEmpty) {
+		PrintError(filename, line, "'regex' command must at least contain one argument");
+		return false;
+	}
+
+	if (m_bSetMode)
+	{
+		if (m_sSetMode.empty()) {
+			PrintError(filename, line, "<new mode> for --set switch is not specified for the 'regex' command");
+			return false;
+		}
+
+		int iRes = getModeByString(m_sSetMode);
+		if (iRes < 0) {
+			PrintError(filename, line, "<new mode> for switch --set for the 'regex' command is invalid");
+			return false;
+		}
+	}
+
+	return true;
 }
 
 int Command_Regex::run()
 {
-	if (m_bEmpty)
-	{
-		output("Error: 'regex' command must at least contain one argument\n");
-		return 1;
-	}
-	else if (m_bHelp)
+	if (m_bHelp)
 		output(help());
-	else
+	else if (m_bMode)
 	{
-		if (m_bMode)
+		std::string str = getModeString(m_iMode);
+		output("Current regular expression flavor is " + str + "\n\n");
+	}
+	else if (m_bList)
+	{
+		std::string str;
+		output("\nAvailable modes are:\n");
+		for (int i = 1; i <= std::regex::flag_type::egrep; i *= 2)
 		{
-			std::string str = getModeString(m_iMode);
-			output("Current regex expression flavor is " + str + "\n\n");
+			str = getModeString(i);
+			output(str + "\n");
 		}
-		else if (m_bList)
-		{
-			std::string str;
-			output("\nAvailable modes are:\n");
-			for (int i = 1; i <= std::regex::flag_type::egrep; i *= 2)
-			{
-				str = getModeString(i);
-				output(str + "\n");
-			}
-			output("\n");
-		}
-		else if (m_bSetMode)
-		{
-			if (m_sSetMode.empty())
-			{
-				output("Error: new regex mode is not specified, missing <new mode> expression\n");
-				return 1;
-			}
-
-			int iRes = getModeByString(m_sSetMode);
-			if (iRes < 0)
-			{
-				output("Error: new regex mode is invalid\n");
-				return 1;
-			}
-
-			m_iMode = (std::regex::flag_type)iRes;
-		}
+		output("\n");
+	}
+	else if (m_bSetMode)
+	{
+		int iRes = getModeByString(m_sSetMode);
+		m_iMode = (std::regex::flag_type)iRes;
 	}
 
-	return 0; // no error
+	return 0;
 }
 
 std::string Command_Regex::getModeString(const int &i)

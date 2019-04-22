@@ -15,7 +15,7 @@ public:
 	Command() = delete;
 	Command(const std::vector<std::string> &options, Handler);
 	virtual ~Command() = default;
-	virtual bool parse() = 0;
+	virtual bool parse(const char*, int&) = 0;
 	virtual int run(void) = 0;
 	void force(void*, int);
 	Handler handler() { return m_handler; }

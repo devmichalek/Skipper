@@ -16,19 +16,19 @@ public:
 
 	explicit Command_Regex(std::vector<std::string> options);
 	Command_Regex() = delete;
-	~Command_Regex() {} // not needed, nothing on heap
-	bool parse();
+	~Command_Regex() {}
+	bool parse(const char* filename, int &line);
 	int run();
 
 	static std::string help()
 	{
 		std::string a = "\nDefinition:\n";
-		std::string b = "\tregex - gives regex information, changes regex behaviour\n";
+		std::string b = "\tregex - gives regular expression information, changes regular expression behaviour\n";
 		std::string c = "\nSyntax:\n";
 		std::string d = "\t[-h --help] - prints help\n";
-		std::string e = "\t[-m --mode] - prints current regex mode\n";
-		std::string f = "\t[-l --list] - prints available regex mode\n";
-		std::string g = "\t[-s --set <new mode>] - sets new regex mode\n";
+		std::string e = "\t[-m --mode] - prints current regular mode\n";
+		std::string f = "\t[-l --list] - prints available regular mode\n";
+		std::string g = "\t[-s --set <new mode>] - sets new regular mode\n";
 		std::string h = "\n";
 		return a + b + c + d + e + f + g + h;
 	}

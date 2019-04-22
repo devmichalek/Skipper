@@ -1,4 +1,5 @@
 #include "cmd_wait.h"
+#include "Console.h"
 #include <chrono>
 #include <thread>
 
@@ -11,7 +12,7 @@ Command_Wait::Command_Wait(std::vector<std::string> options) : Command(options, 
 	m_iType = -1;
 }
 
-bool Command_Wait::parse()
+bool Command_Wait::parse(const char* filename, int &line)
 {
 	if (m_options.empty())
 		m_bEmpty = true;
@@ -30,7 +31,8 @@ bool Command_Wait::parse()
 			{
 				if (!validate(it, "hd"))
 				{
-					output("Error: cannot resolve " + it + " switch\n");
+					std::string res = "Cannot resolve " + it + " switch for the 'wait' command";
+					PrintError(filename, line, res.c_str());
 					return false;
 				}
 
@@ -43,17 +45,22 @@ bool Command_Wait::parse()
 			if (m_sDuration.empty()) { m_sDuration = it; }
 			else
 			{
-				output("Error: too many arguments for 'wait' command\n");
+				PrintError(filename, line, "Too many arguments for the 'wait' command");
 				return false;
 			}
 		}
 	}
 
-	if (!m_bHelp && !m_bDuration && m_sDuration.empty())
-	{
-		output("Error: missing argument for 'wait' command\n");
+	if (m_bEmpty) {
+		PrintError(filename, line, "Too little arguments for the 'wait' command\n");
+		return 1;
+	}
+
+	if (!m_bHelp && !m_bDuration && m_sDuration.empty()) {
+		PrintError(filename, line, "Missing argument for the 'wait' command");
 		return false;
 	}
+
 	else if (!m_sDuration.empty())
 	{
 		std::string sDigit = "";
@@ -65,9 +72,8 @@ bool Command_Wait::parse()
 				break;
 		}
 
-		if (sDigit.empty())
-		{
-			output("Error: missing digit part of argument for 'wait' command\n");
+		if (sDigit.empty()) {
+			PrintError(filename, line, "Missing digit part of argument for the 'wait' command");
 			return false;
 		}
 
@@ -82,42 +88,29 @@ bool Command_Wait::parse()
 				sType = m_sDuration[i] + sType;
 		}
 
-		if (sType.empty())
-		{
-			output("Error: missing duration type in argument for 'wait' command\n");
+		if (sType.empty()) {
+			PrintError(filename, line, "Missing duration type in argument for the 'wait' command");
 			return false;
 		}
 
-		if (sType == "ns")
-			m_iType = 0;
-		else if (sType == "us")
-			m_iType = 1;
-		else if (sType == "ms")
-			m_iType = 2;
-		else if (sType == "s")
-			m_iType = 3;
-		else if (sType == "min")
-			m_iType = 4;
-		else if (sType == "h")
-			m_iType = 5;
+		if (sType == "ns")			m_iType = 0;
+		else if (sType == "us")		m_iType = 1;
+		else if (sType == "ms")		m_iType = 2;
+		else if (sType == "s")		m_iType = 3;
+		else if (sType == "min")	m_iType = 4;
+		else if (sType == "h")		m_iType = 5;
 
-		if (m_iType < 0)
-		{
-			output("Error: duration type argument is wrong for 'wait' command\n");
+		if (m_iType < 0) {
+			PrintError(filename, line, "Duration type argument is wrong for the 'wait' command");
 			return false;
 		}
 	}
 
-	return true; // no error
+	return true;
 }
 
 int Command_Wait::run()
 {
-	if (m_bEmpty)
-	{
-		output("Error: too little arguments for 'wait' command\n");
-		return 1;
-	}
 	if (m_bHelp)
 		output(help());
 	else if (m_bDuration)
@@ -136,13 +129,12 @@ int Command_Wait::run()
 	{
 		switch (m_iType)
 		{
-			case 0: std::this_thread::sleep_for(std::chrono::nanoseconds(m_iDuration)); break;
-			case 1: std::this_thread::sleep_for(std::chrono::microseconds(m_iDuration)); break;
-			case 2: std::this_thread::sleep_for(std::chrono::milliseconds(m_iDuration)); break;
-			case 3: std::this_thread::sleep_for(std::chrono::seconds(m_iDuration)); break;
-			case 4: std::this_thread::sleep_for(std::chrono::minutes(m_iDuration)); break;
-			case 5: std::this_thread::sleep_for(std::chrono::hours(m_iDuration)); break;
-			default: break;
+			case 0: std::this_thread::sleep_for(std::chrono::nanoseconds(m_iDuration));		break;
+			case 1: std::this_thread::sleep_for(std::chrono::microseconds(m_iDuration));	break;
+			case 2: std::this_thread::sleep_for(std::chrono::milliseconds(m_iDuration));	break;
+			case 3: std::this_thread::sleep_for(std::chrono::seconds(m_iDuration));			break;
+			case 4: std::this_thread::sleep_for(std::chrono::minutes(m_iDuration));			break;
+			case 5: std::this_thread::sleep_for(std::chrono::hours(m_iDuration));			break;
 		}
 	}
 

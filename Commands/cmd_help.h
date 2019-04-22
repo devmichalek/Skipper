@@ -8,8 +8,8 @@ class Command_Help final : public Command
 
 public:
 	explicit Command_Help(std::vector<std::string> options);
-	~Command_Help() {} // not needed
-	bool parse();
+	~Command_Help() {}
+	bool parse(const char* filename, int &line);
 	int run();
 
 	static std::string help()
