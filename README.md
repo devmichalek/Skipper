@@ -86,7 +86,7 @@ Skipper is a self acting interpreter mainly for file management. Compare, move, 
 	- [-d --directory \<directory name\>]
 	- [-r --recursive]
 	- [\<regular expression\>]<br>
-- move
+- **move**
 	- [-h --help]
 	- [-d --directory \<directory name\>]
 	- [-r --recursive]
