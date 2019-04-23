@@ -1,13 +1,17 @@
 ## Commands (in alphabetical order)
 - **compare**
-  - [-h --help]
-  - [-d --directory \<directory name\>]
-  - [-f --file \<test file name\> \<pattern file name\>]
-  - [-r --regex \<test regular expression\> \<pattern regular expression\>]<br>
+	  - [-h --help]
+	  - [-d --directory \<directory name\>]
+	  - [-f --file \<test file name\> \<pattern file name\>]
+	  - [-r --regex \<test regular expression\> \<pattern regular expression\>]<br>
 - **copy**
 	- [-h --help]
 	- [-d --directory \<directory name\>]
 	- [-r --recursive]
+	- [-o --overwrite]
+	- [-u --update]
+	- [-c --directoryonly]
+	- [-i --ignore]
 	- [\<regular expression\> \<destination directory name\>]<br>
 - **help**
 	- [-h --help]<br>
@@ -24,6 +28,7 @@
 	- [-h --help]
 	- [-d --directory \<directory name\>]
 	- [-r --recursive]
+	- [-i --ignore]
 	- [\<regular expression\> \<destination directory name\>]<br>
 - **regex**
 	-[-h --help]
@@ -40,6 +45,8 @@
 	- [-h --help]
 	- [-d --directory \<directory name\>]
 	- [-r --recursive]
+	- [-i --ignore]
+	- [-o --omit]
 	- [\<regular expression\> \<new name\>]<br>
 - **wait**
 	- [-h --help]
