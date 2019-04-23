@@ -1,9 +1,9 @@
 ## Commands (in alphabetical order)
 - **compare**
-	  - [-h --help]
-	  - [-d --directory \<directory name\>]
-	  - [-f --file \<test file name\> \<pattern file name\>]
-	  - [-r --regex \<test regular expression\> \<pattern regular expression\>]<br>
+	- [-h --help]
+	- [-d --directory \<directory name\>]
+	- [-f --file \<test file name\> \<pattern file name\>]
+	- [-r --regex \<test regular expression\> \<pattern regular expression\>]<br>
 - **copy**
 	- [-h --help]
 	- [-d --directory \<directory name\>]
