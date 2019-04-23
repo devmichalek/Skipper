@@ -1,0 +1,14 @@
+
+{
+	{
+		#!copy foo\.txt bum
+		!copy -u foo\.txt bum
+		!copy -o foo\.txt bum
+		!copy --ignore foo\.txt bum
+		!copy --help
+	}
+	{
+		!copy -r 00\.txt bum
+		!copy -d foo [0-9]+\.pat bum
+	}
+}
