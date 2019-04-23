@@ -9,6 +9,8 @@ Command_Rename::Command_Rename(std::vector<std::string> options) : Command(optio
 	m_bHelp = false;
 	m_bDirectory = false;
 	m_bRecursive = false;
+	m_bIgnore = false;
+	m_bOmit = false;
 	m_sDirectory = "";
 	m_sRegex = "";
 	m_sNewName = "";
@@ -25,13 +27,15 @@ bool Command_Rename::parse(const char* filename, int &line)
 		{
 			if (it[1] == '-')
 			{
-				if (it == "--help") { m_bHelp = true; break; }
-				else if (it == "--directory") { m_bDirectory = true; }
-				else if (it == "--recursive") { m_bRecursive = true; }
+				if (it == "--help")				{ m_bHelp = true; break; }
+				else if (it == "--directory")	{ m_bDirectory = true; }
+				else if (it == "--recursive")	{ m_bRecursive = true; }
+				else if (it == "--ignore")		{ m_bIgnore = true; }
+				else if (it == "--omit")		{ m_bOmit = true; }
 			}
 			else
 			{
-				if (!validate(it, "hdr"))
+				if (!validate(it, "hdrio"))
 				{
 					std::string res = "Cannot resolve " + it + " switch for the 'rename' command";
 					PrintError(filename, line, res.c_str());
@@ -41,6 +45,8 @@ bool Command_Rename::parse(const char* filename, int &line)
 				if (it.find('h') != std::string::npos) { m_bHelp = true; break; }
 				if (it.find('d') != std::string::npos) { m_bDirectory = true; }
 				if (it.find('r') != std::string::npos) { m_bRecursive = true; }
+				if (it.find('i') != std::string::npos) { m_bIgnore = true; }
+				if (it.find('o') != std::string::npos) { m_bOmit = true; }
 			}
 		}
 		else
@@ -72,6 +78,12 @@ bool Command_Rename::parse(const char* filename, int &line)
 			PrintError(filename, line, "New name is not specified for the 'rename' command");
 			return false;
 		}
+	}
+
+	if (m_sRegex.find("\\.") != std::string::npos &&
+		m_sNewName.find('.') == std::string::npos)
+	{
+		PrintWarning(filename, line, "<regular expression> contains . which indicates on files but <new name> is a directory, performance warning, 'rename' command");
 	}
 
 	return true;
@@ -151,6 +163,9 @@ int Command_Rename::run()
 					if (ibuffer != std::string::npos)
 					{
 						std::string newDirectory = it.substr(0, ibuffer);
+						if (newDirectory.front() != '\\' && newDirectory.front() != '/')
+							newDirectory += '/';
+						int distance = 0;
 						auto jt = std::find(dirs.begin(), dirs.end(), newDirectory);
 						if (jt == dirs.end())
 						{
@@ -158,17 +173,48 @@ int Command_Rename::run()
 							dirs.push_back(newDirectory);
 						}
 						else
-							++counters[std::distance(dirs.begin(), jt)];
-						newName = m_sNewName;
-						ibuffer = newName.rfind('.');
-						if (ibuffer != std::string::npos)
-							newName = newName.substr(0, ibuffer) + std::to_string(counters[std::distance(dirs.begin(), jt)]) + newName.substr(++ibuffer);
-						else
-							newName += std::to_string(counters[std::distance(dirs.begin(), jt)]);
+						{
+							distance = std::distance(dirs.begin(), jt);
+							++counters[distance];
+						}
+
+						// Append.
+						int iVal = counters[distance];
+						std::string app = !iVal && m_bOmit ? "" : std::to_string(iVal);
+
+						std::string buffer = "";
+						// Check if file name is available.
+						while (true)
+						{
+							buffer = m_sNewName;
+							ibuffer = buffer.rfind('.');
+							if (ibuffer != std::string::npos)
+							{
+								buffer = buffer.substr(0, ibuffer) + app + buffer.substr(ibuffer);
+								buffer = newDirectory + buffer;
+								if (!std::filesystem::exists(buffer))
+									break;
+								++counters[distance]; // increment...
+							}
+							else
+							{
+								buffer += app;
+								buffer = newDirectory + buffer;
+								break;
+							}
+						}
+						newName = buffer;
 					}
 
 					// Rename.
-					std::filesystem::rename(it, newName);
+					try {
+						std::filesystem::rename(it, newName);
+					}
+					catch (std::filesystem::filesystem_error &e) {
+						output("Error: filesystem_error caught: " + std::string(e.what()) + ", 'rename' command\n");
+						if (!m_bIgnore)
+							return 1;
+					}
 				}
 			}
 		}

@@ -1,0 +1,10 @@
+
+{
+	!rename -o foo\.txt bum.txt
+	!rename -o bum\.txt foo.txt
+
+	!rename -r [0-9]+\.pat goal.pat
+	!rename -d foo goal[0-9]+\.pat 0.pat
+
+	!rename --help
+}

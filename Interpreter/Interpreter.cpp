@@ -251,7 +251,7 @@ bool Interpreter::connect(std::fstream &file, CommonScope* &upNode, int &line, i
 					m_sCatchedMsg = "catched message is empty";
 				}
 
-				PrintError(m_sFileName.c_str(), line + 1, m_sCatchedMsg.c_str());
+				PrintError(m_sFileName.c_str(), line, m_sCatchedMsg.c_str());
 				return false;
 			}
 
@@ -363,6 +363,10 @@ void Interpreter::analyze(std::string* msg)
 			{	// remove
 				pCmd = new Command_Remove(extract(ref, 8));
 			}
+			else if (ref.substr(2, 6) == "ename ")
+			{	// rename
+				pCmd = new Command_Rename(extract(ref, 8));
+			}
 		}
 		else if (ref[1] == 'w')
 		{
@@ -373,10 +377,6 @@ void Interpreter::analyze(std::string* msg)
 			else if (ref.substr(2, 4) == "ipe ")
 			{	// wipe
 				pCmd = new Command_Wait(extract(ref, 6));
-			}
-			else if (ref.substr(2, 6) == "ename ")
-			{	// rename
-				pCmd = new Command_Rename(extract(ref, 8));
 			}
 		}
 	}
