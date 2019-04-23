@@ -61,14 +61,17 @@ bool Command_Rename::parse(const char* filename, int &line)
 		return false;
 	}
 
-	if (m_sRegex.empty()) {
-		PrintError(filename, line, "Regular expression is not specified for the 'rename' command");
-		return false;
-	}
+	if (!m_bHelp)
+	{
+		if (m_sRegex.empty()) {
+			PrintError(filename, line, "Regular expression is not specified for the 'rename' command");
+			return false;
+		}
 
-	if (m_sNewName.empty()) {
-		PrintError(filename, line, "New name is not specified for the 'rename' command");
-		return false;
+		if (m_sNewName.empty()) {
+			PrintError(filename, line, "New name is not specified for the 'rename' command");
+			return false;
+		}
 	}
 
 	return true;

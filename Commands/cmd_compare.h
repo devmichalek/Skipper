@@ -33,7 +33,7 @@ public:
 
 	static std::string assist()
 	{
-		return "  compare\n\t[-h --help]\n\t[-d --directory <directory name>]\n\t[-f --file <test file name> <pattern file name>]\n\t[-r --regex <first regular expression> <second regular expression>]\n";
+		return "  compare\n\t[-h --help]\n\t[-d --directory <directory name>]\n\t[-f --file <test file name> <pattern file name>]\n\t[-r --regex <test regular expression> <pattern regular expression>]\n";
 	}
 
 private:

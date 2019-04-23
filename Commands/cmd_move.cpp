@@ -61,14 +61,17 @@ bool Command_Move::parse(const char* filename, int &line)
 		return false;
 	}
 
-	if (m_sRegex.empty()) {
-		PrintError(filename, line, "Regular expression is not specified for the 'move' command");
-		return false;
-	}
+	if (!m_bHelp)
+	{
+		if (m_sRegex.empty()) {
+			PrintError(filename, line, "Regular expression is not specified for the 'move' command");
+			return false;
+		}
 
-	if (m_sDestination.empty()) {
-		PrintError(filename, line, "Destination directory is not specified for the 'move' command");
-		return false;
+		if (m_sDestination.empty()) {
+			PrintError(filename, line, "Destination directory is not specified for the 'move' command");
+			return false;
+		}
 	}
 
 	return true;

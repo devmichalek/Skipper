@@ -32,6 +32,6 @@ public:
 
 	static std::string assist()
 	{
-		return "  rename\n\t[-h --help]\n\t[-d --directory <directory name>]\n\t[-r --recursive]\n\t[<regular expression> <regular expression>]\n";
+		return "  rename\n\t[-h --help]\n\t[-d --directory <directory name>]\n\t[-r --recursive]\n\t[<regular expression> <new name>]\n";
 	}
 };
