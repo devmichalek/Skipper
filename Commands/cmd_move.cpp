@@ -9,6 +9,7 @@ Command_Move::Command_Move(std::vector<std::string> options) : Command(options, 
 	m_bHelp = false;
 	m_bDirectory = false;
 	m_bRecursive = false;
+	m_bIgnore = false;
 	m_sDirectory = "";
 	m_sRegex = "";
 	m_sDestination = "";
@@ -28,10 +29,11 @@ bool Command_Move::parse(const char* filename, int &line)
 				if (it == "--help") { m_bHelp = true; break; }
 				else if (it == "--directory") { m_bDirectory = true; }
 				else if (it == "--recursive") { m_bRecursive = true; }
+				else if (it == "--ignore") { m_bIgnore = true; }
 			}
 			else
 			{
-				if (!validate(it, "hdr"))
+				if (!validate(it, "hdri"))
 				{
 					std::string res = "Cannot resolve " + it + " switch for the 'move' command";
 					PrintError(filename, line, res.c_str());
@@ -41,6 +43,7 @@ bool Command_Move::parse(const char* filename, int &line)
 				if (it.find('h') != std::string::npos) { m_bHelp = true; break; }
 				if (it.find('d') != std::string::npos) { m_bDirectory = true; }
 				if (it.find('r') != std::string::npos) { m_bRecursive = true; }
+				if (it.find('i') != std::string::npos) { m_bIgnore = true; }
 			}
 		}
 		else
@@ -69,8 +72,13 @@ bool Command_Move::parse(const char* filename, int &line)
 		}
 
 		if (m_sDestination.empty()) {
-			PrintError(filename, line, "Destination directory is not specified for the 'move' command");
-			return false;
+			if (!m_sRegex.empty() && !m_sDirectory.empty())
+				m_sDestination = std::filesystem::current_path().string();
+			else
+			{
+				PrintError(filename, line, "Destination directory is not specified for the 'move' command");
+				return false;
+			}
 		}
 	}
 
@@ -141,6 +149,7 @@ int Command_Move::run()
 					m_sDestination += '/';
 
 				size_t ibuffer;
+				std::string temp;
 				for (auto &i : cells)
 				{	// Make path relative if possible.
 					std::string &it = result[i];
@@ -148,9 +157,19 @@ int Command_Move::run()
 					if (ibuffer == std::string::npos)
 						ibuffer = result[i].rfind('/');
 					if (ibuffer != std::string::npos)
-						it = it.substr(++ibuffer);
+						temp = it.substr(++ibuffer);
+					else
+						temp = it;
+
 					// Move.
-					std::filesystem::rename(it, m_sDestination + it);
+					try {
+						std::filesystem::rename(it, m_sDestination + temp);
+					}
+					catch (std::filesystem::filesystem_error &e) {
+						output("Error: filesystem_error caught: " + std::string(e.what()) + ", 'move' command\n");
+						if (!m_bIgnore)
+							return 1;
+					}
 				}
 			}
 		}

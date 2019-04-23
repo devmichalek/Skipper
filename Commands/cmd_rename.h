@@ -23,7 +23,7 @@ public:
 		std::string b = "\trename - renames files\n";
 		std::string c = "\nSyntax:\n";
 		std::string d = "\t[-h --help] - prints help\n";
-		std::string e = "\t[-f --directory <directory name>] - searches in requested directory, if not specified searches in current directory\n";
+		std::string e = "\t[-d --directory <directory name>] - searches in requested directory, if not specified searches in current directory\n";
 		std::string f = "\t[-r --recursive] - searches recursively\n";
 		std::string g = "\t[<regular expression> <new name>] - specifies regular expression key and new name for matched objects\n";
 		std::string h = "\n";

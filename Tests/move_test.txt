@@ -1,0 +1,11 @@
+
+{
+	!move -d bum foo\.txt foo
+	!move -d foo foo\.txt bum
+
+	!move -r -d foo [0-9]+\.pat bum
+	!move -r -d bum [0-9]+\.pat foo
+
+	!move foo\.txt bum
+	!move -d bum foo\.txt
+}
