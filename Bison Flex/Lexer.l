@@ -9,8 +9,6 @@
 	Interpreter interpreter(globalScope);
 %}
 
-INTEGERS [0-9]+
-FLOATS [0-9]*\.[0-9]+
 OPTION (\-[a-zA-Z]+)|(\-\-[a-zA-Z]+)
 REGEX [a-zA-Z0-9\@\#\$\%\^\&\*\.\,\(\)\?\/\\\;\:\'\"\{\}\[\]\+\=\~\-\_]+
 WHITESPACE [\n\r \t]
@@ -18,9 +16,6 @@ COMMENT \#.*\n
 REDIR [\>\<]+
 
 %%	/*----- Definition section -----*/
-{INTEGERS}	{yylval.ival = atoi(yytext);	return INT;}
-{FLOATS}	{yylval.fval = (float)atof(yytext);	return FLOAT;}
-
 [+*/()-]	{return yytext[0];}
 [\n]		{return '\n';}
 [ \t]		{/*empty*/}

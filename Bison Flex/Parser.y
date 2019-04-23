@@ -27,15 +27,11 @@
 	std::string* sval;
 }
 
-%token <ival> INT
-%token <fval> FLOAT
 %token <sval> STRING
 %token <csval> OPTSTR
 %token <csval> CMDSTR
 %token <csval> REGSTR
 %token <csval> REDSTR
-%type<ival> int_exp
-%type<fval> float_exp
 %type<sval> cmd_exp
 %type<sval> cmd_exp_r
 %type<sval> cmd_exp_rr
@@ -51,27 +47,9 @@ input: /*empty*/
 	;
 
 line: '\n'
-	| int_exp '\n'		{std::cout << "=" << $1 << std::endl;}
-	| float_exp '\n'	{std::cout << "=" << $1 << std::endl;}
 	| cmd_exp_rr '\n'	{interpreter.analyze($1);}
 	| cmd_exp_r '\n'	{interpreter.analyze($1);}
 	| cmd_exp '\n'		{interpreter.analyze($1);}
-	;
-
-int_exp: INT				{$$ = $1;}
-	| int_exp '+' int_exp	{$$ = $1 + $3;}
-	| int_exp '-' int_exp	{$$ = $1 - $3;}
-	| int_exp '*' int_exp	{$$ = $1 * $3;}
-	| int_exp '/' int_exp	{$$ = $1 / $3;}
-	| '(' int_exp ')'		{$$ = $2;}
-	;
-
-float_exp: FLOAT				{$$ = $1;}
-	| float_exp '+' float_exp	{$$ = $1 + $3;}
-	| float_exp '-' float_exp	{$$ = $1 - $3;}
-	| float_exp '*' float_exp	{$$ = $1 * $3;}
-	| float_exp '/' float_exp	{$$ = $1 / $3;}
-	| '(' float_exp ')'			{$$ = $2;}
 	;
 
 cmd_exp_rr: cmd_exp REDSTR REGSTR {
