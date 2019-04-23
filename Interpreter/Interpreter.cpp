@@ -160,9 +160,14 @@ bool Interpreter::connect(std::fstream &file, CommonScope* &upNode, int &line, i
 		{	// Prepare string.
 			std::string sline("");
 			sline += sign;
+			int fline = 0;
 			while (sign = file.get())
 			{
-				if (sign == '\n' || sign == EOF)
+				if (sign == '\n') {
+					++fline;
+					break;
+				}
+				if(sign == EOF)
 					break;
 				sline += sign;
 			}
@@ -194,11 +199,12 @@ bool Interpreter::connect(std::fstream &file, CommonScope* &upNode, int &line, i
 			// Retrieve.
 			if (m_pCmd)
 			{
-				std::string cmd_ident = std::string("Correctly inserted new command ") + std::string(HandlerIdentTable[(int)m_pCmd->handler()]);
-				PrintSuccess(m_sFileName.c_str(), line, cmd_ident.c_str());
-				if (!m_pCmd->parse(m_sFileName.c_str(), line))
-				{	// Error Parse Command.
+				if (!m_pCmd->parse(m_sFileName.c_str(), line))	// Error Parse Command.
 					PrintError(m_sFileName.c_str(), line, "Caught error while parsing command");
+				else
+				{
+					std::string cmd_ident = std::string("Correctly inserted and parsed new command ") + std::string(HandlerIdentTable[(int)m_pCmd->handler()]);
+					PrintSuccess(m_sFileName.c_str(), line, cmd_ident.c_str());
 				}
 
 				if (m_pCmd->handler() == Handler::CMD_INCLUDE)
@@ -248,6 +254,8 @@ bool Interpreter::connect(std::fstream &file, CommonScope* &upNode, int &line, i
 				PrintError(m_sFileName.c_str(), line + 1, m_sCatchedMsg.c_str());
 				return false;
 			}
+
+			line += fline;
 		}
 	}
 
