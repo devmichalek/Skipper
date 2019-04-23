@@ -73,7 +73,8 @@ bool Command_Wipe::parse(const char* filename, int &line)
 		{
 			if (m_bDirectory && m_sDirectory.empty())	{ m_sDirectory = it; }
 			else if (m_bSet && sset.empty())			{ sset = it; }
-			else if (m_bRange /*&& srange.empty()*/)	{ srange += it; }
+			else if (m_bRange && srange.find(' ') == std::string::npos)
+														srange += srange.empty() ? it : (" " + it);
 			else if (m_bLine && sline.empty())			{ sline = it; }
 			else if (m_bKeyword && m_sKeyword.empty())	{ m_sKeyword = it; }
 			else if (m_sRegex.empty())					{ m_bRegex = true; m_sRegex = it; }
@@ -138,7 +139,7 @@ bool Command_Wipe::parse(const char* filename, int &line)
 
 		size_t pos = srange.find(' ');
 		if (pos == std::string::npos) {
-			PrintError(filename, line, "Argument of --range switch for the 'wipe' command is not correctly specified");
+			PrintError(filename, line, "Argument for --range switch for the 'wipe' command is not correctly specified");
 			return false;
 		}
 
@@ -283,15 +284,15 @@ void Command_Wipe::wipe(std::string &filename)
 				{
 					file.close();
 					file.open(filename.c_str(), std::ofstream::out | std::ofstream::trunc);
-					for (int i = 0; i <= foundKeyword; ++i)
-						file << fileData[i];
+					for (int i = 0; i <= foundKeyword - 1; ++i)
+						file << fileData[i] << std::endl;
 				}
 				else
 				{
 					file.close();
 					file.open(filename.c_str(), std::ofstream::out | std::ofstream::trunc);
-					for (int i = foundKeyword; i < fileData.size(); ++i)
-						file << fileData[i];
+					for (int i = foundKeyword + 1; i < fileData.size(); ++i)
+						file << fileData[i] << std::endl;
 				}
 
 				file.close();
@@ -308,8 +309,10 @@ void Command_Wipe::wipe(std::string &filename)
 				{
 					file.close();
 					file.open(filename.c_str(), std::ofstream::out | std::ofstream::trunc);
-					for (int i = m_iRangeFirst; i <= m_iRangeLast && i < fileData.size(); ++i)
-						file << fileData[i];
+					for (int i = 0; i < (m_iRangeFirst - 1) && i < fileData.size(); ++i)
+						file << fileData[i] << std::endl;
+					for (int i = m_iRangeLast + 1; i < fileData.size(); ++i)
+						file << fileData[i] << std::endl;
 					file.close();
 				}
 			}
@@ -323,16 +326,16 @@ void Command_Wipe::wipe(std::string &filename)
 					{
 						file.close();
 						file.open(filename.c_str(), std::ofstream::out | std::ofstream::trunc);
-						for (int i = 0; i <= m_iLine && i < fileData.size(); ++i)
-							file << fileData[i];
+						for (int i = 0; i < m_iLine && i < fileData.size(); ++i)
+							file << fileData[i] << std::endl;
 					}
 				}
 				else
 				{
 					file.close();
 					file.open(filename.c_str(), std::ofstream::out | std::ofstream::trunc);
-					for (int i = m_iLine; i < fileData.size(); ++i)
-						file << fileData[i];
+					for (int i = m_iLine + 1; i < fileData.size(); ++i)
+						file << fileData[i] << std::endl;
 				}
 
 				file.close();

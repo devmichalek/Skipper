@@ -376,7 +376,7 @@ void Interpreter::analyze(std::string* msg)
 			}
 			else if (ref.substr(2, 4) == "ipe ")
 			{	// wipe
-				pCmd = new Command_Wait(extract(ref, 6));
+				pCmd = new Command_Wipe(extract(ref, 6));
 			}
 		}
 	}

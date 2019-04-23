@@ -1,0 +1,8 @@
+
+{
+	!wipe -h
+	!wipe --mode
+	!wipe --range 2 5 foo\.txt
+	!wipe -k keyword foo\.txt
+	!wipe --line 1 foo\.txt 
+}
