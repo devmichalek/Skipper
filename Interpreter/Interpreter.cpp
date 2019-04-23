@@ -302,6 +302,9 @@ void Interpreter::analyze(std::string* msg)
 		if (pos != std::string::npos)
 		{
 			m_sPathToFile = ref.substr(++pos, ref.size() - pos);
+			while (m_sPathToFile.front() == ' ' || m_sPathToFile.front() == '\t')
+				m_sPathToFile.erase(0, 1);
+			
 			pos = ref.find('>'); // find
 			ref.erase(pos, ref.size() - pos);
 		}

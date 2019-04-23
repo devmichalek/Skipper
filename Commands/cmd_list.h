@@ -20,10 +20,10 @@ public:
 	static std::string help()
 	{
 		std::string a = "\nDefinition:\n";
-		std::string b = "\tlist - prints files and directories for requested directory\n";
+		std::string b = "\tlist - gives list of files and directories\n";
 		std::string c = "\nSyntax:\n";
 		std::string d = "\t[-h --help] - prints help\n";
-		std::string e = "\t[-f --directory <directory name>] - searches in requested directory, if not specified searches in current directory\n";
+		std::string e = "\t[-d --directory <directory name>] - searches in requested directory, if not specified searches in current directory\n";
 		std::string f = "\t[-r --recursive] - searches directories recursively\n";
 		std::string g = "\t[<regular expression>] - specifies regular expression pattern\n";
 		std::string h = "\n";
