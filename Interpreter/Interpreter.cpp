@@ -10,6 +10,7 @@
 #include "cmd_regex.h"
 #include "cmd_remove.h"
 #include "cmd_rename.h"
+#include "cmd_run.h"
 #include "cmd_wait.h"
 #include "cmd_wipe.h"
 
@@ -366,6 +367,10 @@ void Interpreter::analyze(std::string* msg)
 			else if (ref.substr(2, 6) == "ename ")
 			{	// rename
 				pCmd = new Command_Rename(extract(ref, 8));
+			}
+			else if (ref.substr(2, 3) == "un ")
+			{	// run
+				pCmd = new Command_Run(extract(ref, 5));
 			}
 		}
 		else if (ref[1] == 'w')
