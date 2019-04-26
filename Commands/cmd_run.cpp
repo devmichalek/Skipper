@@ -79,21 +79,24 @@ bool Command_Run::parse(const char* filename, int &line)
 		return false;
 	}
 
-	if (!m_bExecute && !m_bRegex) {
-		PrintError(filename, line, "Missing either --execute or --regex switch for the 'run' command");
-		return false;
-	}
-
-	if (m_bExecute) {
-		if (m_sExecute.empty()) {
-			PrintError(filename, line, "Missing <object name> for --execute switch for the 'run' command");
+	if (!m_bHelp)
+	{
+		if (!m_bExecute && !m_bRegex) {
+			PrintError(filename, line, "Missing either --execute or --regex switch for the 'run' command");
 			return false;
 		}
-	}
-	else if (m_bRegex) {
-		if (m_sRegex.empty()) {
-			PrintError(filename, line, "Missing <regular expression> for --regex switch for the 'run' command");
-			return false;
+
+		if (m_bExecute) {
+			if (m_sExecute.empty()) {
+				PrintError(filename, line, "Missing <object name> for --execute switch for the 'run' command");
+				return false;
+			}
+		}
+		else if (m_bRegex) {
+			if (m_sRegex.empty()) {
+				PrintError(filename, line, "Missing <regular expression> for --regex switch for the 'run' command");
+				return false;
+			}
 		}
 	}
 
@@ -169,6 +172,7 @@ int Command_Run::run()
 
 bool Command_Run::execute(std::string &link)
 {
-
-	return true; // success;
+	int res = system(link.c_str());
+	// sth
+	return !res;
 }

@@ -87,30 +87,33 @@ bool Command_Compare::parse(const char* filename, int &line)
 		return false;
 	}
 
-	if (!m_bFile && !m_bRegex) {
-		PrintError(filename, line, "Missing either --file or --regex switch for the 'compare' command");
-		return false;
-	}
-
-	if (m_bFile) {
-		if (m_sTest.empty()) {
-			PrintError(filename, line, "Missing <test file name> for --file switch for the 'compare' command");
-			return false;
-		}
-		else if (m_sPattern.empty()) {
-			PrintError(filename, line, "Missing <pattern file name> for --file switch for the 'compare' command");
-			return false;
-		}
-	}
-	else if (m_bRegex)
+	if (!m_bHelp)
 	{
-		if (m_sTest.empty()) {
-			PrintError(filename, line, "Missing <test regular expression> for --regex switch for the 'compare' command");
+		if (!m_bFile && !m_bRegex) {
+			PrintError(filename, line, "Missing either --file or --regex switch for the 'compare' command");
 			return false;
 		}
-		else if (m_sPattern.empty()) {
-			PrintError(filename, line, "Missing <pattern regular expression> for --regex switch for the 'compare' command");
-			return false;
+
+		if (m_bFile) {
+			if (m_sTest.empty()) {
+				PrintError(filename, line, "Missing <test file name> for --file switch for the 'compare' command");
+				return false;
+			}
+			else if (m_sPattern.empty()) {
+				PrintError(filename, line, "Missing <pattern file name> for --file switch for the 'compare' command");
+				return false;
+			}
+		}
+		else if (m_bRegex)
+		{
+			if (m_sTest.empty()) {
+				PrintError(filename, line, "Missing <test regular expression> for --regex switch for the 'compare' command");
+				return false;
+			}
+			else if (m_sPattern.empty()) {
+				PrintError(filename, line, "Missing <pattern regular expression> for --regex switch for the 'compare' command");
+				return false;
+			}
 		}
 	}
 
