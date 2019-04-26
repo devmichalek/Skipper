@@ -1,0 +1,7 @@
+
+{
+	!run -h
+	!run -d bum --file test.bat
+	!run -d bum -r [a-z]+\.bat
+	!run --directory #interpreter error
+}

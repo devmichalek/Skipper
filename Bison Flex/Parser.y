@@ -36,9 +36,6 @@
 %type<sval> cmd_exp_r
 %type<sval> cmd_exp_rr
 
-%left '-' '+'
-%left '*' '/'
-
 
 %%	/*----- Grammar section (rules) -----*/
 
