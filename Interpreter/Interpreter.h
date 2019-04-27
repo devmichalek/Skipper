@@ -3,9 +3,10 @@
 #include "CommonScope.h"
 #include "ConcurrentScope.h"
 #include "RegularScope.h"
+#include "Arguments.h"
+#include "Redirection.h"
 
 #include <limits>
-#include <string>
 #include <fstream>
 #include <iostream>
 
@@ -13,13 +14,14 @@ class Interpreter final
 {
 	Command* m_pCmd;
 	Interpreter* m_child;
-	std::string m_sPathToFile;
+	Redirection m_redirection;
 public:
 	bool m_bError;
-	std::string m_sCatchedMsg;
+	std::string m_sCaughtMsg;
 	std::string m_sFileName;
 	RegularScope* m_pTree;
-public:
+	Arguments m_svSwitches;
+
 	explicit Interpreter(RegularScope*&);
 	~Interpreter();
 
@@ -33,5 +35,5 @@ private:
 	void parse(const char*);
 public:
 	/*---- Analyzes input from Yacc, sets output ----*/
-	void analyze(std::string*);
+	void analyze();
 };

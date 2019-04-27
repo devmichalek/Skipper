@@ -26,9 +26,9 @@ Interpreter::Interpreter(RegularScope* &parent)
 		parent->addScope((CommonScope*)m_pTree, CommonScope::REGULAR, "", line);
 	}
 
-	m_sPathToFile = "";
+	m_redirection = std::make_pair(std::string(""), RedirectionType::LEFT);
 	m_sFileName = "";
-	m_sCatchedMsg = "";
+	m_sCaughtMsg = "";
 }
 
 Interpreter::~Interpreter()
@@ -52,8 +52,10 @@ bool Interpreter::scan(const char* filename, const char* parentfile, int linef)
 		int openRegular = 0;
 		int openConcurrent = 0;
 		bool status = connect(file, tree, line, openRegular, openConcurrent);
-		if (!status)
+		if (!status) {
 			PrintError(parentfile ? parentfile : filename, linef, "Interpreter scanning process failed");
+			m_bError = true;
+		}
 		return status;
 	}
 	else
@@ -201,7 +203,10 @@ bool Interpreter::connect(std::fstream &file, CommonScope* &upNode, int &line, i
 			if (m_pCmd)
 			{
 				if (!m_pCmd->parse(m_sFileName.c_str(), line))	// Error Parse Command.
+				{
 					PrintError(m_sFileName.c_str(), line, "Caught error while parsing command");
+					return false;
+				}
 				else
 				{
 					std::string cmd_ident = std::string("Correctly inserted and parsed new command ") + std::string(HandlerIdentTable[(int)m_pCmd->handler()]);
@@ -212,7 +217,7 @@ bool Interpreter::connect(std::fstream &file, CommonScope* &upNode, int &line, i
 				{	// Command evaluated during static interpretation!
 					if (m_pCmd->m_global_buffer.empty())
 					{
-						if (!upNode->addTask(m_pCmd, m_sPathToFile, m_sFileName.c_str(), line))
+						if (!upNode->addTask(m_pCmd, m_redirection, m_sFileName.c_str(), line))
 							return false;
 					}
 					else
@@ -239,7 +244,7 @@ bool Interpreter::connect(std::fstream &file, CommonScope* &upNode, int &line, i
 				}
 				else
 				{
-					if (!upNode->addTask(m_pCmd, m_sPathToFile, m_sFileName.c_str(), line))
+					if (!upNode->addTask(m_pCmd, m_redirection, m_sFileName.c_str(), line))
 						return false;
 				}
 
@@ -247,12 +252,12 @@ bool Interpreter::connect(std::fstream &file, CommonScope* &upNode, int &line, i
 			}
 			else if (m_bError)
 			{
-				if (m_sCatchedMsg.empty()) {
+				if (m_sCaughtMsg.empty()) {
 					printf(" (flex)\n");
-					m_sCatchedMsg = "catched message is empty";
+					m_sCaughtMsg = "caught message is empty";
 				}
 
-				PrintError(m_sFileName.c_str(), line, m_sCatchedMsg.c_str());
+				PrintError(m_sFileName.c_str(), line, m_sCaughtMsg.c_str());
 				return false;
 			}
 
@@ -271,7 +276,7 @@ bool Interpreter::connect(std::fstream &file, CommonScope* &upNode, int &line, i
 }
 
 // Yacc calls this function if pattern is found.
-void Interpreter::analyze(std::string* msg)
+void Interpreter::analyze()
 {
 	Interpreter* ptr = this;
 	while (ptr->m_child)
@@ -279,119 +284,149 @@ void Interpreter::analyze(std::string* msg)
 
 	Command* &pCmd = ptr->m_pCmd;
 	bool &bError = ptr->m_bError;
-	std::string &sCatchedStr = ptr->m_sCatchedMsg;
+	std::string &sCaughtStr = ptr->m_sCaughtMsg;
 	pCmd = nullptr;
 
-	if (bError)
+	if (m_svSwitches.subtypes.back() == Subtype::REDIRECTION)
+	{	// Error.
+		sCaughtStr = "Missing <file name> for previously defined redirection \"" + m_svSwitches.switches.back() + "\"";
+		m_bError = true;
+	}
+	else
 	{
-		if (msg)
-			delete msg;
-		bError = false;
-		return;
+		{	// Redirection.
+			auto it = std::find(m_svSwitches.subtypes.begin(), m_svSwitches.subtypes.end(), Subtype::REDIRECTION);
+			if (it != m_svSwitches.subtypes.end())
+			{
+				int distance = std::distance(m_svSwitches.subtypes.begin(), it);
+				std::string redirection = m_svSwitches.switches[distance];
+				std::string filename = m_svSwitches.switches[distance + 1];
+
+				// Erase last two items.
+				m_svSwitches.switches.erase(m_svSwitches.switches.begin() + distance, m_svSwitches.switches.end());
+				m_svSwitches.subtypes.erase(m_svSwitches.subtypes.begin() + distance, m_svSwitches.subtypes.end());
+
+				if (redirection == ">")
+					m_redirection = std::make_pair(filename, RedirectionType::RIGHT);
+				else if (redirection == ">>")
+					m_redirection = std::make_pair(filename, RedirectionType::RIGHT_ADD);
+				else
+				{
+					if (redirection == "<")
+					{	// Overwrite. Clear but keep command name.
+						m_svSwitches.switches.erase(m_svSwitches.switches.begin() + 1, m_svSwitches.switches.end());
+						m_svSwitches.subtypes.erase(m_svSwitches.subtypes.begin() + 1, m_svSwitches.subtypes.end());
+					}
+
+					// Add new switches.
+					// Add better implementation here.
+					std::ifstream redirectionfile;
+					redirectionfile.open(filename);
+					if (!redirectionfile.is_open())
+					{	// Error.
+						sCaughtStr = "Cannot open redirection file \"" + filename + "\"";
+						m_bError = true;
+						m_svSwitches.clear();
+						return;
+					}
+					else
+					{	// Insert switches from file.
+						std::string line;
+						std::getline(redirectionfile, line);
+						std::vector<std::string> addSwitches = extract(line, 0);
+						m_svSwitches.switches.insert(m_svSwitches.switches.end(), addSwitches.begin(), addSwitches.end());
+					}
+				}
+			}
+			else
+				m_redirection = std::make_pair(std::string(""), RedirectionType::LEFT);
+		}
+
+		std::string ref = m_svSwitches.switches.front(); // Comand Name.
+		m_svSwitches.switches.erase(m_svSwitches.switches.begin());
+		m_svSwitches.subtypes.erase(m_svSwitches.subtypes.begin());
+
+		if (ref.front() != ' ')
+			ref += " ";
+		if (ref[0] == '!')
+		{
+			if (ref[1] == 'c')
+			{
+				if (ref.substr(2, 7) == "ompare ")
+				{	// compare
+					pCmd = new Command_Compare(m_svSwitches.switches);
+				}
+				else if (ref.substr(2, 4) == "opy ")
+				{	// copy
+					pCmd = new Command_Copy(m_svSwitches.switches);
+				}
+			}
+			else if (ref[1] == 'h')
+			{
+				if (ref.substr(2, 4) == "elp ")
+				{	// help
+					pCmd = new Command_Help(m_svSwitches.switches);
+				}
+			}
+			else if (ref[1] == 'i')
+			{
+				if (ref.substr(2, 7) == "nclude ")
+				{	// include
+					pCmd = new Command_Include(m_svSwitches.switches);
+				}
+			}
+			else if (ref[1] == 'l')
+			{
+				if (ref.substr(2, 4) == "ist ")
+				{	// list
+					pCmd = new Command_List(m_svSwitches.switches);
+				}
+			}
+			else if (ref[1] == 'm')
+			{
+				if (ref.substr(2, 4) == "ove ")
+				{	// move
+					pCmd = new Command_Move(m_svSwitches.switches);
+				}
+			}
+			else if (ref[1] == 'r')
+			{
+				if (ref.substr(2, 5) == "egex ")
+				{	// regex
+					pCmd = new Command_Regex(m_svSwitches.switches);
+				}
+				else if (ref.substr(2, 6) == "emove ")
+				{	// remove
+					pCmd = new Command_Remove(m_svSwitches.switches);
+				}
+				else if (ref.substr(2, 6) == "ename ")
+				{	// rename
+					pCmd = new Command_Rename(m_svSwitches.switches);
+				}
+				else if (ref.substr(2, 3) == "un ")
+				{	// run
+					pCmd = new Command_Run(m_svSwitches.switches);
+				}
+			}
+			else if (ref[1] == 'w')
+			{
+				if (ref.substr(2, 4) == "ait ")
+				{	// wait
+					pCmd = new Command_Wait(m_svSwitches.switches);
+				}
+				else if (ref.substr(2, 4) == "ipe ")
+				{	// wipe
+					pCmd = new Command_Wipe(m_svSwitches.switches);
+				}
+			}
+		}
+
+		if (!pCmd)
+		{
+			sCaughtStr = "Command " + ref + " not found";
+			bError = true;
+		}
 	}
 
-	if (!msg)
-	{
-		sCatchedStr = "Yacc message is corrupted";
-		bError = true;
-		return;
-	}
-
-	std::string ref = *msg;
-	{	// Extract file name (if exists)
-		size_t pos = ref.rfind('>'); // rfind
-		if (pos != std::string::npos)
-		{
-			m_sPathToFile = ref.substr(++pos, ref.size() - pos);
-			while (m_sPathToFile.front() == ' ' || m_sPathToFile.front() == '\t')
-				m_sPathToFile.erase(0, 1);
-			
-			pos = ref.find('>'); // find
-			ref.erase(pos, ref.size() - pos);
-		}
-	}
-
-	if (ref.front() != ' ')
-		ref += " ";
-	if (ref[0] == '!')
-	{
-		if (ref[1] == 'c')
-		{
-			if (ref.substr(2, 7) == "ompare ")
-			{	// compare
-				pCmd = new Command_Compare(extract(ref, 9));
-			}
-			else if (ref.substr(2, 4) == "opy ")
-			{	// copy
-				pCmd = new Command_Copy(extract(ref, 6));
-			}
-		}
-		else if (ref[1] == 'h')
-		{
-			if (ref.substr(2, 4) == "elp ")
-			{	// help
-				pCmd = new Command_Help(extract(ref, 6));
-			}
-		}
-		else if (ref[1] == 'i')
-		{
-			if (ref.substr(2, 7) == "nclude ")
-			{	// include
-				pCmd = new Command_Include(extract(ref, 9));
-			}
-		}
-		else if (ref[1] == 'l')
-		{
-			if (ref.substr(2, 4) == "ist ")
-			{	// list
-				pCmd = new Command_List(extract(ref, 6));
-			}
-		}
-		else if (ref[1] == 'm')
-		{
-			if (ref.substr(2, 4) == "ove ")
-			{	// move
-				pCmd = new Command_Move(extract(ref, 6));
-			}
-		}
-		else if (ref[1] == 'r')
-		{
-			if (ref.substr(2, 5) == "egex ")
-			{	// regex
-				pCmd = new Command_Regex(extract(ref, 7));
-			}
-			else if (ref.substr(2, 6) == "emove ")
-			{	// remove
-				pCmd = new Command_Remove(extract(ref, 8));
-			}
-			else if (ref.substr(2, 6) == "ename ")
-			{	// rename
-				pCmd = new Command_Rename(extract(ref, 8));
-			}
-			else if (ref.substr(2, 3) == "un ")
-			{	// run
-				pCmd = new Command_Run(extract(ref, 5));
-			}
-		}
-		else if (ref[1] == 'w')
-		{
-			if (ref.substr(2, 4) == "ait ")
-			{	// wait
-				pCmd = new Command_Wait(extract(ref, 6));
-			}
-			else if (ref.substr(2, 4) == "ipe ")
-			{	// wipe
-				pCmd = new Command_Wipe(extract(ref, 6));
-			}
-		}
-	}
-
-	if (!pCmd)
-	{
-		sCatchedStr = "Command " + *msg + " not found";
-		bError = true;
-	}
-
-	if (msg)
-		delete msg;
+	m_svSwitches.clear();
 }
