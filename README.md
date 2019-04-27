@@ -2,8 +2,8 @@
 Skipper is a self acting interpreter mainly for file management. Compare, move, rename (and more) multiple files by regular expression rules. Program has simple syntax which you have to follow to execute commands correctly.
 #### Key features:
 - [x] Built-in basic commands
-- [x] Compatible with external commands (running batch, exe etc.)
-- [x] Input and output redirection
+- [x] Compatible with external commands (.bat, .cmd, .exe and more!)
+- [x] Input and output redirection (e.g. "<< args.txt" or ">> output.txt")
 - [x] Concurrent or singe-threaded execution structure
 - [ ] Control of optimisation level (nodes and its "order", currently without user decision)
 
@@ -15,12 +15,19 @@ Skipper is a self acting interpreter mainly for file management. Compare, move, 
 
 ## Examples
 ```
+  # args.txt
+  # This file contains regular expression pattern (argument).
+  [a-zA-Z0-9]+\.log
+  
   # file.txt
+  # Example of !list command and !remove command.
+  # Example of concurrent and regular scope.
+  
   # Global Scope
   { # Regular Scope 0
     [ # Concurrent Scope 0.0
-      !list -r .*\.php$ >> phps.log # Search recursively for all .php files and redirect output to phps.log
-      !remove -r -v << phps.log # Remove all files listed in phps.log and print the result to the console
+      !list -r .*\.php$ >> phps.log # Search recursively for all .php files and redirect output to the phps.log
+      !remove -r -v << args.txt # Search recursively (with verbose option) and remove all files that matches regular expression pattern defined in args.txt.
     ]
     [ # Concurrent Scope 0.1
       # Do other things
@@ -54,16 +61,16 @@ Skipper is a self acting interpreter mainly for file management. Compare, move, 
   # main.log
   [ # Concurrent Scope A
     # Do work A
-    !run a.bat
+    !run -d "directory" --file a.bat >> out.txt # Execute a.bat batch file from "directory" directory and redirect (append) output to the out.txt file.
     !include foo.log # Paste the code from foo.log
   ]
   [ # Concurrent Scope B
     # Do work B
-    !run b.bat
+    !run -r -R [a-z].bat # Search recursively for files that matches regular expression and execute all of them.
     !include foo.log # Paste the code from foo.log
   ]
 ```
 ## Command's [list](https://github.com/devmichalek/Skipper/blob/master/COMMANDS.md)
-
+To get more information about particular command call ```!<command name> --help```. To redirect command to the file use the following syntax: ```!<command name> <command args> >> <file name>```. **>>** means **append to file**, **>** is **overwrite file**. To insert additional arguments to the command from file use syntax: ```!<command name> <command args> << <file name>```. **<<** means **append arguments from file**, **<** is **overwrite existing arguments on the left with the ones from file**.
 ## Project Structure
-Project was made with Visual Studio 2017. Interpreter is partly managed by Bison & Flex. Code uses the newest C++17 standard (filesystem) as well as C++14 and C++11 (regex and many other features such as multithreading). FTP file managing system is upon the Boost.Asio library.
+Project was made with Visual Studio 2017. Interpreter is partly managed by Bison & Flex (parsing of the command to be more specific). Code uses the newest C++17 standard (filesystem) as well as previous versions (regex and many other features such as multithreading).
