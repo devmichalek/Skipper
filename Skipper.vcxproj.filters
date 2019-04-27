@@ -127,6 +127,12 @@
     <ClInclude Include="Commands\cmd_run.h">
       <Filter>Commands</Filter>
     </ClInclude>
+    <ClInclude Include="Interpreter\Arguments.h">
+      <Filter>Interpreter</Filter>
+    </ClInclude>
+    <ClInclude Include="Interpreter\Redirection.h">
+      <Filter>Interpreter</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="Bison Flex\Lexer.l">
