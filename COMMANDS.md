@@ -2,8 +2,9 @@
 - **compare**
 	- [-h --help]
 	- [-d --directory \<directory name\>]
+	- [-r --recursive]
 	- [-f --file \<test file name\> \<pattern file name\>]
-	- [-r --regex \<test regular expression\> \<pattern regular expression\>]<br>
+	- [-R --regex \<test regular expression\> \<pattern regular expression\>]<br>
 - **copy**
 	- [-h --help]
 	- [-d --directory \<directory name\>]
@@ -48,6 +49,12 @@
 	- [-i --ignore]
 	- [-o --omit]
 	- [\<regular expression\> \<new name\>]<br>
+- **run**
+	- [-h --help]
+	- [-d --directory \<directory name\>]
+	- [-r --recursive]
+	- [-e --execute \<object name\>
+	- [-R --regex \<regular expression\>]<br>
 - **wait**
 	- [-h --help]
 	- [-d --duration]
