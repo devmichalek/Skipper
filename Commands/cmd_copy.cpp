@@ -29,13 +29,13 @@ bool Command_Copy::parse(const char* filename, int &line)
 		{
 			if (it[1] == '-')
 			{
-				if (it == "--help")				{ m_bHelp = true; break; }
-				else if (it == "--directory")	{ m_bDirectory = true; }
-				else if (it == "--recursive")	{ m_bRecursive = true; }
-				else if (it == "--overwrite")	{ m_bOverwrite = true; }
-				else if (it == "--update")		{ m_bUpdate = true; }
+				if (it == "--help")					{ m_bHelp = true; break; }
+				else if (it == "--directory")		{ m_bDirectory = true; }
+				else if (it == "--recursive")		{ m_bRecursive = true; }
+				else if (it == "--overwrite")		{ m_bOverwrite = true; }
+				else if (it == "--update")			{ m_bUpdate = true; }
 				else if (it == "--directoryonly")	{ m_bDirOnly = true; }
-				else if (it == "--ignore") { m_bIgnore = true; }
+				else if (it == "--ignore")			{ m_bIgnore = true; }
 			}
 			else
 			{
