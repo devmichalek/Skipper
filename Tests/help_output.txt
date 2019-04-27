@@ -1,0 +1,81 @@
+
+Syntax:
+  [] - optional
+  <> - expression
+
+Examples:
+  list --recursive --directory "a\b\c" [a-z]+\.txt
+  compare -r [0-9]+\.txt [0-9]+\.pat
+  list -rd "foo" [abc+]\.js
+
+Commands (in alphabetical order):
+  compare
+	[-h --help]
+	[-d --directory <directory name>]
+	[-r --recursive]
+	[-f --file <test file name> <pattern file name>]
+	[-R --regex <test regular expression> <pattern regular expression>]
+  copy
+	[-h --help]
+	[-d --directory <directory name>]
+	[-r --recursive]
+	[-o --overwrite]
+	[-u --update]
+	[-c --directoryonly]
+	[-i --ignore]
+	[<regular expression> <destination directory name>]
+  help
+	[-h --help]
+  include
+	[-h --help]
+	[-d --directory <directory name>]
+	[-f --file <file name>]
+  move
+	[-h --help]
+	[-d --directory <directory name>]
+	[-r --recursive]
+	[-i --ignore]
+	[<regular expression> <destination directory name>]
+  list
+	[-h --help]
+	[-d --directory <directory name>]
+	[-r --recursive]
+	[<regular expression>]
+  regex
+	[-h --help]
+	[-m --mode]
+	[-l --list]
+	[-s --set <new mode>]
+  remove
+	[-h --help]
+	[-d --directory <directory name>]
+	[-v --verbose]
+	[-r --recursive]
+	<regular expression>
+  rename
+	[-h --help]
+	[-d --directory <directory name>]
+	[-r --recursive]
+	[-i --ignore]
+	[-o --omit]
+	[<regular expression> <new name>]
+  run
+	[-h --help]
+	[-d --directory <directory name>]
+	[-r --recursive]
+	[-e --execute <object name>
+	[-R --regex <regular expression>]
+  wait
+	[-h --help]
+	[-d --duration]
+	[<time duration> <type of duration>]
+  wipe
+	[-h --help]
+	[-d --directory <directory name>]
+	[-m --mode]
+	[-s --set <new mode>]
+	[-r --range <first line> <last line>]
+	[-l --line <line>]
+	[-k --keyword <keyword>]
+	[<regular expression>]
+

@@ -2,11 +2,12 @@
 #include "cmd_compare.h"
 #include "cmd_copy.h"
 #include "cmd_include.h"
-#include "cmd_move.h"
 #include "cmd_list.h"
+#include "cmd_move.h"
 #include "cmd_regex.h"
 #include "cmd_remove.h"
 #include "cmd_rename.h"
+#include "cmd_run.h"
 #include "cmd_wait.h"
 #include "cmd_wipe.h"
 #include "Console.h"
@@ -73,6 +74,7 @@ int Command_Help::run()
 		output(Command_Regex::assist());
 		output(Command_Remove::assist());
 		output(Command_Rename::assist());
+		output(Command_Run::assist());
 		output(Command_Wait::assist());
 		output(Command_Wipe::assist());
 		output("\n");
