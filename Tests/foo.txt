@@ -1,0 +1,10 @@
+
+Definition:
+	list - gives list of files and directories
+
+Syntax:
+	[-h --help] - prints help
+	[-d --directory <directory name>] - searches in requested directory, if not specified searches in current directory
+	[-r --recursive] - searches directories recursively
+	[<regular expression>] - specifies regular expression pattern
+

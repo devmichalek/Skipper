@@ -1,0 +1,11 @@
+
+Definition:
+	compare - compares requested file with requested pattern
+
+Syntax:
+	[-h --help] - prints help
+	[-d --directory <directory name>] - searches for files in requested directory, if not specified searches in current directory
+	[-r --recursive] - searches recursively
+	[-f --file <test file name> <pattern file name>] - searches for requested test file and compares it with pattern file
+	[-R --regex <test regular expression> <pattern regular expression>] - searches for requested files with regular expression, compares 'n' matching test files with 'm' matching pattern files
+

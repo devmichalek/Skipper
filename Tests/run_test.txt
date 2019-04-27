@@ -1,7 +1,9 @@
 
 {
-	!run -h
-	!run -d bum --file test.bat
+	!run -h  	# comment
+	!run -d bum --file test.bat > output.txt
 	!run -d bum -r [a-z]+\.bat
-	!run --directory #interpreter error
+	!run -d -a -c < run_args.txt
+	!run << run_args.txt
+	!wait 10s
 }

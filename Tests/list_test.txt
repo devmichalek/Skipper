@@ -5,4 +5,5 @@
 	!list -d foo [0-9]+\.pat
 	!list -r [0-9]+\.txt
 	!list [a-z]+.*
+	!wait 10s
 }
