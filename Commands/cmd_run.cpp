@@ -2,16 +2,18 @@
 #include "cmd_regex.h"
 #include "Console.h"
 #include <filesystem>
+#include <array>
 
 Command_Run::Command_Run(std::vector<std::string> options) : Command(options, Handler::CMD_RUN)
 {
 	m_bEmpty = false;
 	m_bHelp = false;
-	m_bExecute= false;
+	m_bFile = false;
 	m_bDirectory = false;
+	m_bRecursive = false;
 	m_bRegex = false;
 	m_sDirectory = "";
-	m_sExecute = "";
+	m_sFile = "";
 	m_sRegex = "";
 }
 
@@ -28,12 +30,13 @@ bool Command_Run::parse(const char* filename, int &line)
 			{
 				if (it == "--help")				{ m_bHelp = true; break; }
 				else if (it == "--directory")	{ m_bDirectory = true; }
-				else if (it == "--execute")		{ m_bExecute = true; }
+				else if (it == "--recursive")	{ m_bRecursive = true; }
+				else if (it == "--file")		{ m_bFile = true; }
 				else if (it == "--regex")		{ m_bRegex = true; }
 			}
 			else
 			{
-				if (!validate(it, "hder"))
+				if (!validate(it, "hdrfR"))
 				{
 					std::string res = "Cannot resolve " + it + " switch for the 'run' command";
 					PrintError(filename, line, res.c_str());
@@ -42,8 +45,9 @@ bool Command_Run::parse(const char* filename, int &line)
 
 				if (it.find('h') != std::string::npos) { m_bHelp = true; break; }
 				if (it.find('d') != std::string::npos) { m_bDirectory = true; }
-				if (it.find('e') != std::string::npos) { m_bExecute = true; }
-				if (it.find('r') != std::string::npos) { m_bRegex = true; }
+				if (it.find('r') != std::string::npos) { m_bRecursive = true; }
+				if (it.find('f') != std::string::npos) { m_bFile = true; }
+				if (it.find('R') != std::string::npos) { m_bRegex = true; }
 			}
 		}
 		else
@@ -52,17 +56,17 @@ bool Command_Run::parse(const char* filename, int &line)
 				m_sDirectory = it;
 			else
 			{
-				if (m_bExecute && m_bRegex)
+				if (m_bFile && m_bRegex)
 				{
-					PrintError(filename, line, "Switches --execute and --regex cannot be specified together for the 'run' command");
+					PrintError(filename, line, "Switches --file and --regex cannot be specified together for the 'run' command");
 					return false;
 				}
-				else if (m_bExecute && m_sExecute.empty())
-					m_sExecute = it;
+				else if (m_bFile && m_sFile.empty())
+					m_sFile = it;
 				else if (m_bRegex && m_sRegex.empty())
 					m_sRegex = it;
 				else {
-					PrintError(filename, line, "Either switch --execute or --regex is not specified for the 'run' command");
+					PrintError(filename, line, "Either switch --file or --regex is not specified for the 'run' command");
 					return false;
 				}
 			}
@@ -81,14 +85,14 @@ bool Command_Run::parse(const char* filename, int &line)
 
 	if (!m_bHelp)
 	{
-		if (!m_bExecute && !m_bRegex) {
-			PrintError(filename, line, "Missing either --execute or --regex switch for the 'run' command");
+		if (!m_bFile && !m_bRegex) {
+			PrintError(filename, line, "Missing either --file or --regex switch for the 'run' command");
 			return false;
 		}
 
-		if (m_bExecute) {
-			if (m_sExecute.empty()) {
-				PrintError(filename, line, "Missing <object name> for --execute switch for the 'run' command");
+		if (m_bFile) {
+			if (m_sFile.empty()) {
+				PrintError(filename, line, "Missing <object name> for --file switch for the 'run' command");
 				return false;
 			}
 		}
@@ -109,22 +113,31 @@ int Command_Run::run()
 		output(help());
 	else
 	{
-		if (m_bExecute)
+		if (m_bFile)
 		{
 			if (m_bDirectory)
 			{
 				if (m_sDirectory.back() != '/' && m_sDirectory.back() != '\\')
 					m_sDirectory += '/';
-				m_sExecute = m_sDirectory + m_sExecute;
+				m_sFile = m_sDirectory + m_sFile;
 			}
 
-			execute(m_sExecute);
+			execute(m_sFile);
 		}
 		else
 		{
+			if (!m_bDirectory) // If directory is not set, start from current.
+				m_sDirectory = std::filesystem::current_path().string();
+
 			std::vector<std::string> result;
-			for (const auto & entry : std::filesystem::directory_iterator(m_sDirectory))
-				result.push_back(entry.path().string());
+			if (m_bRecursive) {
+				for (const auto & entry : std::filesystem::recursive_directory_iterator(m_sDirectory))
+					result.push_back(entry.path().string());
+			}
+			else {
+				for (const auto & entry : std::filesystem::directory_iterator(m_sDirectory))
+					result.push_back(entry.path().string());
+			}
 
 			if (result.empty())
 				output("Warning: could not find any files by regular expression for the 'run' command\n");
@@ -172,7 +185,23 @@ int Command_Run::run()
 
 bool Command_Run::execute(std::string &link)
 {
-	int res = system(link.c_str());
-	// sth
+	std::replace(link.begin(), link.end(), '/', '\\');
+
+	int res = 0;
+	std::array<char, 128> buffer;
+	std::string result;
+	std::unique_ptr<FILE, decltype(&_pclose)> pipe(_popen(link.c_str(), "r"), _pclose);
+	if (!pipe) {
+		//throw std::runtime_error("popen() failed");
+		res = 1;
+	}
+	else
+	{
+		while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr)
+			result += buffer.data();
+
+		output(result);
+	}
+
 	return !res;
 }
