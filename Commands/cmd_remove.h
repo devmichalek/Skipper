@@ -34,6 +34,6 @@ public:
 
 	static std::string assist()
 	{
-		return "  remove\n\t[-h --help]\n\t[-d --directory <directory name>]\n\t[-v --verbose]\n\t[-r --recursive]\n\t<regular expression>\n";
+		return "  remove\n\t[-h --help]\n\t[-d --directory <directory name>]\n\t[-v --verbose]\n\t[-r --recursive]\n\t[<regular expression>]\n";
 	}
 };

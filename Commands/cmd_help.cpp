@@ -69,8 +69,8 @@ int Command_Help::run()
 		output(Command_Copy::assist());
 		output(Command_Help::assist());
 		output(Command_Include::assist());
-		output(Command_Move::assist());
 		output(Command_List::assist());
+		output(Command_Move::assist());
 		output(Command_Regex::assist());
 		output(Command_Remove::assist());
 		output(Command_Rename::assist());
