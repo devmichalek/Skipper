@@ -21,24 +21,36 @@ void CommonScope::print(std::string &&msg, int &&)
 void CommonScope::redirect(std::string &&msg, int &&index)
 {
 	std::lock_guard<std::mutex> locker(*m_romutexes[index]);
-	if (m_rofiles[index].first->is_open())
-		*m_rofiles[index].first << msg;
+	std::fstream* fptr = std::get<std::fstream*>(m_rofiles[index]);
+	if (fptr->is_open())
+		*fptr << msg;
 }
 
-bool CommonScope::push(Command* &cmd, std::string &pathToFile, const char* filename, int &line)
+bool CommonScope::push(Command* &cmd, Redirection &redirection, const char* filename, int &line)
 {
+	std::string pathToFile = redirection.first;
+
 	int output_index = -1;
 	if (!pathToFile.empty())
-	{	// open next file...
+	{	// Open the next file.
 		auto it = m_rofiles.begin();
 		for (; it != m_rofiles.end(); ++it)
-			if (it->second == pathToFile)
+			if (std::get<std::string>(*it) == pathToFile)
 				break;
 
 		if (it == m_rofiles.end())
 		{
 			std::fstream* file = new std::fstream;
-			file->open(pathToFile, std::ios::app);
+			std::ios::openmode openmode;
+			switch (redirection.second)
+			{
+				case RedirectionType::RIGHT:
+					openmode = std::ios::out | std::ios::trunc;
+					break;
+				default:
+					openmode = std::ios::app;
+			}
+			file->open(pathToFile, openmode);
 
 			if (!file->is_open())
 			{	// File error.
@@ -46,16 +58,28 @@ bool CommonScope::push(Command* &cmd, std::string &pathToFile, const char* filen
 				PrintError(filename, line, msg.c_str());
 				delete cmd;
 				cmd = nullptr;
-				pathToFile.clear();
+				redirection = std::make_pair(std::string(""), RedirectionType::LEFT);
 				return false;
 			}
 
 			output_index = (int)m_rofiles.size();
-			m_rofiles.push_back(std::make_pair(file, pathToFile));
+			m_rofiles.push_back(std::make_tuple(file, pathToFile, redirection.second));
 			m_romutexes.push_front(std::make_unique<std::mutex>());
 		}
 		else
+		{
+			RedirectionType rt = std::get<RedirectionType>(*it);
+			if (rt != redirection.second)
+			{	// Redirection type error.
+				std::string msg = "Cannot change redirection type for " + pathToFile;
+				PrintError(filename, line, msg.c_str());
+				delete cmd;
+				cmd = nullptr;
+				redirection = std::make_pair(std::string(""), RedirectionType::LEFT);
+				return false;
+			}
 			output_index = (int)std::distance(m_rofiles.begin(), it);
+		}	
 	}
 
 	// Add next task.

@@ -13,7 +13,7 @@ public:
 	explicit ConcurrentScope(RegularScope*&);
 	~ConcurrentScope();
 
-	bool addTask(Command*&, std::string&, const char*, int&);
+	bool addTask(Command*&, Redirection&, const char*, int&);
 	bool addScope(CommonScope*, M_TYPE, const char*, int&);
 	bool execute();
 	void destroy();

@@ -23,12 +23,14 @@ int main(int argc, char** argv)
 	
 	std::vector<CommonScope::m_rofile_type> &rofiles = CommonScope::rofiles();
 	if (!rofiles.empty())
-	{	// Only global scope can access this code
+	{	// Only global scope can access this code.
+		std::fstream* fptr = nullptr;
 		for (auto it = rofiles.begin(); it != rofiles.end(); ++it)
 		{
-			if ((*it).first->is_open())
-				(*it).first->close();
-			delete (*it).first;
+			fptr = std::get<std::fstream*>(*it);
+			if (fptr->is_open())
+				fptr->close();
+			delete fptr;
 		}
 		rofiles.clear();
 	}

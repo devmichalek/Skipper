@@ -14,18 +14,18 @@ RegularScope::~RegularScope()
 	// ...
 }
 
-bool RegularScope::addTask(Command* &cmd, std::string &pathToFile, const char* filename, int &line)
+bool RegularScope::addTask(Command* &cmd, Redirection &redirection, const char* filename, int &line)
 {
 	if (m_nodes && m_nodes->m_type == CONCURRENT)
 	{
 		PrintError(filename, line, "Tasks are not possible inside regular scope with concurrent scopes");
 		delete cmd;
 		cmd = nullptr;
-		pathToFile.clear();
+		redirection = std::make_pair(std::string(""), RedirectionType::LEFT);
 		return false;
 	}
 	
-	return push(cmd, pathToFile, filename, line);
+	return push(cmd, redirection, filename, line);
 }
 
 bool RegularScope::addScope(CommonScope* newScope, M_TYPE newType, const char* filename, int &line)
@@ -163,10 +163,10 @@ bool RegularScope::capture(RegularScope* &branch, const char* filename, int &lin
 			return false;
 		}
 
-		std::string nofile = "";
+		Redirection noredirection = std::make_pair(std::string(""), RedirectionType::LEFT);
 		while (!branch->m_tasks.empty())
 		{
-			push(branch->m_tasks.front(), nofile, filename, line); // this is now new owner of branch's tasks
+			push(branch->m_tasks.front(), noredirection, filename, line); // this is now new owner of branch's tasks
 			branch->m_tasks.pop(); // Popping without deleting pointer.
 		}
 	}
@@ -236,10 +236,10 @@ void RegularScope::consolidate()
 			if (!ptr->m_tasks.empty())
 			{
 				int line = -1;
-				std::string nofile = "";
+				Redirection noredirection = std::make_pair(std::string(""), RedirectionType::LEFT);
 				while (!ptr->m_tasks.empty())
 				{
-					push(ptr->m_tasks.front(), nofile, nullptr, line);
+					push(ptr->m_tasks.front(), noredirection, nullptr, line);
 					ptr->m_tasks.pop();
 				}
 			}
@@ -255,10 +255,10 @@ void RegularScope::consolidate()
 				if (!ptr->m_tasks.empty())
 				{
 					int line = -1;
-					std::string nofile = "";
+					Redirection noredirection = std::make_pair(std::string(""), RedirectionType::LEFT);
 					while (!ptr->m_tasks.empty())
 					{
-						push(ptr->m_tasks.front(), nofile, nullptr, line);
+						push(ptr->m_tasks.front(), noredirection, nullptr, line);
 						ptr->m_tasks.pop();
 					}
 				}

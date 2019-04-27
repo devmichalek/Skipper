@@ -1,5 +1,6 @@
 #pragma once
 #include "cmd.h"
+#include "Redirection.h"
 #include <queue>
 #include <deque>
 #include <mutex>
@@ -9,7 +10,7 @@
 class CommonScope
 {
 public:
-	using m_rofile_type = std::pair<std::fstream*, std::string>;
+	using m_rofile_type = std::tuple<std::fstream*, std::string, RedirectionType>;
 protected:
 	// Task manipulation.
 	std::queue<Command*> m_tasks;
@@ -33,7 +34,7 @@ public:
 	explicit CommonScope(const M_TYPE &newType);
 	~CommonScope() {}
 
-	virtual bool addTask(Command*&, std::string&, const char*, int&) = 0;
+	virtual bool addTask(Command*&, Redirection&, const char*, int&) = 0;
 	virtual bool addScope(CommonScope*, M_TYPE, const char*, int&) = 0;
 	virtual bool execute() = 0;
 	virtual void destroy() = 0;
@@ -47,6 +48,6 @@ public:
 protected:
 	static void print(std::string&&, int&&);
 	static void redirect(std::string&&, int&&);
-	bool push(Command*&, std::string&, const char*, int&);
+	bool push(Command*&, Redirection&, const char*, int&);
 	void pop();
 };

@@ -15,9 +15,9 @@ ConcurrentScope::~ConcurrentScope()
 	// ...
 }
 
-bool ConcurrentScope::addTask(Command* &cmd, std::string &pathToFile, const char* filename, int &line)
+bool ConcurrentScope::addTask(Command* &cmd, Redirection &redirection, const char* filename, int &line)
 {
-	return push(cmd, pathToFile, filename, line);
+	return push(cmd, redirection, filename, line);
 }
 
 
@@ -102,10 +102,10 @@ bool ConcurrentScope::capture(RegularScope* &branch, const char* filename, int &
 {
 	if (!branch->m_tasks.empty())
 	{	// Branch contains tasks.
-		std::string nofile = "";
+		Redirection noredirection = std::make_pair(std::string(""), RedirectionType::LEFT);
 		while (!branch->m_tasks.empty())
 		{
-			push(branch->m_tasks.front(), nofile, filename, line); // this scope is now owner of new tasks
+			push(branch->m_tasks.front(), noredirection, filename, line); // this scope is now owner of new tasks
 			branch->m_tasks.pop(); // popping without deleting pointer
 		}
 	}
