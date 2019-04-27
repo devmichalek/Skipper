@@ -10,6 +10,7 @@ Command_Compare::Command_Compare(std::vector<std::string> options) : Command(opt
 	m_bHelp = false;
 	m_bFile= false;
 	m_bDirectory = false;
+	m_bRecursive = false;
 	m_bRegex = false;
 	m_sDirectory = "";
 	m_sTest = "";
@@ -27,14 +28,15 @@ bool Command_Compare::parse(const char* filename, int &line)
 		{
 			if (it[1] == '-')
 			{
-				if (it == "--help") { m_bHelp = true; break; }
-				else if (it == "--directory") { m_bDirectory = true; }
-				else if (it == "--file") { m_bFile = true; }
-				else if (it == "--regex") { m_bRegex = true; }
+				if (it == "--help")				{ m_bHelp = true; break; }
+				else if (it == "--directory")	{ m_bDirectory = true; }
+				else if (it == "--recursive")	{ m_bRecursive = true; }
+				else if (it == "--file")		{ m_bFile = true; }
+				else if (it == "--regex")		{ m_bRegex = true; }
 			}
 			else
 			{
-				if (!validate(it, "hdfr"))
+				if (!validate(it, "hdrfR"))
 				{
 					std::string res = "Cannot resolve " + it + " switch for the 'compare' command";
 					PrintError(filename, line, res.c_str());
@@ -43,8 +45,9 @@ bool Command_Compare::parse(const char* filename, int &line)
 
 				if (it.find('h') != std::string::npos) { m_bHelp = true; break; }
 				if (it.find('d') != std::string::npos) { m_bDirectory = true; }
+				if (it.find('r') != std::string::npos) { m_bRecursive = true; }
 				if (it.find('f') != std::string::npos) { m_bFile = true; }
-				if (it.find('r') != std::string::npos) { m_bRegex = true; }
+				if (it.find('R') != std::string::npos) { m_bRegex = true; }
 			}
 		}
 		else
@@ -140,9 +143,18 @@ int Command_Compare::run()
 		}
 		else
 		{
+			if (!m_bDirectory) // If directory is not set, start from current.
+				m_sDirectory = std::filesystem::current_path().string();
+
 			std::vector<std::string> result;
-			for (const auto & entry : std::filesystem::directory_iterator(m_sDirectory))
-				result.push_back(entry.path().string());
+			if (m_bRecursive) {
+				for (const auto & entry : std::filesystem::recursive_directory_iterator(m_sDirectory))
+					result.push_back(entry.path().string());
+			}
+			else {
+				for (const auto & entry : std::filesystem::directory_iterator(m_sDirectory))
+					result.push_back(entry.path().string());
+			}
 
 			if (result.empty())
 				output("Warning: could not find any files by regular expression for the 'compare' command\n");
