@@ -9,22 +9,88 @@
 	Interpreter interpreter(globalScope);
 %}
 
-OPTION (\-[a-zA-Z]+)|(\-\-[a-zA-Z]+)
-REGEX [a-zA-Z0-9\@\#\$\%\^\&\*\.\,\(\)\?\/\\\;\:\'\"\{\}\[\]\+\=\~\-\_]+
-WHITESPACE [\n\r \t]
+QWORD [a-zA-Z0-9]+
+WORD {QWORD}|(\"[a-zA-Z0-9 ]+\")
+COMMAND \!{QWORD}
+OPTION (\-{QWORD})|(\-\-{QWORD})
+REGEX [a-zA-Z0-9\@\#\$\%\^\&\*\.\,\(\)\?\/\\\;\:\{\}\[\]\+\=\~\-\_]+
+REDIR (\<)|(\<\<)|(\>)|(\>\>)
+FILE ({QWORD}\.{QWORD})|(\"{QWORD}\.{QWORD}\")
+WHITESPACE [\r\t ]+
 COMMENT \#.*\n
-REDIR [\>\<]+
 
 %%	/*----- Definition section -----*/
-[+*/()-]	{return yytext[0];}
-[\n]		{return '\n';}
-[ \t]		{/*empty*/}
-{COMMENT}	{/*empty*/}
+[\n]		{
+				return '\n';
+			}
 
-{OPTION}	{yylval.csval = _strdup(yytext); return OPTSTR;}
-\![a-zA-Z]+	{yylval.csval = _strdup(yytext); return CMDSTR;}
-{REGEX}		{yylval.csval = _strdup(yytext); return REGSTR;}
-{REDIR}		{yylval.csval = _strdup(yytext); return REDSTR;}
+{WHITESPACE}	{
+					/*empty*/
+				}
+
+{COMMENT}	{
+				/*empty*/
+			}
+
+{COMMAND}	{
+				if (!interpreter.m_bError) {
+					std::string error_msg = "";
+					if (!interpreter.m_svSwitches.add<Subtype::COMMAND>(std::string(yytext), error_msg)) {
+						interpreter.m_bError = true;
+						interpreter.m_sCaughtMsg = error_msg;
+					}
+				}
+			}
+
+{OPTION}	{
+				if (!interpreter.m_bError) {
+					std::string error_msg = "";
+					if (!interpreter.m_svSwitches.add<Subtype::OPTION>(std::string(yytext), error_msg)) {
+						interpreter.m_bError = true;
+						interpreter.m_sCaughtMsg = error_msg;
+					}
+				}
+			}
+
+{REGEX}		{
+				if (!interpreter.m_bError) {
+					std::string error_msg = "";
+					if (!interpreter.m_svSwitches.add<Subtype::REGEX>(std::string(yytext), error_msg)) {
+						interpreter.m_bError = true;
+						interpreter.m_sCaughtMsg = error_msg;
+					}
+				}
+			}
+
+{REDIR}		{
+				if (!interpreter.m_bError) {
+					std::string error_msg = "";
+					if (!interpreter.m_svSwitches.add<Subtype::REDIRECTION>(std::string(yytext), error_msg)) {
+						interpreter.m_bError = true;
+						interpreter.m_sCaughtMsg = error_msg;
+					}
+				}
+			}
+
+{WORD}		{
+				if (!interpreter.m_bError) {
+					std::string error_msg = "";
+					if (!interpreter.m_svSwitches.add<Subtype::WORD>(std::string(yytext), error_msg)) {
+						interpreter.m_bError = true;
+						interpreter.m_sCaughtMsg = error_msg;
+					}
+				}
+			}
+
+{FILE}		{
+				if (!interpreter.m_bError) {
+					std::string error_msg = "";
+					if (!interpreter.m_svSwitches.add<Subtype::FILE>(std::string(yytext), error_msg)) {
+						interpreter.m_bError = true;
+						interpreter.m_sCaughtMsg = error_msg;
+					}
+				}
+			}
 
 %%	/*----- User code section -----*/
 

@@ -66,7 +66,6 @@
 #line 4 "Bison Flex\\Parser.y"
 
 	#pragma warning (disable: 4005)
-	#include <string>
 	#include "Interpreter.h"
 	extern Interpreter interpreter;
 
@@ -82,7 +81,7 @@
 	}
 
 /* Line 371 of yacc.c  */
-#line 86 ".\\Generated\\Parser.cpp"
+#line 85 ".\\Generated\\Parser.cpp"
 
 # ifndef YY_NULL
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -112,26 +111,13 @@
 extern int yydebug;
 #endif
 
-/* Tokens.  */
-#ifndef YYTOKENTYPE
-# define YYTOKENTYPE
-   /* Put the tokens into the symbol table, so that GDB and other debuggers
-      know about them.  */
-   enum yytokentype {
-     STRING = 258,
-     OPTSTR = 259,
-     CMDSTR = 260,
-     REGSTR = 261,
-     REDSTR = 262
-   };
-#endif
 
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
 {
 /* Line 387 of yacc.c  */
-#line 23 "Bison Flex\\Parser.y"
+#line 22 "Bison Flex\\Parser.y"
 
 	int ival;
 	float fval;
@@ -140,7 +126,7 @@ typedef union YYSTYPE
 
 
 /* Line 387 of yacc.c  */
-#line 144 ".\\Generated\\Parser.cpp"
+#line 130 ".\\Generated\\Parser.cpp"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -168,7 +154,7 @@ int yyparse ();
 /* Copy the second part of user declarations.  */
 
 /* Line 390 of yacc.c  */
-#line 172 ".\\Generated\\Parser.cpp"
+#line 158 ".\\Generated\\Parser.cpp"
 
 #ifdef short
 # undef short
@@ -388,10 +374,10 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  2
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   8
+#define YYLAST   3
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  9
+#define YYNTOKENS  4
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  3
 /* YYNRULES -- Number of rules.  */
@@ -401,7 +387,7 @@ union yyalloc
 
 /* YYTRANSLATE(YYLEX) -- Bison symbol number corresponding to YYLEX.  */
 #define YYUNDEFTOK  2
-#define YYMAXUTOK   262
+#define YYMAXUTOK   257
 
 #define YYTRANSLATE(YYX)						\
   ((unsigned int) (YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
@@ -410,7 +396,7 @@ union yyalloc
 static const yytype_uint8 yytranslate[] =
 {
        0,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       8,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       3,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -434,8 +420,7 @@ static const yytype_uint8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
-       5,     6,     7
+       2,     2,     2,     2,     2,     2,     1,     2
 };
 
 #if YYDEBUG
@@ -449,13 +434,13 @@ static const yytype_uint8 yyprhs[] =
 /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
 static const yytype_int8 yyrhs[] =
 {
-      10,     0,    -1,    -1,    10,    11,    -1,     8,    -1
+       5,     0,    -1,    -1,     5,     6,    -1,     3,    -1
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    43,    43,    44,    47
+       0,    32,    32,    33,    36
 };
 #endif
 
@@ -464,8 +449,7 @@ static const yytype_uint8 yyrline[] =
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
 {
-  "$end", "error", "$undefined", "STRING", "OPTSTR", "CMDSTR", "REGSTR",
-  "REDSTR", "'\\n'", "$accept", "input", "line", YY_NULL
+  "$end", "error", "$undefined", "'\\n'", "$accept", "input", "line", YY_NULL
 };
 #endif
 
@@ -474,14 +458,14 @@ static const char *const yytname[] =
    token YYLEX-NUM.  */
 static const yytype_uint16 yytoknum[] =
 {
-       0,   256,   257,   258,   259,   260,   261,   262,    10
+       0,   256,   257,    10
 };
 # endif
 
 /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] =
 {
-       0,     9,    10,    10,    11
+       0,     4,     5,     5,     6
 };
 
 /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
@@ -524,7 +508,7 @@ static const yytype_int8 yypgoto[] =
 #define YYTABLE_NINF -1
 static const yytype_uint8 yytable[] =
 {
-       2,     0,     0,     0,     0,     0,     0,     0,     3
+       2,     0,     0,     3
 };
 
 #define yypact_value_is_default(Yystate) \
@@ -535,14 +519,14 @@ static const yytype_uint8 yytable[] =
 
 static const yytype_int8 yycheck[] =
 {
-       0,    -1,    -1,    -1,    -1,    -1,    -1,    -1,     8
+       0,    -1,    -1,     3
 };
 
 /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
    symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,    10,     0,     8,    11
+       0,     5,     0,     3,     6
 };
 
 #define yyerrok		(yyerrstatus = 0)
@@ -1342,9 +1326,17 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-      
+        case 4:
 /* Line 1792 of yacc.c  */
-#line 1348 ".\\Generated\\Parser.cpp"
+#line 36 "Bison Flex\\Parser.y"
+    {
+				interpreter.analyze();
+			}
+    break;
+
+
+/* Line 1792 of yacc.c  */
+#line 1340 ".\\Generated\\Parser.cpp"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1576,5 +1568,5 @@ yyreturn:
 
 
 /* Line 2055 of yacc.c  */
-#line 83 "Bison Flex\\Parser.y"
+#line 41 "Bison Flex\\Parser.y"
 	/*----- User code section -----*/

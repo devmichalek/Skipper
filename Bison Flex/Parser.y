@@ -3,7 +3,6 @@
 %defines "Generated/Parser.h"
 %{
 	#pragma warning (disable: 4005)
-	#include <string>
 	#include "Interpreter.h"
 	extern Interpreter interpreter;
 
@@ -27,15 +26,6 @@
 	std::string* sval;
 }
 
-%token <sval> STRING
-%token <csval> OPTSTR
-%token <csval> CMDSTR
-%token <csval> REGSTR
-%token <csval> REDSTR
-%type<sval> cmd_exp
-%type<sval> cmd_exp_r
-%type<sval> cmd_exp_rr
-
 
 %%	/*----- Grammar section (rules) -----*/
 
@@ -43,93 +33,9 @@ input: /*empty*/
 	| input line
 	;
 
-line: '\n'
-	| cmd_exp_rr '\n'	{interpreter.analyze($1);}
-	| cmd_exp_r '\n'	{interpreter.analyze($1);}
-	| cmd_exp '\n'		{interpreter.analyze($1);}
-	;
-
-cmd_exp_rr: cmd_exp REDSTR REGSTR {
-								std::string* str = $1;
-								(*str) += " " + std::string($2);
-								(*str) += " " + std::string($3);
-								$$ = str;
-							}
-	| cmd_exp_r REDSTR REGSTR {
-								std::string* str = $1;
-								(*str) += " " + std::string($2);
-								(*str) += " " + std::string($3);
-								$$ = str;
-							}
-	;
-
-cmd_exp_r: cmd_exp REGSTR	{
-								std::string* str = $1;
-								(*str) += " " + std::string($2);
-								$$ = str;
-							}
-	| cmd_exp REGSTR REGSTR {
-								std::string* str = $1;
-								(*str) += " " + std::string($2);
-								(*str) += " " + std::string($3);
-								$$ = str;
-							}
-	| cmd_exp REGSTR REGSTR REGSTR {
-								std::string* str = $1;
-								(*str) += " " + std::string($2);
-								(*str) += " " + std::string($3);
-								(*str) += " " + std::string($4);
-								$$ = str;
-							}
-	| cmd_exp REGSTR REGSTR REGSTR REGSTR{
-								std::string* str = $1;
-								(*str) += " " + std::string($2);
-								(*str) += " " + std::string($3);
-								(*str) += " " + std::string($4);
-								(*str) += " " + std::string($5);
-								$$ = str;
-							}
-	;
-
-cmd_exp: CMDSTR	{
-					std::string* str = new std::string($1);
-					$$ = str;
-				}
-	| CMDSTR OPTSTR	{
-						std::string* str = new std::string($1);
-						(*str) += " " + std::string($2);
-						$$ = str;
-					}
-	| CMDSTR OPTSTR	OPTSTR {
-								std::string* str = new std::string($1);
-								(*str) += " " + std::string($2);
-								(*str) += " " + std::string($3);
-								$$ = str;
-							}
-	| CMDSTR OPTSTR	OPTSTR OPTSTR	{
-										std::string* str = new std::string($1);
-										(*str) += " " + std::string($2);
-										(*str) += " " + std::string($3);
-										(*str) += " " + std::string($4);
-										$$ = str;
-									}
-	| CMDSTR OPTSTR	OPTSTR OPTSTR OPTSTR	{
-												std::string* str = new std::string($1);
-												(*str) += " " + std::string($2);
-												(*str) += " " + std::string($3);
-												(*str) += " " + std::string($4);
-												(*str) += " " + std::string($5);
-												$$ = str;
-											}
-	| CMDSTR OPTSTR	OPTSTR OPTSTR OPTSTR OPTSTR {
-													std::string* str = new std::string($1);
-													(*str) += " " + std::string($2);
-													(*str) += " " + std::string($3);
-													(*str) += " " + std::string($4);
-													(*str) += " " + std::string($5);
-													(*str) += " " + std::string($6);
-													$$ = str;
-												}
+line: '\n'	{
+				interpreter.analyze();
+			}
 	;
 
 %%	/*----- User code section -----*/

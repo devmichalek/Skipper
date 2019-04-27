@@ -40,26 +40,13 @@
 extern int yydebug;
 #endif
 
-/* Tokens.  */
-#ifndef YYTOKENTYPE
-# define YYTOKENTYPE
-   /* Put the tokens into the symbol table, so that GDB and other debuggers
-      know about them.  */
-   enum yytokentype {
-     STRING = 258,
-     OPTSTR = 259,
-     CMDSTR = 260,
-     REGSTR = 261,
-     REDSTR = 262
-   };
-#endif
 
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
 {
 /* Line 2058 of yacc.c  */
-#line 23 "Bison Flex\\Parser.y"
+#line 22 "Bison Flex\\Parser.y"
 
 	int ival;
 	float fval;
@@ -68,7 +55,7 @@ typedef union YYSTYPE
 
 
 /* Line 2058 of yacc.c  */
-#line 72 "Generated/Parser.h"
+#line 59 "Generated/Parser.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
