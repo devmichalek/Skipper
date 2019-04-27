@@ -181,8 +181,10 @@
     <ClInclude Include="Commands\cmd_wipe.h" />
     <ClInclude Include="Commands\handlers.h" />
     <ClInclude Include="Generated\Parser.h" />
+    <ClInclude Include="Interpreter\Arguments.h" />
     <ClInclude Include="Interpreter\Console.h" />
     <ClInclude Include="Interpreter\Interpreter.h" />
+    <ClInclude Include="Interpreter\Redirection.h" />
     <ClInclude Include="Scope Tree\CommonScope.h" />
     <ClInclude Include="Scope Tree\ConcurrentScope.h" />
     <ClInclude Include="Scope Tree\RegularScope.h" />
