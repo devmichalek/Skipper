@@ -8,6 +8,7 @@
 #include "cmd_remove.h"
 #include "cmd_rename.h"
 #include "cmd_run.h"
+#include "cmd_search.h"
 #include "cmd_wait.h"
 #include "cmd_wipe.h"
 #include "Console.h"
@@ -75,6 +76,7 @@ int Command_Help::run()
 		output(Command_Remove::assist());
 		output(Command_Rename::assist());
 		output(Command_Run::assist());
+		output(Command_Search::assist());
 		output(Command_Wait::assist());
 		output(Command_Wipe::assist());
 		output("\n");

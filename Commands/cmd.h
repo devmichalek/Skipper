@@ -25,3 +25,4 @@ protected:
 
 bool validate(const std::string &base, std::string search);
 std::vector<std::string> extract(const std::string &str, int &&i);
+std::vector<std::string> entries(const std::string &directory, bool &recursive);

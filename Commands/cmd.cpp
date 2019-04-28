@@ -1,4 +1,5 @@
 #include "cmd.h"
+#include <filesystem>
 
 std::string Command::m_global_buffer = "";
 
@@ -87,4 +88,18 @@ std::vector<std::string> extract(const std::string &str, int &&i)
 	}
 
 	return vec;
+}
+
+std::vector<std::string> entries(const std::string &directory, bool &recursive)
+{
+	std::vector<std::string> result;
+	if (recursive) {
+		for (const auto & entry : std::filesystem::recursive_directory_iterator(directory))
+			result.push_back(entry.path().string());
+	}
+	else {
+		for (const auto & entry : std::filesystem::directory_iterator(directory))
+			result.push_back(entry.path().string());
+	}
+	return std::move(result);
 }

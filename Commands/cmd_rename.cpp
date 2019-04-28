@@ -96,23 +96,10 @@ int Command_Rename::run()
 	else
 	{
 		std::filesystem::path path;
-		if (m_bDirectory)
-			path = m_sDirectory;
-		else
-			path = std::filesystem::current_path();
+		if (!m_bDirectory)
+			m_sDirectory = std::filesystem::current_path().string();
 
-		std::vector<std::string> result;
-		if (m_bRecursive)
-		{
-			for (const auto & entry : std::filesystem::recursive_directory_iterator(path))
-				result.push_back(entry.path().string());
-		}
-		else
-		{
-			for (const auto & entry : std::filesystem::directory_iterator(path))
-				result.push_back(entry.path().string());
-		}
-
+		std::vector<std::string> result = entries(m_sDirectory, m_bRecursive);
 		if (result.empty())
 			output("Warning: could not find any files for the 'rename' command\n");
 		else
@@ -174,7 +161,7 @@ int Command_Rename::run()
 						}
 						else
 						{
-							distance = std::distance(dirs.begin(), jt);
+							distance = static_cast<int>(std::distance(dirs.begin(), jt));
 							++counters[distance];
 						}
 
