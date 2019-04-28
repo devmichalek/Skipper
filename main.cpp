@@ -1,3 +1,12 @@
+/*
+	Project: Skipper
+	License: MIT License
+	Author: Adrian Michalek
+	Email: devmichalek@gmail.com
+	Date: 28.04.2019
+	Github: https://github.com/devmichalek/Skipper
+*/
+
 #include "Interpreter.h"
 #include "RegularScope.h"
 #include "Console.h"
@@ -8,14 +17,20 @@ int main(int argc, char** argv)
 	if (argc == 2)
 	{
 		if (interpreter.scan(argv[1], nullptr, -1)) {
-			consolidate(nullptr, interpreter.m_pTree); // optimize
+			consolidate(nullptr, interpreter.m_pTree);
 			interpreter.m_pTree->execute();
 		}
 	}
 	else if (argc < 2)
+	{
+		interpreter.m_bError = true;
 		PrintFatalError(nullptr, -1, "Argument <filename> is not specified");
+	}
 	else
+	{
+		interpreter.m_bError = true;
 		PrintFatalError(nullptr, -1, "Only argument <filename> is available");
+	}
 
 	if (interpreter.m_bError)
 	{	// If terminated not by user.
