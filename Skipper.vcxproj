@@ -145,6 +145,7 @@
     <ClCompile Include="Commands\cmd.cpp" />
     <ClCompile Include="Commands\cmd_compare.cpp" />
     <ClCompile Include="Commands\cmd_copy.cpp" />
+    <ClCompile Include="Commands\cmd_echo.cpp" />
     <ClCompile Include="Commands\cmd_help.cpp" />
     <ClCompile Include="Commands\cmd_include.cpp" />
     <ClCompile Include="Commands\cmd_list.cpp" />
@@ -170,6 +171,7 @@
     <ClInclude Include="Commands\cmd.h" />
     <ClInclude Include="Commands\cmd_compare.h" />
     <ClInclude Include="Commands\cmd_copy.h" />
+    <ClInclude Include="Commands\cmd_echo.h" />
     <ClInclude Include="Commands\cmd_help.h" />
     <ClInclude Include="Commands\cmd_include.h" />
     <ClInclude Include="Commands\cmd_list.h" />
