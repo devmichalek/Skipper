@@ -19,5 +19,6 @@ public:
 	void destroy();
 	bool capture(RegularScope*&, const char*, int&); // capture tasks and children from other branch
 	ConcurrentScope* getNextNode();
-	void consolidate();
+	friend void consolidate(CommonScope* parent, CommonScope* current);
+	friend void chip(CommonScope* parent, CommonScope* current);
 };

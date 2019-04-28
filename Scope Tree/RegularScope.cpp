@@ -197,6 +197,7 @@ bool RegularScope::capture(RegularScope* &branch, const char* filename, int &lin
 		}
 		else
 			m_nodes = branch->m_nodes;
+		m_children += branch->m_children;
 	}
 
 	branch->m_nodes = nullptr;
@@ -209,67 +210,4 @@ bool RegularScope::capture(RegularScope* &branch, const char* filename, int &lin
 RegularScope* RegularScope::getNextNode()
 {
 	return m_next;
-}
-
-void RegularScope::consolidate()
-{
-	// If there is one child merge.
-	// { {} } -> {}
-	// { [] } -> {}
-
-	// Go to the bottom
-	if (m_children)
-	{
-		CommonScope* ptr = m_nodes;
-		while (ptr)
-		{
-			ptr->consolidate();
-			ptr = ptr->getNextNode();
-		}
-	}
-
-	if (m_children == 1 && m_nodes->m_type == REGULAR)
-	{	// Child nodes and tasks are now parent's nodes and tasks.
-		if (m_nodes->m_type == CONCURRENT)
-		{
-			ConcurrentScope* ptr = (ConcurrentScope*)m_nodes;
-			if (!ptr->m_tasks.empty())
-			{
-				int line = -1;
-				Redirection noredirection = std::make_pair(std::string(""), RedirectionType::LEFT);
-				while (!ptr->m_tasks.empty())
-				{
-					push(ptr->m_tasks.front(), noredirection, nullptr, line);
-					ptr->m_tasks.pop();
-				}
-			}
-
-			if (ptr->m_nodes)
-				m_nodes = ptr->m_nodes;
-		}
-		else
-		{
-			if (m_tasks.empty())
-			{	// No risk.
-				RegularScope* ptr = (RegularScope*)m_nodes;
-				if (!ptr->m_tasks.empty())
-				{
-					int line = -1;
-					Redirection noredirection = std::make_pair(std::string(""), RedirectionType::LEFT);
-					while (!ptr->m_tasks.empty())
-					{
-						push(ptr->m_tasks.front(), noredirection, nullptr, line);
-						ptr->m_tasks.pop();
-					}
-				}
-
-				if (ptr->m_nodes)
-					m_nodes = ptr->m_nodes;
-			}
-			else
-			{
-
-			}
-		}
-	}
 }

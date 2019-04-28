@@ -128,6 +128,7 @@ bool ConcurrentScope::capture(RegularScope* &branch, const char* filename, int &
 		}
 		else
 			m_nodes = (RegularScope*)branch->m_nodes;
+		m_children += branch->m_children;
 	}
 
 	branch->m_nodes = nullptr;
@@ -140,9 +141,4 @@ bool ConcurrentScope::capture(RegularScope* &branch, const char* filename, int &
 ConcurrentScope* ConcurrentScope::getNextNode()
 {
 	return m_next;
-}
-
-void ConcurrentScope::consolidate()
-{
-
 }

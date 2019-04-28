@@ -1,4 +1,6 @@
 #include "CommonScope.h"
+#include "RegularScope.h"
+#include "ConcurrentScope.h"
 #include "Console.h"
 
 CommonScope::CommonScope(const M_TYPE &newType)
@@ -94,4 +96,251 @@ void CommonScope::pop()
 {
 	delete m_tasks.front();
 	m_tasks.pop();
+}
+
+void chip(CommonScope* parent, CommonScope* current)
+{
+	if (parent->m_children)
+	{	// Parent node has children.
+		if ((parent->m_type == CommonScope::REGULAR && ((RegularScope*)parent)->m_nodes->m_type == current->m_type) ||
+			(parent->m_type == CommonScope::CONCURRENT && ((ConcurrentScope*)parent)->m_nodes->m_type == current->m_type))
+		{	// Children of parent node has the same type as current node.
+			// Get children of parent ptr.
+			CommonScope* ptr = nullptr;
+			if (parent->m_type == CommonScope::REGULAR)
+				ptr = ((RegularScope*)parent)->m_nodes;
+			else
+				ptr = ((ConcurrentScope*)parent)->m_nodes;
+			CommonScope* nextPtr = ptr->getNextNode();
+
+			// Search for matching ptr based on next ptr.
+			while (nextPtr)
+			{
+				if (nextPtr == current)
+					break;
+				ptr = ptr->getNextNode();
+				nextPtr = nextPtr->getNextNode();
+			}
+
+			if (nextPtr)
+			{
+				CommonScope* todelete = nextPtr;
+				if (ptr->m_type == CommonScope::REGULAR)
+				{
+					((RegularScope*)ptr)->m_next = (RegularScope*)nextPtr->getNextNode();
+					((RegularScope*)todelete)->m_nodes = nullptr;
+					((RegularScope*)todelete)->m_next = nullptr;
+					((RegularScope*)todelete)->m_upNode = nullptr;
+				}
+				else
+				{
+					((ConcurrentScope*)ptr)->m_next = (ConcurrentScope*)nextPtr->getNextNode();
+					((ConcurrentScope*)todelete)->m_nodes = nullptr;
+					((ConcurrentScope*)todelete)->m_next = nullptr;
+					((ConcurrentScope*)todelete)->m_upNode = nullptr;
+				}
+
+				while (!todelete->m_tasks.empty())
+					todelete->m_tasks.pop();
+
+				delete todelete;
+				todelete = nullptr;
+				--parent->m_children;
+			}
+			else
+			{
+				// Ascribe again.
+				if (parent->m_type == CommonScope::REGULAR)
+					ptr = ((RegularScope*)parent)->m_nodes;
+				else
+					ptr = ((ConcurrentScope*)parent)->m_nodes;
+
+				if (ptr == current)
+				{	// It can be only the first one.
+					if (parent->m_type == CommonScope::REGULAR)
+						((RegularScope*)parent)->m_nodes = ptr->getNextNode();
+					else
+						((ConcurrentScope*)parent)->m_nodes = (RegularScope*)ptr->getNextNode();
+
+					CommonScope* todelete = ptr;
+					if (ptr->m_type == CommonScope::REGULAR)
+					{
+						((RegularScope*)todelete)->m_next = nullptr;
+						((RegularScope*)todelete)->m_nodes = nullptr;
+						((RegularScope*)todelete)->m_upNode = nullptr;
+					}
+					else
+					{
+						((ConcurrentScope*)todelete)->m_next = nullptr;
+						((ConcurrentScope*)todelete)->m_nodes = nullptr;
+						((ConcurrentScope*)todelete)->m_upNode = nullptr;
+					}
+
+					while (!todelete->m_tasks.empty())
+						todelete->m_tasks.pop();
+
+					delete todelete;
+					todelete = nullptr;
+					--parent->m_children;
+				}
+			}
+		}
+	}
+}
+
+void consolidate(CommonScope* parent, CommonScope* current)
+{
+	// Go to the bottom.
+	if (current->m_children)
+	{
+		CommonScope* ptr = nullptr;
+		if (current->m_type == CommonScope::REGULAR)
+			ptr = ((RegularScope*)current)->m_nodes;
+		else
+			ptr = ((ConcurrentScope*)current)->m_nodes;
+
+		while (ptr)
+		{
+			consolidate(current, ptr);
+			ptr = ptr->getNextNode();
+		}
+	}
+
+	bool update = true;
+	while (update)
+	{
+		update = false;
+		if (current->m_children)
+		{
+			CommonScope* ptr = nullptr;
+			if (current->m_type == CommonScope::REGULAR)
+				ptr = ((RegularScope*)current)->m_nodes;
+			else
+				ptr = ((ConcurrentScope*)current)->m_nodes;
+
+			// If there are children continue.
+			while (current->m_children && ptr)
+			{
+				// 1. Current node contains only one concurrent child scope / or
+				// 2. There are no grandchildren of current node.
+				if (ptr->m_type == CommonScope::CONCURRENT && (current->m_children == 1 ||
+					(!((ConcurrentScope*)ptr)->m_nodes) && ptr->m_tasks.empty()))
+				{
+					ConcurrentScope* child = (ConcurrentScope*)ptr;
+					if (!child->m_tasks.empty())
+					{
+						int line = -1;
+						Redirection noredirection = std::make_pair(std::string(""), RedirectionType::LEFT);
+						while (!child->m_tasks.empty())
+						{
+							current->push(child->m_tasks.front(), noredirection, nullptr, line);
+							child->m_tasks.pop();
+						}
+					}
+
+					// Delete and switch.
+					CommonScope* switcher = child->getNextNode();
+					chip(current, child);
+					ptr = switcher;
+					update = true;
+					break;
+				}
+				else if (ptr->m_type == CommonScope::REGULAR)
+				{
+					// 1. There are no tasks inside child scope / or
+					// 2. There are tasks inside child scope but no grandchildren / or
+					// 3. There are tasks and grandchildren of regular type.
+					if (current->m_tasks.empty() || (!current->m_tasks.empty() &&
+						(!ptr->m_children || (ptr->m_children && ((RegularScope*)ptr)->m_nodes->m_type == CommonScope::REGULAR))))
+					{
+						RegularScope* child = (RegularScope*)ptr;
+
+						// Child has tasks. Child tasks are now our tasks.
+						if (!child->m_tasks.empty())
+						{
+							int line = -1;
+							Redirection noredirection = std::make_pair(std::string(""), RedirectionType::LEFT);
+							while (!child->m_tasks.empty())
+							{
+								current->push(child->m_tasks.front(), noredirection, nullptr, line);
+								child->m_tasks.pop();
+							}
+						}
+
+						// Child has children. Grandchildren are now our children...
+						if (child->m_children)
+						{
+							if (child->m_nodes->m_type == CommonScope::REGULAR)
+							{
+								// Get subsub.
+								RegularScope* subChildBeginPtr = (RegularScope*)child->m_nodes;
+								RegularScope* subChildEndPtr = subChildBeginPtr->m_next;
+								if (subChildEndPtr)
+								{
+									while (subChildEndPtr->m_next)
+										subChildEndPtr = subChildEndPtr->m_next;
+								}
+								else
+									subChildEndPtr = subChildBeginPtr;
+
+								{	// Switch parents.
+									RegularScope* psPtr = (RegularScope*)child->m_nodes;
+									while (psPtr)
+									{
+										psPtr->m_upNode = current;
+										psPtr = psPtr->m_next;
+									}
+								}
+
+								RegularScope* subPtr = (RegularScope*)((RegularScope*)current)->m_nodes;
+								RegularScope* subNextPtr = subPtr->getNextNode();
+								RegularScope* todelete = nullptr;
+								while (subNextPtr)
+								{
+									if (subNextPtr == ptr)
+										break;
+									subPtr = subNextPtr;
+									subNextPtr = subNextPtr->getNextNode();
+								}
+								if (subNextPtr)
+								{	// Middle or Last.
+									todelete = subNextPtr;
+									subPtr->m_next = subChildEndPtr;
+									subChildEndPtr->m_next = subNextPtr->m_next;
+								}
+								else
+								{	// First.
+									todelete = subPtr;
+									subPtr = (RegularScope*)((RegularScope*)current)->m_nodes;
+									subChildEndPtr->m_next = subPtr->m_next;
+									((RegularScope*)current)->m_nodes = subChildBeginPtr;
+								}
+								ptr = todelete->m_next;
+								todelete->m_nodes = nullptr;
+								todelete->m_next = nullptr;
+								todelete->m_upNode = nullptr;
+								delete todelete;
+								todelete = nullptr;
+								continue;
+							}
+							else
+							{
+								ptr = ptr->getNextNode();
+								continue;
+							}
+						}
+
+						// Delete and switch.
+						CommonScope* switcher = child->getNextNode();
+						chip(current, child);
+						ptr = switcher;
+						update = true;
+						continue;
+					}
+				}
+
+				ptr = ptr->getNextNode();
+			}
+		}
+	}
 }

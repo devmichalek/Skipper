@@ -7,8 +7,10 @@ int main(int argc, char** argv)
 	extern Interpreter interpreter;
 	if (argc == 2)
 	{
-		if (interpreter.scan(argv[1], nullptr, -1))
+		if (interpreter.scan(argv[1], nullptr, -1)) {
+			consolidate(nullptr, interpreter.m_pTree); // optimize
 			interpreter.m_pTree->execute();
+		}
 	}
 	else if (argc < 2)
 		PrintFatalError(nullptr, -1, "Argument <filename> is not specified");
