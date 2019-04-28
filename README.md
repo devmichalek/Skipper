@@ -74,3 +74,6 @@ Skipper is a self acting interpreter mainly for file management. Compare, move, 
 To get more information about particular command call ```!<command name> --help```. To redirect command to the file use the following syntax: ```!<command name> <command args> >> <file name>```. **>>** means **append to file**, **>** is **overwrite file**. To insert additional arguments to the command from file use syntax: ```!<command name> <command args> << <file name>```. **<<** means **append arguments from file**, **<** is **overwrite existing arguments on the left with the ones from file**.
 ## Project Structure
 Project was made with Visual Studio 2017. Interpreter is partly managed by Bison & Flex (parsing of the command to be more specific). Code uses the newest C++17 standard (filesystem) as well as previous versions (regex and many other features such as multithreading).
+#### Quick Download
+- [Windows x64](https://drive.google.com/file/d/1ins6giqYEQGGA4nCfc9X2YU9ZcCRhYm6/view?usp=sharing)<br>
+- [Windows x86](https://drive.google.com/file/d/1Wy1yFj3-iLisy3W2FG2WjtOzdRk0BVq4/view?usp=sharing)
