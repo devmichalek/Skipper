@@ -5,6 +5,7 @@ enum class Handler : THandler
 {
 	CMD_COMPARE = 0,
 	CMD_COPY,
+	CMD_ECHO,
 	CMD_HELP,
 	CMD_INCLUDE,
 	CMD_LIST,

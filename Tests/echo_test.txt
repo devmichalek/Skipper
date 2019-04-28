@@ -1,0 +1,4 @@
+!echo "sth " into " the file" > echo_result.txt
+!echo "yeah"
+!echo < echo_args.txt
+!wait 3s

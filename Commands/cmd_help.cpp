@@ -1,6 +1,7 @@
 #include "cmd_help.h"
 #include "cmd_compare.h"
 #include "cmd_copy.h"
+#include "cmd_echo.h"
 #include "cmd_include.h"
 #include "cmd_list.h"
 #include "cmd_move.h"
@@ -68,6 +69,7 @@ int Command_Help::run()
 		output("\nCommands (in alphabetical order):\n");
 		output(Command_Compare::assist());
 		output(Command_Copy::assist());
+		output(Command_Echo::assist());
 		output(Command_Help::assist());
 		output(Command_Include::assist());
 		output(Command_List::assist());

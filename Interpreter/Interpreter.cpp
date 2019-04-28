@@ -3,6 +3,7 @@
 #include "Parser.h"
 #include "cmd_compare.h"
 #include "cmd_copy.h"
+#include "cmd_echo.h"
 #include "cmd_help.h"
 #include "cmd_include.h"
 #include "cmd_list.h"
@@ -360,6 +361,13 @@ void Interpreter::analyze()
 				else if (ref.substr(2, 4) == "opy ")
 				{	// copy
 					pCmd = new Command_Copy(m_svSwitches.switches);
+				}
+			}
+			else if (ref[1] == 'e')
+			{
+				if (ref.substr(2, 4) == "cho ")
+				{	// echo
+					pCmd = new Command_Echo(m_svSwitches.switches);
 				}
 			}
 			else if (ref[1] == 'h')

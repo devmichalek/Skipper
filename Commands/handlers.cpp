@@ -4,6 +4,7 @@
 const char* HandlerIdentTable[] = {
 	"Compare",
 	"Copy",
+	"Echo",
 	"Help",
 	"Include",
 	"List",
