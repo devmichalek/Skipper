@@ -11,6 +11,7 @@
 #include "cmd_remove.h"
 #include "cmd_rename.h"
 #include "cmd_run.h"
+#include "cmd_search.h"
 #include "cmd_wait.h"
 #include "cmd_wipe.h"
 
@@ -298,7 +299,7 @@ void Interpreter::analyze()
 			auto it = std::find(m_svSwitches.subtypes.begin(), m_svSwitches.subtypes.end(), Subtype::REDIRECTION);
 			if (it != m_svSwitches.subtypes.end())
 			{
-				int distance = std::distance(m_svSwitches.subtypes.begin(), it);
+				int distance = (int)std::distance(m_svSwitches.subtypes.begin(), it);
 				std::string redirection = m_svSwitches.switches[distance];
 				std::string filename = m_svSwitches.switches[distance + 1];
 
@@ -406,6 +407,13 @@ void Interpreter::analyze()
 				else if (ref.substr(2, 3) == "un ")
 				{	// run
 					pCmd = new Command_Run(m_svSwitches.switches);
+				}
+			}
+			else if (ref[1] == 's')
+			{
+				if (ref.substr(2, 6) == "earch ")
+				{	// search
+					pCmd = new Command_Search(m_svSwitches.switches);
 				}
 			}
 			else if (ref[1] == 'w')

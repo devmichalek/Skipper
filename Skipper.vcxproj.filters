@@ -65,6 +65,9 @@
     <ClCompile Include="Commands\cmd_run.cpp">
       <Filter>Commands</Filter>
     </ClCompile>
+    <ClCompile Include="Commands\cmd_search.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Commands\cmd.h">
@@ -132,6 +135,9 @@
     </ClInclude>
     <ClInclude Include="Interpreter\Redirection.h">
       <Filter>Interpreter</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands\cmd_search.h">
+      <Filter>Commands</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

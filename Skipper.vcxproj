@@ -153,6 +153,7 @@
     <ClCompile Include="Commands\cmd_remove.cpp" />
     <ClCompile Include="Commands\cmd_rename.cpp" />
     <ClCompile Include="Commands\cmd_run.cpp" />
+    <ClCompile Include="Commands\cmd_search.cpp" />
     <ClCompile Include="Commands\cmd_wait.cpp" />
     <ClCompile Include="Commands\cmd_wipe.cpp" />
     <ClCompile Include="Commands\handlers.cpp" />
@@ -177,6 +178,7 @@
     <ClInclude Include="Commands\cmd_remove.h" />
     <ClInclude Include="Commands\cmd_rename.h" />
     <ClInclude Include="Commands\cmd_run.h" />
+    <ClInclude Include="Commands\cmd_search.h" />
     <ClInclude Include="Commands\cmd_wait.h" />
     <ClInclude Include="Commands\cmd_wipe.h" />
     <ClInclude Include="Commands\handlers.h" />

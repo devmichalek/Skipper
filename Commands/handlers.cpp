@@ -11,6 +11,7 @@ const char* HandlerIdentTable[] = {
 	"Regex",
 	"Remove",
 	"Rename",
+	"Search",
 	"Run",
 	"Wait",
 	"Wipe"

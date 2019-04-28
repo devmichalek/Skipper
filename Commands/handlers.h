@@ -13,6 +13,7 @@ enum class Handler : THandler
 	CMD_REMOVE,
 	CMD_RENAME,
 	CMD_RUN,
+	CMD_SEARCH,
 	CMD_WAIT,
 	CMD_WIPE
 };

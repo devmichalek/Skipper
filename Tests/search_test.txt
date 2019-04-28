@@ -1,0 +1,6 @@
+
+{
+	!search --help >> search_result.txt
+	!search --directory "foo" [0-9]+\.pat [a-z]+ >> search_result.txt
+	!search -r [a-z]+.* help >> search_result.txt
+}
