@@ -14,6 +14,9 @@
 	- [-c --directoryonly]
 	- [-i --ignore]
 	- [\<regular expression\> \<destination directory name\>]<br>
+- **echo**
+	- [-h --help]
+	- [\<text\>]<br>
 - **help**
 	- [-h --help]<br>
 - **include**
@@ -32,7 +35,7 @@
 	- [-i --ignore]
 	- [\<regular expression\> \<destination directory name\>]<br>
 - **regex**
-	-[-h --help]
+	- [-h --help]
 	- [-m --mode]
 	- [-l --list]
 	- [-s --set \<new mode\>]<br>
@@ -55,6 +58,11 @@
 	- [-r --recursive]
 	- [-e --execute \<object name\>
 	- [-R --regex \<regular expression\>]<br>
+- **search**
+	- [-h --help]
+	- [-d --directory \<directory name\>]
+	- [-r --recursive]
+	- [\<file regular expression\> \<search regular expression\>]<br>
 - **wait**
 	- [-h --help]
 	- [-d --duration]
